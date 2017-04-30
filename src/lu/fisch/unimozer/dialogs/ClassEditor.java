@@ -1,0 +1,507 @@
+/*
+    Unimozer
+    Unimozer intends to be a universal modelizer for Java™. It allows the user
+    to draw UML diagrams and generates the relative Java™ code automatically
+    and vice-versa.
+
+    Copyright (C) 2009  Bob Fisch
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or any
+    later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package lu.fisch.unimozer.dialogs;
+
+import japa.parser.ast.body.ClassOrInterfaceDeclaration;
+import japa.parser.ast.body.ModifierSet;
+import java.awt.Frame;
+import java.awt.Rectangle;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import lu.fisch.unimozer.Element;
+import lu.fisch.unimozer.Ini;
+import lu.fisch.unimozer.Java;
+import lu.fisch.unimozer.Unimozer;
+
+/**
+ *
+ * @author robertfisch
+ */
+public class ClassEditor extends javax.swing.JDialog
+{
+    public boolean OK = false;
+
+    public static ClassEditor showModal(Frame frame, String title)
+    {
+        ClassEditor ce = new ClassEditor(frame,title,true);
+        ce.setLocationRelativeTo(frame);
+        ce.pnlAuto.setVisible(false);
+        ce.pack();
+        ce.setVisible(true);
+        return ce;
+    }
+
+    public static ClassEditor showModal(Frame frame, String title, boolean extOptions)
+    {
+        ClassEditor ce = new ClassEditor(frame,title,true);
+        ce.genDoc.setSelected(Boolean.valueOf(Ini.get("javaDocClass", "true")));
+        ce.genMain.setSelected(Boolean.valueOf(Ini.get("mainClass", "false")));
+        ce.setLocationRelativeTo(frame);
+        ce.pnlAuto.setVisible(extOptions);
+        ce.pack();
+        ce.setVisible(true);
+        return ce;
+    }
+
+    public static ClassEditor showModal(Frame frame, String title, Element ele, String extendsWho)
+    {
+        ClassEditor ce = new ClassEditor(frame,title,true);
+        ce.setLocationRelativeTo(frame);
+        ce.setModifier(((ClassOrInterfaceDeclaration) ele.getNode()).getModifiers());
+        ce.setClassName(((ClassOrInterfaceDeclaration) ele.getNode()).getName());
+        ce.setExtends(extendsWho);
+        ce.pnlAuto.setVisible(false);
+        ce.pack();
+        ce.setVisible(true);
+        return ce;
+    }
+
+    public boolean isInterface()
+    {
+        return chkInterface.isSelected();
+    }
+
+    public boolean genMain()
+    {
+        return genMain.isSelected();
+    }
+
+    public boolean genDoc()
+    {
+        return genDoc.isSelected();
+    }
+
+    public String getClassName()
+    {
+        return edtName.getText();
+    }
+
+    public void setClassName(String name)
+    {
+        edtName.setText(name);
+    }
+
+    public String getExtends()
+    {
+        return edtExtends.getText();
+    }
+
+    public String getPackage()
+    {
+        return edtPackage.getText();
+    }
+
+    public void setExtends(String name)
+    {
+        edtExtends.setText(name);
+    }
+
+    public void setModifier(int mod)
+    {
+        if(ModifierSet.isPublic(mod)) selPublic.setSelected(true);
+        if(ModifierSet.isProtected(mod)) selProtected.setSelected(true);
+        if(ModifierSet.isPrivate(mod)) selPrivate.setSelected(true);
+        if(ModifierSet.isAbstract(mod)) selAbstract.setSelected(true);
+        //if(ModifierSet.isStatic(mod)) selStatic.setSelected(true);
+        if(ModifierSet.isFinal(mod)) selFinal.setSelected(true);
+
+    }
+
+    public int getModifier()
+    {
+        int mod = 0;
+        if(selPublic.isSelected()) mod+=ModifierSet.PUBLIC;
+        if(selProtected.isSelected()) mod+=ModifierSet.PROTECTED;
+        if(selPrivate.isSelected()) mod+=ModifierSet.PRIVATE;
+        //if(selStatic.isSelected()) mod+=ModifierSet.STATIC;
+        if(selFinal.isSelected()) mod+=ModifierSet.FINAL;
+        if(selAbstract.isSelected()) mod+=ModifierSet.ABSTRACT;
+        return mod;
+    }
+
+    /** Creates new form ClassEditor */
+    public ClassEditor() {
+        initComponents();
+        Unimozer.switchButtons(btnOK, btnCancel);
+        this.pack();
+    }
+
+    
+    public ClassEditor(Frame frame, String title, boolean modal)
+    {
+        super(frame,title, modal);
+        initComponents();
+        Unimozer.switchButtons(btnOK, btnCancel);
+        this.pack();
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        radioVisibility = new javax.swing.ButtonGroup();
+        jLabel1 = new javax.swing.JLabel();
+        edtName = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        selDefault = new javax.swing.JRadioButton();
+        selPublic = new javax.swing.JRadioButton();
+        selProtected = new javax.swing.JRadioButton();
+        selPrivate = new javax.swing.JRadioButton();
+        jPanel2 = new javax.swing.JPanel();
+        selFinal = new javax.swing.JCheckBox();
+        selAbstract = new javax.swing.JCheckBox();
+        btnOK = new javax.swing.JButton();
+        btnCancel = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        edtExtends = new javax.swing.JTextField();
+        pnlAuto = new javax.swing.JPanel();
+        genMain = new javax.swing.JCheckBox();
+        genDoc = new javax.swing.JCheckBox();
+        edtPackage = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        chkInterface = new javax.swing.JCheckBox();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
+
+        jLabel1.setText("Name:");
+
+        edtName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                edtNameKeyPressed(evt);
+            }
+        });
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Visibility"));
+        jPanel1.setEnabled(false);
+
+        radioVisibility.add(selDefault);
+        selDefault.setText("default");
+        selDefault.setEnabled(false);
+
+        radioVisibility.add(selPublic);
+        selPublic.setSelected(true);
+        selPublic.setText("public");
+        selPublic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selPublicActionPerformed(evt);
+            }
+        });
+
+        radioVisibility.add(selProtected);
+        selProtected.setText("protected");
+        selProtected.setEnabled(false);
+
+        radioVisibility.add(selPrivate);
+        selPrivate.setText("private");
+        selPrivate.setEnabled(false);
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(selPublic)
+            .add(selProtected)
+            .add(selDefault)
+            .add(selPrivate)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .add(selPublic)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selProtected)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selDefault)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selPrivate)
+                .addContainerGap())
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Modifier"));
+
+        selFinal.setText("final");
+
+        selAbstract.setText("abstract");
+        selAbstract.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selAbstractActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel2Layout.createSequentialGroup()
+                        .add(selFinal)
+                        .add(0, 0, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .add(0, 0, Short.MAX_VALUE)
+                        .add(selAbstract)))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(selFinal)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selAbstract)
+                .addContainerGap(60, Short.MAX_VALUE))
+        );
+
+        btnOK.setText("OK");
+        btnOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOKActionPerformed(evt);
+            }
+        });
+
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Extends:");
+
+        edtExtends.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                edtExtendsKeyPressed(evt);
+            }
+        });
+
+        pnlAuto.setBorder(javax.swing.BorderFactory.createTitledBorder("Code generation"));
+
+        genMain.setText("Main Method");
+        genMain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genMainActionPerformed(evt);
+            }
+        });
+
+        genDoc.setSelected(true);
+        genDoc.setText("JavaDoc Comments");
+
+        org.jdesktop.layout.GroupLayout pnlAutoLayout = new org.jdesktop.layout.GroupLayout(pnlAuto);
+        pnlAuto.setLayout(pnlAutoLayout);
+        pnlAutoLayout.setHorizontalGroup(
+            pnlAutoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(pnlAutoLayout.createSequentialGroup()
+                .add(8, 8, 8)
+                .add(pnlAutoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(genDoc)
+                    .add(genMain))
+                .addContainerGap(60, Short.MAX_VALUE))
+        );
+        pnlAutoLayout.setVerticalGroup(
+            pnlAutoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(pnlAutoLayout.createSequentialGroup()
+                .add(genMain)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(genDoc)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        edtPackage.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                edtPackageKeyPressed(evt);
+            }
+        });
+
+        jLabel3.setText("Package:");
+
+        chkInterface.setText("interface");
+        chkInterface.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkInterfaceActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(btnCancel)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 73, Short.MAX_VALUE)
+                        .add(btnOK))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(jLabel2)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 13, Short.MAX_VALUE)
+                        .add(edtExtends, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 167, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(layout.createSequentialGroup()
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 19, Short.MAX_VALUE)
+                        .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(pnlAuto, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(jLabel3)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(edtPackage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 167, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                        .add(jLabel1)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 27, Short.MAX_VALUE)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(chkInterface)
+                            .add(edtName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 167, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel1)
+                    .add(edtName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(chkInterface)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(edtExtends, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel2))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(edtPackage, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel3))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(pnlAuto, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(18, 18, 18)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(btnOK)
+                    .add(btnCancel))
+                .addContainerGap())
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void selPublicActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selPublicActionPerformed
+    {//GEN-HEADEREND:event_selPublicActionPerformed
+        // TODO add your handling code here:
+}//GEN-LAST:event_selPublicActionPerformed
+
+    private void btnOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnOKActionPerformed
+    {//GEN-HEADEREND:event_btnOKActionPerformed
+        boolean test1 = Java.isIdentifier(edtName.getText());
+        boolean test2 = Java.isExtends(edtExtends.getText()) || edtExtends.getText().equals("");
+        //System.err.println(Boolean.toString(test1));
+        //System.err.println(Boolean.toString(test2));
+        if(test1 && test2)
+        {
+            OK = true;
+            this.setVisible(false);
+        }
+        else
+        {
+            if (!test1) JOptionPane.showMessageDialog(this, "“"+edtName.getText()+"“ is not a correct class name." , "Error", JOptionPane.ERROR_MESSAGE);
+            else if (!test2) JOptionPane.showMessageDialog(this, "“"+edtName.getText()+"“ is not a correct class name." , "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnOKActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCancelActionPerformed
+    {//GEN-HEADEREND:event_btnCancelActionPerformed
+        OK = false;
+        this.setVisible(false);
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void edtNameKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_edtNameKeyPressed
+    {//GEN-HEADEREND:event_edtNameKeyPressed
+		if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
+		{
+			OK=false;
+			setVisible(false);
+		}
+		else if(evt.getKeyCode() == KeyEvent.VK_ENTER) // && (evt.isShiftDown() || evt.isControlDown()))
+		{
+			btnOKActionPerformed(null);
+		}
+    }//GEN-LAST:event_edtNameKeyPressed
+
+    private void selAbstractActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selAbstractActionPerformed
+    {//GEN-HEADEREND:event_selAbstractActionPerformed
+        //selStatic.setSelected(false);
+    }//GEN-LAST:event_selAbstractActionPerformed
+
+    private void edtExtendsKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_edtExtendsKeyPressed
+    {//GEN-HEADEREND:event_edtExtendsKeyPressed
+        // TODO add your handling code here:
+}//GEN-LAST:event_edtExtendsKeyPressed
+
+    private void genMainActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_genMainActionPerformed
+    {//GEN-HEADEREND:event_genMainActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_genMainActionPerformed
+
+    private void edtPackageKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_edtPackageKeyPressed
+    {//GEN-HEADEREND:event_edtPackageKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_edtPackageKeyPressed
+
+    private void chkInterfaceActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_chkInterfaceActionPerformed
+    {//GEN-HEADEREND:event_chkInterfaceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_chkInterfaceActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnOK;
+    private javax.swing.JCheckBox chkInterface;
+    private javax.swing.JTextField edtExtends;
+    private javax.swing.JTextField edtName;
+    private javax.swing.JTextField edtPackage;
+    private javax.swing.JCheckBox genDoc;
+    private javax.swing.JCheckBox genMain;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel pnlAuto;
+    private javax.swing.ButtonGroup radioVisibility;
+    private javax.swing.JCheckBox selAbstract;
+    private javax.swing.JRadioButton selDefault;
+    private javax.swing.JCheckBox selFinal;
+    private javax.swing.JRadioButton selPrivate;
+    private javax.swing.JRadioButton selProtected;
+    private javax.swing.JRadioButton selPublic;
+    // End of variables declaration//GEN-END:variables
+
+}

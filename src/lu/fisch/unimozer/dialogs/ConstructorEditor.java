@@ -1,0 +1,469 @@
+/*
+    Unimozer
+    Unimozer intends to be a universal modelizer for Java™. It allows the user
+    to draw UML diagrams and generates the relative Java™ code automatically
+    and vice-versa.
+
+    Copyright (C) 2009  Bob Fisch
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or any
+    later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package lu.fisch.unimozer.dialogs;
+
+import japa.parser.ast.body.ConstructorDeclaration;
+import japa.parser.ast.body.ModifierSet;
+import japa.parser.ast.body.Parameter;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.event.KeyEvent;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import lu.fisch.unimozer.Element;
+import lu.fisch.unimozer.Ini;
+import lu.fisch.unimozer.Java;
+import lu.fisch.unimozer.Unimozer;
+
+/**
+ *
+ * @author robertfisch
+ */
+public class ConstructorEditor extends javax.swing.JDialog
+{
+    public boolean OK = false;
+
+    private DefaultComboBoxModel model = new DefaultComboBoxModel(new String[] { "boolean", "byte", "short", "int", "long", "float", "double", "String" });
+
+
+    public static ConstructorEditor showModal(Frame frame, String title)
+    {
+        ConstructorEditor ce = new ConstructorEditor(frame,title,true);
+        ce.genDoc.setSelected(Boolean.valueOf(Ini.get("javaDocConstructor", "true")));
+
+        ce.setLocationRelativeTo(frame);
+        ce.setVisible(true);
+        return ce;
+    }
+
+    public static ConstructorEditor showModal(Frame frame, String title, Element ele)
+    {
+        ConstructorEditor ce = new ConstructorEditor(frame,title,true);
+
+        ce.setLocationRelativeTo(frame);
+
+        ce.setModifier(((ConstructorDeclaration) ele.getNode()).getModifiers());
+        
+        List<Parameter> pl = ((ConstructorDeclaration) ele.getNode()).getParameters();
+        Vector<Vector<String>> params = new Vector<Vector<String>>();
+        if(pl!=null)
+        for(Parameter p : pl)
+        {
+            Vector<String> ret = new Vector<String>();
+            ret.add(p.getType().toString());
+            ret.add(p.getId().getName());
+            params.add(ret);
+        }
+        ce.setParams(params);
+        ce.genDoc.setVisible(false);
+        ce.setVisible(true);
+        return ce;
+    }
+
+    public boolean generateJavaDoc()
+    {
+        return genDoc.isSelected();
+    }
+
+
+    public void setParams(Vector<Vector<String>> params)
+    {
+        tblParams.setGridColor(Color.LIGHT_GRAY);
+        tblParams.setShowGrid(true);
+        DefaultTableModel tm = (DefaultTableModel) tblParams.getModel();
+        while(tm.getRowCount()>0) tm.removeRow(0);
+        for(Vector vec : params) tm.addRow(vec);
+    }
+
+    public Vector<Vector<String>> getParams()
+    {
+        DefaultTableModel tm = (DefaultTableModel) tblParams.getModel();
+        Vector<Vector<String>> params = new Vector<Vector<String>>();
+        for(int r=0;r<tm.getRowCount();r++)
+        {
+            Vector<String> ret = new Vector<String>();
+            ret.add((String) tm.getValueAt(r, 0));
+            ret.add((String) tm.getValueAt(r, 1));
+            params.add(ret);
+        }
+        return params;
+    }
+
+    public void setModifier(int mod)
+    {
+        if(ModifierSet.isPublic(mod)) selPublic.setSelected(true);
+        if(ModifierSet.isProtected(mod)) selProtected.setSelected(true);
+        if(ModifierSet.isPrivate(mod)) selPrivate.setSelected(true);
+
+    }
+
+    public int getModifier()
+    {
+        int mod = 0;
+        if(selPublic.isSelected()) mod+=ModifierSet.PUBLIC;
+        if(selProtected.isSelected()) mod+=ModifierSet.PROTECTED;
+        if(selPrivate.isSelected()) mod+=ModifierSet.PRIVATE;
+        return mod;
+    }
+
+    /** Creates new form ClassEditor */
+    public ConstructorEditor() {
+        initComponents();
+        Unimozer.switchButtons(btnOK, btnCancel);
+        this.pack();
+    }
+
+    
+    public ConstructorEditor(Frame frame, String title, boolean modal)
+    {
+        super(frame,title, modal);
+        initComponents();
+        Unimozer.switchButtons(btnOK, btnCancel);
+        this.pack();
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        radioVisibility = new javax.swing.ButtonGroup();
+        jPanel1 = new javax.swing.JPanel();
+        selDefault = new javax.swing.JRadioButton();
+        selPublic = new javax.swing.JRadioButton();
+        selProtected = new javax.swing.JRadioButton();
+        selPrivate = new javax.swing.JRadioButton();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        cbParamType = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        edtParamName = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblParams = new javax.swing.JTable();
+        btnAdd = new javax.swing.JButton();
+        btnRemove = new javax.swing.JButton();
+        btnCancel = new javax.swing.JButton();
+        btnOK = new javax.swing.JButton();
+        genDoc = new javax.swing.JCheckBox();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Visibility"));
+
+        radioVisibility.add(selDefault);
+        selDefault.setText("default");
+
+        radioVisibility.add(selPublic);
+        selPublic.setSelected(true);
+        selPublic.setText("public");
+        selPublic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selPublicActionPerformed(evt);
+            }
+        });
+        selPublic.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                selPublicKeyPressed(evt);
+            }
+        });
+
+        radioVisibility.add(selProtected);
+        selProtected.setText("protected");
+
+        radioVisibility.add(selPrivate);
+        selPrivate.setText("private");
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(selDefault)
+                    .add(selPublic)
+                    .add(selProtected)
+                    .add(selPrivate))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .add(selPublic)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selProtected)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selDefault)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selPrivate)
+                .add(23, 23, 23))
+        );
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Parameter"));
+
+        jLabel3.setText("Name:");
+
+        cbParamType.setEditable(true);
+        cbParamType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "boolean", "byte", "short", "int", "long", "float", "double", "String" }));
+
+        jLabel4.setText("Type:");
+
+        edtParamName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                edtParamNameKeyPressed(evt);
+            }
+        });
+
+        tblParams.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Type", "Name"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblParams);
+
+        btnAdd.setText("Add");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
+
+        btnRemove.setText("Remove");
+        btnRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel3Layout.createSequentialGroup()
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(btnAdd)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(btnRemove))
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .add(20, 20, 20)
+                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel4)
+                            .add(jLabel3))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(edtParamName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                            .add(cbParamType, 0, 163, Short.MAX_VALUE)))
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .add(10, 10, 10)
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 223, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel3Layout.createSequentialGroup()
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel3)
+                    .add(edtParamName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel4)
+                    .add(cbParamType, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(btnRemove)
+                    .add(btnAdd))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(20, 20, 20))
+        );
+
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
+
+        btnOK.setText("OK");
+        btnOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOKActionPerformed(evt);
+            }
+        });
+
+        genDoc.setSelected(true);
+        genDoc.setText("JavaDoc Comments");
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(9, 9, 9)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(genDoc)
+                    .add(btnCancel))
+                .add(6, 6, 6)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 256, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(btnOK))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(layout.createSequentialGroup()
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 111, Short.MAX_VALUE)
+                        .add(genDoc)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(btnCancel)
+                    .add(btnOK))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void selPublicActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selPublicActionPerformed
+    {//GEN-HEADEREND:event_selPublicActionPerformed
+        // TODO add your handling code here:
+}//GEN-LAST:event_selPublicActionPerformed
+
+    private void btnOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnOKActionPerformed
+    {//GEN-HEADEREND:event_btnOKActionPerformed
+        boolean test2 = true;
+        String wrong = new String();
+
+        DefaultTableModel tm = (DefaultTableModel) tblParams.getModel();
+        for(int r=0;r<tm.getRowCount() && test2==true;r++)
+        {
+            Vector<String> ret = new Vector<String>();
+            wrong = (String) tm.getValueAt(r, 1);
+            test2 = Java.isIdentifier(wrong);
+        }
+
+        if(test2)
+        {
+            OK = true;
+            this.setVisible(false);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "“"+wrong+"“ is not a correct parameter name." , "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnOKActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCancelActionPerformed
+    {//GEN-HEADEREND:event_btnCancelActionPerformed
+        OK = false;
+        this.setVisible(false);
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void edtParamNameKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_edtParamNameKeyPressed
+    {//GEN-HEADEREND:event_edtParamNameKeyPressed
+        // TODO add your handling code here:
+}//GEN-LAST:event_edtParamNameKeyPressed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAddActionPerformed
+    {//GEN-HEADEREND:event_btnAddActionPerformed
+       if(Java.isIdentifier(edtParamName.getText()))
+       {
+            tblParams.setGridColor(Color.LIGHT_GRAY);
+            tblParams.setShowGrid(true);
+            DefaultTableModel tm = (DefaultTableModel) tblParams.getModel();
+            Vector<String> param = new Vector<String>();
+            param.add((String) cbParamType.getSelectedItem());
+            param.add(edtParamName.getText());
+            tm.addRow(param);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "“"+edtParamName.getText()+"“ is not a correct parameter name." , "Error", JOptionPane.ERROR_MESSAGE);
+        }
+}//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRemoveActionPerformed
+    {//GEN-HEADEREND:event_btnRemoveActionPerformed
+        DefaultTableModel tm = (DefaultTableModel) tblParams.getModel();
+        tm.removeRow(tblParams.getSelectedRow());
+    }//GEN-LAST:event_btnRemoveActionPerformed
+
+    private void selPublicKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_selPublicKeyPressed
+    {//GEN-HEADEREND:event_selPublicKeyPressed
+		if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
+		{
+			OK=false;
+			setVisible(false);
+		}
+		else if(evt.getKeyCode() == KeyEvent.VK_ENTER) // && (evt.isShiftDown() || evt.isControlDown()))
+		{
+			btnOKActionPerformed(null);
+		}
+    }//GEN-LAST:event_selPublicKeyPressed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnOK;
+    private javax.swing.JButton btnRemove;
+    private javax.swing.JComboBox cbParamType;
+    private javax.swing.JTextField edtParamName;
+    private javax.swing.JCheckBox genDoc;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.ButtonGroup radioVisibility;
+    private javax.swing.JRadioButton selDefault;
+    private javax.swing.JRadioButton selPrivate;
+    private javax.swing.JRadioButton selProtected;
+    private javax.swing.JRadioButton selPublic;
+    private javax.swing.JTable tblParams;
+    // End of variables declaration//GEN-END:variables
+
+}

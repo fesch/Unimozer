@@ -1,0 +1,96 @@
+Unimozer licenses file
+----------------------
+
+    Unimozer
+    °°°°°°°°°°°°°
+
+    Unimozer intends to be a universal modelizer for Java™. It allows the
+    user to draw UML diagrams and generates the relative Java™ code auto-
+    matically and vice-versa.
+
+    Copyright (C) 2009  Bob Fisch
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or any
+    later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Used third party components licenses
+------------------------------------
+
+    Components
+    °°°°°°°°°°°°°°°°
+
+    * Java Parser
+        LGPL
+        https://github.com/before/javaparser
+
+    * FileDroppper
+        Public Domain
+        http://iharder.sourceforge.net/current/java/filedrop/
+
+    * Janino Java Compiler
+        New BSD License
+        http://www.janino.net/licensing.html
+
+    * RSyntaxTextArea
+        LGPL
+        http://fifesoft.com/rsyntaxtextarea/RSyntaxTextArea.License.txt
+
+    * FileFilter (BlueJ)
+        GPL2 with Classpath Exception
+        http://www.bluej.org/about/license.html
+
+    * BeanShell
+        LGPL
+        http://www.beanshell.org/license.html
+
+    * JCharDet
+        MPL 1.1
+        http://www.mozilla.org/MPL/MPL-1.1.html
+
+
+    Single files
+    °°°°°°°°°°°°°°°°°°°
+    * bluej.Inputbuffer
+    * bluej.utility.JavaNames
+    * bluej.utility.DirectoryFilter
+    * bluej.utility.JavaSourceFilter
+        GPL2
+        http://www.bluej.org/about/LICENSE.txt
+
+    * lu.fisch.unimozer.compilation.ByteArrayJFO
+    * lu.fisch.unimozer.compilation.ByteClassLoader
+    * lu.fisch.unimozer.compilation.ByteJavaFileManager
+        by Andrew Davison 2007
+        http://fivedots.coe.psu.ac.th/~ad/jg/javaArt1/onTheFlyArt1.pdf
+
+    * lu.fisch.unimozer.console.ReaderInputStream
+        Apache License, Version 2.0
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    * lu.fisch.unimozer.console.WriterOutputStream
+        by Mort Bay Consulting Pty Ltd
+        Apache License, Version 2.0
+        http://www.apache.org/licenses/LICENSE-2.0
+
+
+    Icons
+    °°°°°°°°
+
+    * special icons
+        GPL/LGPL
+        The filenames include the name of the licence as well as the
+        name of the respective autor. All icons which filenames start
+        with "iconfinder" have been found on this site:
+        http://www.iconfinder.net
+

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Unimozer" default="default" basedir=".">
+    <description>Build Unimozer.app</description>
+
+	<target name="Unimozer">
+	  <taskdef name="bundleapp" 
+	    classpath="lib/appbundler-1.0ea.jar"
+	    classname="com.oracle.appbundler.AppBundlerTask"/>
+	
+	    <!-- Note the usage of classpathref to avoid copy-pasting all 
+	    your classpath entries from another target. -->
+	  <bundleapp 
+	  		outputdirectory="./"
+	        name="Unimozer"
+	        displayname="Unimozer"
+	        identifier="lu.fisch.Unimozer"
+	        shortversion="0.27-13"
+	        version="0.27-13"
+	        icon="icon/turtle.icns"
+	        mainclassname="lu.fisch.unimozer.Main"
+	        copyright="Bob Fisch"
+	        applicationCategory="public.app-category.education">
+	        
+          <classpath file="dist/Unimozer.jar" />
+          <classpath file="dist/lib/*" />
+	
+	      <!--<runtime dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_15.jdk/Contents/Home"/>-->
+	
+	      <!-- Specify which architectures you want to support -->
+	      <arch name="x86_64"/>
+	      <arch name="i386"/>
+	
+	      <!-- Register the application as an editor for PNG and JPG files -->
+	      <bundledocument extensions="unimozer.pck"
+	        icon="turtle.icns"
+	        name="Unimozer Package"
+	        role="editor">
+	      </bundledocument>
+	
+	
+	      <!-- Register the application with your custom format, 
+	      bundled as a package -->
+	<!--      <bundledocument extensions="custom"
+	        icon="${bundle.icon}"
+	        name="Custom data"
+	        role="editor"
+	        isPackage="true">
+	      </bundledocument>-->
+	
+	      <!-- Workaround since the icon parameter for bundleapp doesn't work -->
+	      <option value="-Xdock:icon=Contents/Resources/turtle.icns"/>
+	
+	      <!-- OSX specific options, optional -->
+	      <option value="-Dapple.laf.useScreenMenuBar=true"/>
+	      <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+	      <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+	      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=Unimozer"/>
+	      <option value="-Dcom.apple.smallTabs=true"/>
+	      
+	      <option value="-Xdock:name=Unimozer"/>
+	
+	      <option value="-Xmx1024M"/>
+	  </bundleapp>
+	</target>
+</project>
+
+

@@ -1,0 +1,533 @@
+Todo:
+- include JavaDoc from a ZIP-file [Robert FISCH]
+- options to change the font of the editor [Fred FABER]
+- restrict drive letters (for Windows only) [Luc ENGELMANN]
+- find/replace in selection
+
+
+Current version: 0.27-41 (2017.04.29)
+- 01: printing was broken due to editor update [Lux BREDIMUS]
+- 02: copy diagrams cut outer lines for compiled projects [Fred FABER]
+- 03: added error message if save operations fails [Fred FABER]
+- 04: added error message if save operations fails "reloaded" [Fred FABER]
+- 05: fields and methods from anonymous classes are now longer
+      displayed in the UML diagram [Robert FISCH]
+- 06: fixed a problem detecting deleted class [Fred FABER]
+- 07: fixed a problem while generating JavaDoc in Java7 [Wendy CUNNINGHAM]
+- 08: fixed a conversion bug for constructor input [David MANCINI]
+- 09: upgraded to JDK7, dropped support for JDK6 [Robert FISCH]
+- 10: problem with displaying JavaDoc 7 [Denis Heinen]
+- 11: upgraded RSyntaxTextArea & Co [Robert FUTRELL]
+- 11: migrated to NetBeans 7.3 [Robert FISCH]
+- 12: fixed broken syntax highlighting [Robert FISCH]
+- 12: ignore some RSyntaxTextArea errors [Robert FISCH]
+- 13: removed some RSTALanguageSupport related debug messages [Robert FISCH]
+- 13: clear console op projet open [Guy LOESCH]
+- 14: remove "static" for adding classes [Fred FABER]
+- 15: upgraded java parser to version 1.7 [Robert FISCH]
+- 16: recoded the arrow drawing engine [Robert FISCH]
+- 17: bug fixes in the editor [Fred FABER]
+- 18: bug fix in aggregation detection [Fred FABER]
+- 19: new and *signed* JWS version [Robert FISCH]
+- 20: aggregation detection fix [Guy LOESCH]
+- 21: change target version of NetBeans save files to 1.7 [Fred FABER]
+- 22: single line field declarations split in UML [Gilles EVERLING]
+- 23: do not ask again if user doesn't want to reload a file [Gilles EVERLING]
+- 24: bug when copying the entire diagram as graphic [Guy LOESCH]
+- 25: problem displaying error messages [Max Schrantz]
+- 26: display more detailed error messages [Robert FISCH]
+- 27: editor no longer throws an exception [Robert FISCH]
+- 28: 'char' type was not allowed in input [Fred FABER]
+- 29: small detail in class code generation [Carlos CAMBOA]
+- 30: disabled auto-save to find freezing bug [Robert FISCH]
+- 31: added 1.8 to make jar if 1.8 is installed [Fred FABER]
+- 32: compiled with source = 1.8 [Robert FISCH]
+- 32: added tools.jar from JDK 1.8u20 [Robert FISCH]
+- 33: added a logger to detect hangups [Robert FISCH]
+- 34: disabled editor disabling during "new" 
+      (this is where Unimozer freezed up ...) [Robert FISCH]
+- 35: concurrent Hashmap problem [Michel MARCATORIS]
+- 36: replacing non thread-safe loops in Diagram [Robert FISCH]
+- 37: fine tuning the "run" button [Fred FABER]
+- 38: minor change in Structorizer to be able to execute FOR loop [Robert FISCH]
+- 40: Structorizer upgrade [Robert FISCH]
+- 41: added "transient" modifier for field [Valery BOKOV]
+- 42: names of created classes are added to type list for new method [Valery BOKOV]
+
+Version 0.27 (06/12/2012)
+- 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]
+- 02: editor: update of RSyntaxTextArea & Co (Revision 333) [Robert FUTRELL]
+- 02: editor: update of RCommen & Co (Revision 153) [Robert FUTRELL]
+- 03: Removed a Main.java from the default package in RSTALanguageSupport [Jens GETREU]
+- 04: Allowing    "public static void main(String args[])" 
+      as well as  "public static void main(String[] args)" to run [Jens GETREU]
+- 05: F6 and F8 are working now [Fred FABER]
+- 06: Automatic implementation of setter/getter when adding fields [Fred FABER]
+- 06: Saving some more settings to the INI file [Robert FISCH]
+- 07: Getter/setter generator checkbox state is unchecked by default [FF,GE,LB,RF]
+- 08: Reset position of window if outside of the visible area [11TG3 2011/2012]
+- 09: editor: update of RSyntaxTextArea & Co (Revision 337) [Robert FUTRELL]
+- 10: displaying bug: everything is italic [Fred FABER]
+- 11: updated the bootloader to find JDK more reliably unter Windows 7 [Robert FISCH]
+- 11: fixing the displaying bug (only Windows 7!) [Fred FABER]
+- 11: replaced different "foreach" loops [Robert FISCH]
+- 12: aggregations for arrays are now recognized for both notations [Fred FABER]
+- 13: double clicking save files now also works for JWS [David MANCINI]
+- 14: small fix in the NetBeans save file [Robert FISCH]
+- 15: code editor didn't load the correct font size un startup [Fred FABER]
+- 15: editor: update of RSyntaxTextArea & Co (Revision 344) [Robert FUTRELL]
+- 15: editor: update of RCommen & Co (Revision 163) [Robert FUTRELL]
+- 16: font size synchronisation UML and code editor [Michael FORD]
+- 17: field visibility defaults now to "private" [GDT Progra]
+- 18: removed the security manager [Fred FABER]
+- 19: condensed the JavaDoc code generation [Fred FABER]
+- 20: *******************
+- 20: *** BIG CHANGES ***
+- 20: *******************
+- 20: improved import for BlueJ projects with multiple packages [Robert FISCH]
+- 20: Java files are no longer stored in the root of the project [Fred FABER / Robert FISCH]
+- 20: improved generation of BlueJ save files project with packages [Robert FISCH]
+- 20: loading and saving a BlueJ project "clean" it up, meaning that all Java
+      files are being put into the src-directory. [Fred FABER / Robert FISCH]
+- 20: recognize NetBeans Projects and load them accordingly [Fred FABER]
+- 20: create "bin" and "src" only at save [Jens GETREU]
+- 21: editor: update of RSyntaxTextArea & Co (Revision 364) [Robert FUTRELL]
+- 22: added support for generics [Fred FABER]
+- 23: fixed a bug in the inspector [Fred FABER]
+- 24: added auto-save (10 minutes) with confirmation dialog [Fred FABER / Robert FISCH]
+- 25: UML: center class names and remove visibility symbol [Jens GETREU]
+- 26: copy a selected class as PNG to clipboard [Fred FABER]
+- 27: exported diagrams to the clipboard are now auto-cropped [Fred FABER]
+- 28: added "whole words only" to search and find []
+- 29: editor: update of RSyntaxTextArea & Co (Revision 408) [Robert FUTRELL]
+- 29: editor: update of RCommen & Co (Revision 170) [Robert FUTRELL]
+- 30: editor: tried to fixed a freezing bug while using the 
+              compile on-the-fly option [Fred FABER]
+- 31: editor: update of RSyntaxTextArea & Co (Revision 425) [Robert FUTRELL]
+- 31: editor: update of RCommen & Co (Revision 173) [Robert FUTRELL]
+- 32: editor: document structure highlighting [Robert FISCH]
+- 33: editor: document structure highlighting improvements [Robert FISCH]  
+- 33: editor: update of RSyntaxTextArea & Co (Revision 435) [Robert FUTRELL]
+- 33: editor: disabled code folding on Mac OSX because of a bug [Robert FISCH]
+- 33: diagram: fixed a displaying bug [Robert FISCH]
+- 34: editor: document structure highlighting improvements [Fred FABER] 
+- 34: editor: disabled code folding for any OS because it structure highlighting
+              doesn't work with it [Robert FISCH]
+- 34: NS-diagram: using now the same colors as for the structure highlighting [Fred FABER]
+- 35: NS-diagram: are now scrollable [Robert FISCH]
+- 35: editor: document structure highlighting improvements [Robert FISCH] 
+- 36: editor: document structure highlighting improvements [Fred FABER] 
+- 37: editor: document structure highlighting improvements [Robert FISCH] 
+- 38: editor: document structure highlighting improvements [Robert FISCH] 
+- 39: editor: document structure highlighting improvements [11TG3/2011-2012] 
+- 40: load classes not contained in the Unimozer save file [Formation 2012]
+- 40: copy lib folder (if exists) and compile into dist [Robert FISCH]
+- 41: use JAR in the lib folder during compilation [Robert FISCH]
+- 42: testing LTMA repository ...
+- 43: implemented an aligner to not show all new classes on (0,0) [Formation 2012]
+- 44: fixed an aggregation displaying bug [Robert FISCH]
+- 45: fixed a bug in the structure highlighting [Gille KERSCHEN / 11TG3]
+- 46: fixed a loading bug in the aligner [Fred FABER]
+- 46: change the behavior of dragging entire packages [Fref FABER]
+- 47: updated the bootloader for better JDK detection (Mac) [Robert FISCH]
+- 48: updated the bootloader for better JDK detection (Windows, Linux) [Robert FISCH]
+- 48: resolved the 50/51 problem for system having installed JDK7 [Carlos GAMBOA / Guy LOESCH]
+- 48: fixed uncomplete compiler error messages for Java 7 [Carlos GAMBOA / Guy LOESCH]
+- 49: JAR builder updated for building Java 7 bytecode [Fred FABER]
+- 49: added a boot log report form to receive bootstrap information by mail [Robert FISCH]
+- 50: updated support for generic return types [Fred FABER]
+- 51: runtime now switches to the "src" folder [Gilles EVERLING]
+- 52: added real-time monitoring for objects [Gilles EVERLING]
+- 53: better support for JFrames created via "new ..." [Gilles EVERLING]
+- 54: swing-layout is automatically added to the classpath 
+      which allows NetBeans projets to compile out of the box [Claude SIBENALER]
+- 55: remove monitored objects if parent is removed [Gilles EVERLING]
+- 56: updated error message on compilation [Robert FISCH]
+- 57: fixed a bug in the structure highlighting [Robert FISCH]
+- 58: file system synchronization [Fred FABER]
+- 59: file system synchronization bug fixes [Gilles EVERLING]
+- 59: prohibit deleting the source code of an entire class [Robert FISCH]
+- 60: fixed a bug while loading projects [Gilles EVERLING]
+- 61: editor: update of RSyntaxTextArea & Co (Revision 720) [Robert FUTRELL]
+- 61: editor: update of RCommen & Co (Revision 257) [Robert FUTRELL]
+- 62: editor: updated the class deletion test [Robert FISCH]
+- 62: structure highlighter: update for "public interface" [Robert FISCH]
+- 63: remove a bug while removing a class [Robert FISCH]
+- 64: bug: blocking modal dialog when dropping a new project onto an unsaved one [Claude SIBENALER]
+- 64: bug: inherited fields were not displayed in objectizer for packaged classes [Fred FABER]
+
+Version 0.26 (28/06/2011)
+- 01: fixed a problem with static methods in the menu [Robert FISCH]
+- 01: fixed a problem with executing static methods [Robert FISCH
+- 01: fixed a problem while parsing array types [Robert FISCH]
+- 01: WINDOWS: fixed a problem with the open dialog [Claude SIBENALER/Gilbert KLEE]
+- 02: no more error message on startup of Structorizer [Gilles EVERLING]
+- 03: used the internal editor replace function to make undo work [Fred FABER]
+- 04: fix: code bug while inserting elements [Gilles EVERLING]
+- 05: feature: copy syntax highlighted code to the clipboard [Claude SIBENALER]
+- 06: fix: tab stop problem in code editor [Gilles EVERLING/Claude SIBENALER/Fred FABER]
+- 07: fix: automatic code insertion problem [Fred FABER]
+- 08: fix: automatic code insertion problem reloaded [Gilles EVERLING]
+- 09: showing error icons in the glutter bar [Robert FISCH]
+- 09: MAC: RSyntaxTextArea tab stop bug fixed [Fred FABER/Robert FISCH]
+- 10: feature: font size of diagram and editor are not combined and increase
+               together until a maximum of 20 [Luc BREDIMUS]
+- 11: fix: input fix [Gilles EVERLING]
+- 12: updated the code editor [Robert FISCH]
+- 13: feature: object inspector allows to monitor any object [Robert FISCH]
+- 14: feature: cyclic inheritance check in the UML diagram (issue #3150541) [John KOUMARELAS]
+- 15: feature: create inheritance links with the mouse (issue #3150541) [John KOUMARELAS]
+- 16: editor: Javadoc/Multi-line comments now automatically closed [Robert FUTRELL]
+- 17: fix: killed a nasty bug which removed entire classes! [Robert FISCH]
+- 18: editor: More helpful Java code completion [Robert FUTRELL]
+- 18: editor: adding the JDK <src.zip> file [Robert FISCH]
+- 18: recoded the startup while looking for <tools.jar> and <src.zip> [Robert FISCH]
+- 19: show a return value for "null" [Robert FISCH]
+- 19: show "Vector" and "ArrayList" values as table in the object inspector [Robert FISCH]
+- 19: feature: copy only the selected colored code, everything if nothing is selected [Fred FABER]
+- 20: feature: manually stop any code execution [Jean-Claude WARINGO]
+- 20: feature: do not allow double reading from the console [Fred FABER]
+- 21: feature: objectizer cuts labels longer than 50 symbols [Fred FABER]
+- 22: feature: show what method is actually running [Fred FABER]
+- 23: fix: finds <src.jar> on Mac if JavaDeveloper.pkg installed [Robert FISCH]
+- 23: fix: better Vector/ArrayList visualization in the object inspector [Robert FISCH]
+- 24: fix: editor lost focus if "compile on the fly" was enabled [Fred FABER]
+- 25: fix: OI modal view was not set correctly [Simone BEISSEL]
+- 26: feature: remember position & size of OI for the current session [François ZUIDBERG]
+- 27: feature: save all versions of the code  in a ZIP files called "versions.zip"
+               which resides inside the project directory [Fred FABER]
+- 28: fix: save each version into a new ZIP file to increase performance [Robert FISCH]
+- 28: editor: updated to the latest revision [Robert FUTRELL]
+- 29: fix: preserve and clean directory structure of saved files [Fred FABER]
+- 30: fix: use the escape key to quit the OI [Robert FISCH]
+- 31: fix: startup null pointer exception [Gilles EVERLING]
+- 32: fix: concurrent access problem in objectizer [Gilles EVERLING]
+- 33: fix: switched off some debug output of the editor [Robert FISCH]
+- 34: structorizer: do not transform "=" inside strings [Fred FABER]
+- 35: fix: another concurrent access problem in objectizer [Gilles EVERLING]
+- 36: fix: access control violation [Gilles EVERLING]
+- 37: fix: access control violation [Fred FABER]
+- 38: fix: intercept from project names while saving [Fred FABER]
+- 39: structorizer: correct translation of +/ (and similar) [Form. Gr. B]
+- 40: feature: setting initial the startup directory [Luc  ENGELMANN]
+- 41: settings: location of INI file changed as follows [Luc  ENGELMANN]
+        * Mac : /Users/%USERNAME%/Library/Application Support/Unimozer/
+        * Win : \Documents and Settings\%USERNAME%\Application Data\Unimozer\
+        * Linux: /home/%USERNAME%/.unimozer/
+- 42: settings: load default INI from the folder containing the JAR [Luc  ENGELMANN]
+- 43: settings: use of Windows %APPDATA% variable [Luc ENGELMANN]
+- 43: settings: use the same "new" location for Structorizer [Robert FISCH]
+- 43: feature: auto save (to the versions directory) [Gilles EVERLING]
+- 44: fix: do auto save only when really needed [Fred FABER]
+- 45: fix: do not draw the JavaDoc hover message to the clipboard [Roger FEIEREISEN]
+- 46: editor: updated to the latest revision [Robert FUTRELL]
+- 47: editor: update of RSyntaxTextArea (Revision 305) [Robert FUTRELL]
+- 48: structorizer: fixes of FOR loop transformation [Fred FABER]
+
+Version 0.25 (15/11/2010)
+- 01: upgraded BeanShell from 2.0b4 to 2.0b5  [Patrick SPINGYS]
+- 01: remove a building bug [Robert FISCH]
+- 01: fixed another bug related to the new structure [Robert FISCH]
+- 02: bug while displaying objects with NULL content [Fred FABER]
+- 02: added some tooltips [Gilles EVERLING]
+- 03: added support for "byte" and "short" parameter types [Gilles EVERLING]
+- 03: added support for "float" and "long" parameter types [Robert FISCH]
+- 04: repaint objectizer afer method cal [Marcin Rzeczkowski]
+- 05: while saving, the filename was set to the dirname [Fred FABER/Claude SIBENALER]
+- 06: printing: unable to print code [Claude SIBENALER]
+- 06: printing: different other bugfixes [Robert FISCH]
+- 07: printing: added bypass for preview [Robert FISCH]
+- 07: MAC: fixing about message [Claude SIBENALER]
+- 08: JavaDoc: fixed a bug while writing on a Windows network drive [Robert FISCH]
+- 09: Windows: fixed a bug while using packages [Robert FISCH]
+- 10: JavaDoc: generating and displaying JavaDoc with packages didnt work [Robert FISCH]
+- 10: Windows: loading projects with packages didn't work [Robert FISCH]
+- 11: JavaDoc: fixed another bug while loading default packaged classes [Gilles EVERLING]
+- 12: trying to make the open/save dialog behave correctely [Claude SIBENALER]
+- 13: fixed a bug which was erasing entire classes [Marcin Rzeczkowski]
+- 14: object inspector: this is a new feature which allows to inspect objects [Robert FISCH]
+- 15: objectizer: show inherited fields  [Robert FISCH]
+- 15: object inspector: new icons showing the visibility of fields   [Robert FISCH]
+- 16: object inspector: display arrays correctely [Robert FISCH]
+- 17: objectizer: only show fields defined inside the project [Robert FISCH]
+- 17: object inspector: inspect sub objects on click only to prevent recursive
+                        cycles producting a stack overflow [Robert FISCH]
+- 18: MAC: application didn't quit properly via the menu bar [Fred FABER]
+- 19: fixed a problem with the "compile-on-the-fly" option [Gilles EVERLING]
+- 20: can only create public classes [Fred FABER]
+- 20: fixed a printing problem [Fred FABER]
+- 21: Objectizer displayed a wrong classname [Claude SIBENALER]
+- 22: Added Undo/Redo to main menu [Fred FABER]
+- 22: Added Cut/Copy/Paste to the main menu [Fred FABER]
+- 22: Renamed "Replace..." to "Replace All..." in main menu [Fred FABER]
+- 22: do not allow to add duplicated fields via UI [Robert FISCH]
+
+Version 0.24 (04/08/2010)
+- 01: started subversioning to help distinguishing versions [Robert FISCH]
+- 01: Unimozer projects can now be opened in NetBeans [Robert FISCH]
+- 02: added support for Java packages [Robert FISCH]
+- 02: moved sources to the "src" subdirectory but conserving them in
+      the root to maintain compatibility with BlueJ [Robert FISCH]
+- 02: recoded the JAR-compiler to include any ressource file contained
+      in the "src" directory [Robert FISCH]
+- 02: packages in the UML diagram can now bew moved with the mouse [Robert FISCH]
+- 03: source directories can now be added recursively by dropping them
+      on the diagram [Robert FISCH]
+- 03: review the relation drawing (still no optimal!) [Robert FISCH]
+- 03: fixed some minor bugs [Robert FISCH]
+- 03: added menus to show/hide fields and methods [Robert FISCH]
+- 03: added toolbar to show/hide elements on the diagram [Robert FISCH]
+- 04: minor bugfixes related to the introduction of packages [Robert FISCH]
+- 04: added support for interfaces [Robert FISCH]
+- 05: one more bug in the connector drawing algorithm [Robert FISCH]
+- 05: added code completion [Robert FISCH] --> Big thanks to Robert from FIFESOFT
+- 05: added Robert's source tree view [Robert FISCH]
+- 05: I found a way to access any member of a class [Robert FISCH]
+- 05: objets show their fields with the affected values [Wendy Cunningham]
+- 05: bug related to the tree view integreation [Robert FISCH]
+- 06: Packages from Fifesoft updated to revision 190 [Robert FISCH]
+- 06: Packages from Fifesoft updated to revision 210 [Robert FISCH]
+- 07: ERR-Console connect / disconnect on code editor [Robert FISCH]
+
+Version 0.23 (04/04/2010)
+- when disabled, only the diagram classes are draw on gray [Fred FABER]
+- added font size option to printout [Robert FISCH]
+- corrected UML diagram for self-composition [Robert FISCH]
+- clear console on run [Fred FABER]
+- "add file" didn't allow to open files inside a project [Robert FISCH]
+- can now also load sources with sytax errors [Robert FISCH]
+- recoded mouse click workflow [Robert FISCH]
+- classes are not longer cleared upon a syntax error [Fred FABER]
+- cleaned up the compilation code [Robert FISCH]
+- fixed keybindings and dialogs owners [Robert FISCH]
+- fixed a bug in the console [Robert FISCH]
+- add method via GUI didnt create a JavaDoc @return [Form. Gr. B]
+- some textual fixes [Form. Gr. B]
+- editor is focused at the new code if a method or constructor is
+  added via the GUI [Form. Gr. B]
+- catch wron parameter names before adding them to the list [Form. Gr. B]
+- fixed a bug with the creating of a JAR archive [Robert FISCH]
+- clean console on compile [Form. Gr. B]
+- double clicking the structogram opens it in Structorizer [Form. Gr. B]
+- replaced “ bei " [Form. Gr. B]
+- fixed a resource loading problem in the interpreter [Georges KUGENER]
+- fixed a bug in the JAR packager [Robert FISCH]
+- the JAR packager now also allows to add a resource directory [Robert FISCH]
+- create FOR loop in Structorizer following DIN [Robert FISCH]
+- RSyntaxTextArea update to version 1.4.1 [Robert FISCH]
+ 
+Version 0.22 (03/02/2010)
+- RSyntaxTextArea update to version 1.4 [Robert FISCH]
+- Threading bug while creating JavaDoc [Robert FISCH]
+- using now SwingWorker for creating JavaDoc [Robert FISCH]
+- solved the JavaDoc generation / saving bud (#20) [Robert FISCH]
+- new method to load the SUN compiler [Robert FISCH]
+- added "tools.jar" to JNLP to make work Unimozer started via Java Web Start
+  on systems not running JDK (#20) [Robert FISCH]
+- solved a file blocking problem while saving to the network [Form. Gr. A]
+- add JavaDoc code generation for (#22) [Fred FABER]
+    > constructor
+    > field
+- save & restore to/from INI file
+    > drawing font size [Robert FISCH]
+    > JavaDoc generation options (#22) [Fred FABER]
+- fixed a bug while reloading the JavaDoc [Fred FABER]
+- methods in the object popup menu are now sorted in natural order [Fred FABER]
+- clicking on a method in the UML jumpes to that method/field in the
+  code window [Form. Gr. A]
+- after loading code into the editor, the undo history is cleared [Robert FISCH]
+- assignments are being displayed as arrows in the NSD [Form. Gr. A]
+- before printing, any selection is cleared [Robert FISCH]
+- <OK> & <Cancel> button positions are OS dependant [Form. Gr. A]
+- adding elements to a class are maintained in the order (1) fields,
+  (2) constructors and (3) methods [Form. Gr. A]
+- different buttons stay disabled in error mode [Robert FISCH]
+- Compilation errors are now shown in a list. Clicking on an error
+  in the list opens the referred class in the editor and highlights
+  the concerned line [Robert FISCH]
+- Added menu item "Add File ..." to load an existing file [Fred FABER]
+- Introduced new class to display program errors in the console [Robert FISCH]
+- Implmented "Find" functionality [Form. Gr. A]
+- Implmented "Find Again" functionality [Robert FISCH]
+- Implmented "Replace" functionality [Form. Gr. A]
+- content updating bug [Fred FABER]
+- new code editing logic [Fred FABER/FISRO]
+- replaced the AST parser for code generation tasks [Robert FISCH]
+    > this means that comments are now persisten!
+    > fields, methods & constructors may be inserted at a wrong position
+- added filtering for double lines on printout [Robert FISCH]
+- bug while transforming FOR loop to NSD [Fred FABER]
+- added items to printout [Robert FISCH]
+    > directoryname / filename
+    > date & time
+    > page number
+- different small bug in different parts of the code [Robert FISCH]
+
+Version 0.21 (25/01/2010)
+- minor bugfixes [Robert FISCH]
+- automatic caracter endoding detection while reading files [Fred FABER]
+- added option for setting the global file encoding [Fred FABER]
+- added GUI option to change the default file encoding [Robert FISCH]
+- automatic code generation while adding a new class [Robert FISCH]
+- bugfix while generating JavaDoc [Robert FISCH]
+- bugfix while editing a newly created class [Robert FISCH]
+- adapted the character encoding detector to match my needs [Robert FISCH]
+- bugfix in the program logic [Robert FISCH]
+- using the "DocumentListener" for codeEditor changes [Robert FISCH]
+- small bugfixes in the "RTextArea" [Robert FISCH]
+- updated UML view [GETJE]
+- JavaDOC generation with the "private" flag on [Fred FABER]
+- do not show the JavaDoc speedbutton if not available [Robert FISCH]
+- some spelling mistakes [Jeannot NESEN]
+- some wrong dialogue titles [Jeannot NESEN]
+- initialize the structogram when creating a new project [Form. Gr. A]
+- after compiling CLASS files, clicking on the class gave an error [Robert FISCH]
+- clear console on "make" and "compile" [Form. Gr. A]
+- print function with [Form. Gr. A]
+    > preview [Robert FISCH]
+    > diagram option
+    > code option
+    > JavaDoc filter [Guy LOESCH]
+- killed a bad namespace bug [Claude SIBENALER]
+- save & restore to/from INI file [Robert FISCH]
+    > printer options
+    > windows size & position
+    > slider positions
+- using system environment varible "JDK_HOME" to include "tools.jar" [Robert FISCH]
+- trying to detect automatically the JDK in windows [Robert FISCH]
+- BlueJ package file reading bug eliminated [Form. Gr. A]
+- BlueJ package file double click problem solved [Robert FISCH]
+- added a new Windows wrapper (like for Structorizer) [Robert FISCH]
+- eliminated a bug when creating a method with the GUI [Form. Gr. A]
+- adding automatically JavaDoc comments to methods [Fred FABER]
+- adding option for automatic method JavaDoc genertion [Robert FISCH]
+- eliminating a bug while adding wrongly named identifiers [Robert FISCH]
+- JavaDoc can now be viewed in the code pane (like in BlueJ) [Robert FISCH]
+
+
+Version 0.20 (17/12/2009)
+- integrated parts of Structorizer
+- Unimozer is now published under the terms of the GPLv3 license
+- Unimozer proposes names while creating objects [Fred FABER]
+- the diagram is disabled while editing the code (#17) [Fred FABER]
+- improuvement of the display of a FOR-loop in the NS-diagram [Robert FISCH]
+- added controls to class-popup menu [Robert FISCH]
+- updated RSyntaxTextArea [Robert FISCH]
+- JavaDoc is now being UTF-8 coded [Robert FISCH]
+- program workflow while saving [Robert FISCH]
+- class diagram visual styles [Robert FISCH]
+    > UML (default)
+    > Java
+- visual settings are being stored persistently [Robert FISCH]
+- toolbar settings are being stored persistently [Robert FISCH]
+- fixed problem with the display of some toolbars [Robert FISCH]
+- updated the save logic [Robert FISCH]
+- implemented a fully functional console (#18) [GETJE]
+- rearranged components on screen [Robert FISCH]
+- Unimozer can now also open BlueJ packages [Robert FISCH]
+- Simple folders can also be opened als new project [Robert FISCH]
+- last opened directory is now remembered (#19) [Fred FABER]
+- fixed some issues on Windows loading package icons [Robert FISCH]
+- fixed some issues on Windows with Java Web Start [Robert FISCH]
+
+
+Version 0.19 (never published as bundle)
+- bug while creating a JAR bundle (#14)
+- removed "Create JavaDoc" if no JDK is found (#15)
+- bug while executing inherited methods
+- entering a "String" as input can be done with or without quotes
+- added separate tabs for standard output and error
+- recoded the relationship arrow drawing
+- disabled direct editing of the source code (#1)
+    > this option will be attached to and saved with a project
+- recoded the I/O part of the "StringList" utility class
+- the information about what relations to show is attached to and
+  saved with a project
+- added increase/decrease font toolbar again
+- usage of types in templated declarations are now supported
+
+Version 0.18 (29/06/2009)
+- new menu structure
+- possibility to compile a project
+- possibility to generate CLASS-files (make)
+- possibility to create a JAR-bundle (build)
+    > select what class to launch automatically
+    > only classes with an entrypoint can be selected (#13)
+    > select the target JVM version (1.1 - 1.6)
+- possibility to run a project
+    > only classes with an entrypoint can be run (#13)
+- possibility to delete CLASS- and JAR-files (clean)
+- allow to show/hide toolbars
+    > changes are *not yet* persistent
+- possibility to execute a command
+- puts generated classes into a subdirectory "bin"
+- puts generated bundle into a subdirectory "dist"
+- possibility to show/hode class relations 
+    > changes are *not yet* persistent
+- possibility to generate JavaDoc files
+
+Version 0.17 (23/06/2009)
+- problem while parsing abstract methods solved
+- editor was not writeable after adding a new class
+- updated syntax checking notification
+- modified objectizer to not allow objects with the same name
+- closing an JFrame now also deletes the object in the objectizer
+- writing also BlueJ package files
+
+Version 0.16 (22/06/2009)
+- application did not start correctely with Java < 1.6
+- classes did not compile correctely with Java < 1.6
+- hovering comments now display correctely multiline comments
+
+Version 0.15 (20/06/2009)
+- kicked AppleJavaExtensions as this package doesn't work as
+  expected on some Mac's
+- hacked the java parser to not eat up comments inside of (#1)
+    > constructors
+    > methods
+- solved the file encoding problem (#12)
+
+Version 0.14 (19/06/2009)
+- bug while changing the name of a class in the diagram
+- new line drawing for composition and aggregation
+- test for correct identifiers of the following elements (#6)
+    > class
+    > constructor parameters
+    > method name + method parameters
+    > fields
+    > objects
+- show Javadoc comments while hovering over an element (#10)
+- show JavaDoc comments when executing a metod(#11)
+
+Version 0.13 [10/06/2009]
+- added access to static methods via the class (#8)
+- added access to public fields an their methods on objects (#7)
+- minor bug in the object visualiser
+- wrong icons in the speedbar
+- bug while changing the name of a class in the code
+
+Version 0.12 [07/06/2009]
+- minor bug while showing syntax errors
+- minor bug concerning the activation of the save button (#2)
+- close by objects opened windows on application quit
+- icons as in NetBeans
+- recoded the runtime using BeanShell (#4)
+
+Version 0.11 [30/05/2009]
+- if JDK installed, use that one for code compilation
+- if no JDK found, use the Janino compiler
+- show the syntax-status of the code (threaded)
+
+Version 0.1 [not published] :: initial version
+- create UML diagrams with
+    > new (class, field, constructor, method)
+    > edit (class, field, constructor, method)
+    > from JAVA code
+- JAVA code
+    > edit class code
+    > generate UML from class code
+- live compilation
+    > compile classes
+    > load classes
+    > create objects
+    > execute methods on objects

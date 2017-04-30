@@ -1,0 +1,517 @@
+/*
+    Unimozer
+    Unimozer intends to be a universal modelizer for Java™. It allows the user
+    to draw UML diagrams and generates the relative Java™ code automatically
+    and vice-versa.
+
+    Copyright (C) 2009  Bob Fisch
+ 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or any
+    later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package lu.fisch.unimozer.dialogs;
+
+import japa.parser.ast.body.FieldDeclaration;
+import japa.parser.ast.body.ModifierSet;
+import java.awt.Frame;
+import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
+import lu.fisch.unimozer.Element;
+import lu.fisch.unimozer.Ini;
+import lu.fisch.unimozer.Java;
+import lu.fisch.unimozer.Unimozer;
+
+/**
+ *
+ * @author robertfisch
+ */
+public class FieldEditor extends javax.swing.JDialog
+{
+    public boolean OK = false;
+
+    public static FieldEditor showModal(Frame frame, String title)
+    {
+        FieldEditor ce = new FieldEditor(frame,title,true);
+        ce.genDoc.setSelected(Boolean.valueOf(Ini.get("javaDocField", "true")));
+        ce.genThis.setSelected(Boolean.valueOf(Ini.get("thisField", "false")));
+        ce.genSetter.setSelected(Boolean.valueOf(Ini.get("setterField", "false")));
+        ce.genGetter.setSelected(Boolean.valueOf(Ini.get("getterField", "false")));
+        ce.setLocationRelativeTo(frame);
+        ce.setVisible(true);
+        return ce;
+    }
+
+    public static FieldEditor showModal(Frame frame, String title, Element ele)
+    {
+        FieldEditor ce = new FieldEditor(frame,title,true);
+        ce.setLocationRelativeTo(frame);
+
+        ce.setModifier(((FieldDeclaration) ele.getNode()).getModifiers());
+        ce.setFieldName(((FieldDeclaration) ele.getNode()).getVariables().get(0).getId().toString());
+        ce.setFieldType(((FieldDeclaration) ele.getNode()).getType().toString());
+
+        ce.genDoc.setVisible(false);
+        ce.setVisible(true);
+        return ce;
+    }
+
+    public boolean generateJavaDoc()
+    {
+        return genDoc.isSelected();
+    }
+
+    public boolean generateSetter()
+    {
+        return genSetter.isSelected() && genSetter.isEnabled();
+    }
+
+    public boolean generateGetter()
+    {
+        return genGetter.isSelected() && genGetter.isEnabled();
+    }
+
+    public boolean generateSetterIni()
+    {
+        return genSetter.isSelected();
+    }
+
+    public boolean generateGetterIni()
+    {
+        return genGetter.isSelected();
+    }
+
+    public boolean generateThis()
+    {
+        return !genThis.isSelected();
+    }
+
+    public String getFieldName()
+    {
+        return edtName.getText();
+    }
+
+    public void setFieldName(String name)
+    {
+        edtName.setText(name);
+    }
+
+    public String getFieldType()
+    {
+        return (String) cbType.getSelectedItem();
+    }
+
+    public void setFieldType(String name)
+    {
+        cbType.setSelectedItem(name);
+    }
+
+    public void setModifier(int mod)
+    {
+        if(ModifierSet.isPublic(mod)) selPublic.setSelected(true);
+        if(ModifierSet.isProtected(mod)) selProtected.setSelected(true);
+        if(ModifierSet.isPrivate(mod)) selPrivate.setSelected(true);
+        if(ModifierSet.isAbstract(mod)) selAbstract.setSelected(true);
+        if(ModifierSet.isStatic(mod)) selStatic.setSelected(true);
+        if(ModifierSet.isFinal(mod)) selFinal.setSelected(true);
+        if(ModifierSet.isTransient(mod)) selTransient.setSelected(true);
+
+    }
+
+    public int getModifier()
+    {
+        int mod = 0;
+        if(selPublic.isSelected()) mod+=ModifierSet.PUBLIC;
+        if(selProtected.isSelected()) mod+=ModifierSet.PROTECTED;
+        if(selPrivate.isSelected()) mod+=ModifierSet.PRIVATE;
+        if(selStatic.isSelected()) mod+=ModifierSet.STATIC;
+        if(selFinal.isSelected()) mod+=ModifierSet.FINAL;
+        if(selAbstract.isSelected()) mod+=ModifierSet.ABSTRACT;
+        if(selTransient.isSelected()) mod+=ModifierSet.TRANSIENT;
+        return mod;
+    }
+
+    /** Creates new form ClassEditor */
+    public FieldEditor() {
+        initComponents();
+        Unimozer.switchButtons(btnOK, btnCancel);
+        this.pack();
+    }
+
+    
+    public FieldEditor(Frame frame, String title, boolean modal)
+    {
+        super(frame,title, modal);
+        initComponents();
+        Unimozer.switchButtons(btnOK, btnCancel);
+        this.pack();
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        radioVisibility = new javax.swing.ButtonGroup();
+        jLabel1 = new javax.swing.JLabel();
+        edtName = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        selDefault = new javax.swing.JRadioButton();
+        selPublic = new javax.swing.JRadioButton();
+        selProtected = new javax.swing.JRadioButton();
+        selPrivate = new javax.swing.JRadioButton();
+        jPanel2 = new javax.swing.JPanel();
+        selStatic = new javax.swing.JCheckBox();
+        selFinal = new javax.swing.JCheckBox();
+        selAbstract = new javax.swing.JCheckBox();
+        selTransient = new javax.swing.JCheckBox();
+        btnCancel = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        cbType = new javax.swing.JComboBox();
+        btnOK = new javax.swing.JButton();
+        genDoc = new javax.swing.JCheckBox();
+        genGetter = new javax.swing.JCheckBox();
+        genSetter = new javax.swing.JCheckBox();
+        genThis = new javax.swing.JCheckBox();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
+
+        jLabel1.setText("Type:");
+
+        edtName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                edtNameKeyPressed(evt);
+            }
+        });
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Visibility"));
+
+        radioVisibility.add(selDefault);
+        selDefault.setText("default");
+
+        radioVisibility.add(selPublic);
+        selPublic.setText("public");
+        selPublic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selPublicActionPerformed(evt);
+            }
+        });
+
+        radioVisibility.add(selProtected);
+        selProtected.setText("protected");
+
+        radioVisibility.add(selPrivate);
+        selPrivate.setSelected(true);
+        selPrivate.setText("private");
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(selDefault)
+            .add(selPublic)
+            .add(selProtected)
+            .add(selPrivate)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
+                .add(selPublic)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selProtected)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selDefault)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selPrivate)
+                .add(23, 23, 23))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Modifier"));
+
+        selStatic.setText("static");
+        selStatic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selStaticActionPerformed(evt);
+            }
+        });
+
+        selFinal.setText("final");
+        selFinal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selFinalActionPerformed(evt);
+            }
+        });
+
+        selAbstract.setText("abstract");
+        selAbstract.setEnabled(false);
+        selAbstract.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selAbstractActionPerformed(evt);
+            }
+        });
+
+        selTransient.setText("transient");
+        selTransient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selTransientActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(selStatic)
+                    .add(selFinal)
+                    .add(selAbstract)
+                    .add(selTransient))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(selStatic)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(selFinal)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(selAbstract)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selTransient)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Name:");
+
+        cbType.setEditable(true);
+        cbType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "boolean", "byte", "short", "int", "long", "float", "double", "String" }));
+        cbType.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                cbTypeInputMethodTextChanged(evt);
+            }
+        });
+        cbType.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                cbTypeKeyPressed(evt);
+            }
+        });
+
+        btnOK.setText("OK");
+        btnOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOKActionPerformed(evt);
+            }
+        });
+
+        genDoc.setSelected(true);
+        genDoc.setText("JavaDoc Comments");
+        genDoc.setToolTipText("Automatically generate the JavaDoc header.");
+        genDoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genDocActionPerformed(evt);
+            }
+        });
+
+        genGetter.setSelected(true);
+        genGetter.setText("Getter");
+        genGetter.setToolTipText("Automatically generate a getter.");
+
+        genSetter.setSelected(true);
+        genSetter.setText("Setter");
+        genSetter.setToolTipText("Automatically generate a setter.");
+
+        genThis.setSelected(true);
+        genThis.setText("Use \"p\" parameter prefix");
+        genThis.setToolTipText("Prefix the setters parameter with a \"p\" and don't use \"this\".");
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(layout.createSequentialGroup()
+                                .add(29, 29, 29)
+                                .add(genThis))
+                            .add(genDoc)
+                            .add(btnCancel)
+                            .add(genGetter)
+                            .add(genSetter))
+                        .addContainerGap())
+                    .add(layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(layout.createSequentialGroup()
+                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(jLabel1)
+                                    .add(jLabel2))
+                                .add(23, 23, 23)
+                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(edtName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                                    .add(cbType, 0, 170, Short.MAX_VALUE)))
+                            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                .add(btnOK)
+                                .add(layout.createSequentialGroup()
+                                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(18, 18, 18)
+                                    .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                        .add(23, 23, 23))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel2)
+                    .add(edtName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel1)
+                    .add(cbType, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(genSetter)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(genThis)
+                .add(5, 5, 5)
+                .add(genGetter)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(genDoc)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(btnCancel)
+                    .add(btnOK))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void selPublicActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selPublicActionPerformed
+    {//GEN-HEADEREND:event_selPublicActionPerformed
+        // TODO add your handling code here:
+}//GEN-LAST:event_selPublicActionPerformed
+
+    private void btnOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnOKActionPerformed
+    {//GEN-HEADEREND:event_btnOKActionPerformed
+        boolean test1 = Java.isIdentifier(edtName.getText());
+        if(test1)
+        {
+            OK = true;
+            this.setVisible(false);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "“"+edtName.getText()+"“ is not a correct field name." , "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnOKActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCancelActionPerformed
+    {//GEN-HEADEREND:event_btnCancelActionPerformed
+        OK = false;
+        this.setVisible(false);
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void edtNameKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_edtNameKeyPressed
+    {//GEN-HEADEREND:event_edtNameKeyPressed
+		if(evt.getKeyCode() == KeyEvent.VK_ESCAPE)
+		{
+			OK=false;
+			setVisible(false);
+		}
+		else if(evt.getKeyCode() == KeyEvent.VK_ENTER) // && (evt.isShiftDown() || evt.isControlDown()))
+		{
+			btnOKActionPerformed(null);
+		}
+    }//GEN-LAST:event_edtNameKeyPressed
+
+    private void cbTypeKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_cbTypeKeyPressed
+    {//GEN-HEADEREND:event_cbTypeKeyPressed
+        edtNameKeyPressed(evt);
+    }//GEN-LAST:event_cbTypeKeyPressed
+
+    private void cbTypeInputMethodTextChanged(java.awt.event.InputMethodEvent evt)//GEN-FIRST:event_cbTypeInputMethodTextChanged
+    {//GEN-HEADEREND:event_cbTypeInputMethodTextChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbTypeInputMethodTextChanged
+
+    private void selStaticActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selStaticActionPerformed
+    {//GEN-HEADEREND:event_selStaticActionPerformed
+        selAbstract.setSelected(false);
+    }//GEN-LAST:event_selStaticActionPerformed
+
+    private void selAbstractActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selAbstractActionPerformed
+    {//GEN-HEADEREND:event_selAbstractActionPerformed
+        selStatic.setSelected(false);
+    }//GEN-LAST:event_selAbstractActionPerformed
+
+    private void genDocActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_genDocActionPerformed
+    {//GEN-HEADEREND:event_genDocActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_genDocActionPerformed
+
+    private void selFinalActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_selFinalActionPerformed
+    {//GEN-HEADEREND:event_selFinalActionPerformed
+        genThis.setEnabled(!selFinal.isSelected());
+        genSetter.setEnabled(!selFinal.isSelected());
+        genGetter.setEnabled(!selFinal.isSelected());
+    }//GEN-LAST:event_selFinalActionPerformed
+
+    private void selTransientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selTransientActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_selTransientActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnOK;
+    private javax.swing.JComboBox cbType;
+    private javax.swing.JTextField edtName;
+    private javax.swing.JCheckBox genDoc;
+    private javax.swing.JCheckBox genGetter;
+    private javax.swing.JCheckBox genSetter;
+    private javax.swing.JCheckBox genThis;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.ButtonGroup radioVisibility;
+    private javax.swing.JCheckBox selAbstract;
+    private javax.swing.JRadioButton selDefault;
+    private javax.swing.JCheckBox selFinal;
+    private javax.swing.JRadioButton selPrivate;
+    private javax.swing.JRadioButton selProtected;
+    private javax.swing.JRadioButton selPublic;
+    private javax.swing.JCheckBox selStatic;
+    private javax.swing.JCheckBox selTransient;
+    // End of variables declaration//GEN-END:variables
+
+}
