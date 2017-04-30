@@ -665,12 +665,12 @@ public class MyClass implements Space
         int insertAt = getCodePositions().get(2);
 
         String mod = "";
-        if(ModifierSet.isAbstract(modifier)) mod+=" abstract";
         if(ModifierSet.isPrivate(modifier)) mod+=" private";
         if(ModifierSet.isProtected(modifier)) mod+=" protected";
         if(ModifierSet.isPublic(modifier)) mod+=" public";
         if(ModifierSet.isStatic(modifier)) mod+=" static";
         if(ModifierSet.isFinal(modifier)) mod+=" final";
+        if(ModifierSet.isAbstract(modifier)) mod+=" abstract";
         if(ModifierSet.isSynchronized(modifier)) mod+=" synchronized";
         mod=mod.trim();
 
