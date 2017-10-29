@@ -2267,27 +2267,37 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
             if(mouseClass!=null)
             {
                 addNewFilesAndReloadExistingSavedFiles();
+                
+                // WHAT THE HELL WAS allowEdit for???
                 if(allowEdit==true)
                 {
-                    // laod the code into the editor and enable it
-                    editor.setClassName(mouseClass.getShortName());
-                    editor.setCode(mouseClass.getJavaCode());
-                    //editor.setMouseClass(mouseClass);
-                    if(mouseClass.getSelected()!=null)
+                    if(mouseClass.isDisplaySource())
                     {
-                        editor.setCursorTo(mouseClass.getSelected().getFullName());
+                        // laod the code into the editor and enable it
+                        editor.setClassName(mouseClass.getShortName());
+                        editor.setCode(mouseClass.getJavaCode());
+                        //editor.setMouseClass(mouseClass);
+                        if(mouseClass.getSelected()!=null)
+                        {
+                            editor.setCursorTo(mouseClass.getSelected().getFullName());
+                        }
+                        //if(frame.showComments()) editor.setCode(mouseClass.getJavaCode());
+                        //else editor.setCode(mouseClass.getJavaCodeCommentless());
                     }
-                    //if(frame.showComments()) editor.setCode(mouseClass.getJavaCode());
-                    //else editor.setCode(mouseClass.getJavaCodeCommentless());
+                    else cleanEditor();
                 }
                 else
                 {
-                    editor.setCode(mouseClass.getContent().getText());
-                    editor.setClassName(mouseClass.getShortName());
-                    if(mouseClass.getSelected()!=null)
+                    if(mouseClass.isDisplaySource())
                     {
-                        editor.setCursorTo(mouseClass.getSelected().getFullName());
+                        editor.setCode(mouseClass.getContent().getText());
+                        editor.setClassName(mouseClass.getShortName());
+                        if(mouseClass.getSelected()!=null)
+                        {
+                            editor.setCursorTo(mouseClass.getSelected().getFullName());
+                        }
                     }
+                    else cleanEditor();
                 }
                 editor.setEnabled(true);
                 showParseStatus(mouseClass.parse());

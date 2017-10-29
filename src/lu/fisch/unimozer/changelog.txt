@@ -56,6 +56,7 @@ Current version: 0.27-45 (2017.10.29)
 - 43: problem with final/static/abstract methods [Valery BOKOV]
 - 44: fixed some printing issues with the paper format [Robert FISCH]
 - 45: fixed a bug in objectizer concerning non Unimozer objects [Ronny OSWEILER]
+- 45: added feature to now allow class editing [Ronny OSWEILER]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]

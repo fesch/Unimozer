@@ -116,6 +116,7 @@ public class MyClass implements Space
 
     private boolean isUML = true;
     private boolean isInterface = false;
+    private boolean displaySource = true;
 
     private String packagename = Package.DEFAULT;
     
@@ -290,6 +291,14 @@ public class MyClass implements Space
     public MyClass(FileInputStream fis, String encoding) throws FileNotFoundException, ParseException, IOException
     {
         loadFromFileInputStream(fis,encoding);
+    }
+
+    public boolean isDisplaySource() {
+        return displaySource;
+    }
+
+    public void setDisplaySource(boolean displaySource) {
+        this.displaySource = displaySource;
     }
 
     public boolean hasCyclicInheritance()
