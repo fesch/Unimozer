@@ -5,7 +5,7 @@ Todo:
 - find/replace in selection
 
 
-Current version: 0.27-44 (2017.10.29)
+Current version: 0.27-45 (2017.10.29)
 - 01: printing was broken due to editor update [Lux BREDIMUS]
 - 02: copy diagrams cut outer lines for compiled projects [Fred FABER]
 - 03: added error message if save operations fails [Fred FABER]
@@ -55,6 +55,7 @@ Current version: 0.27-44 (2017.10.29)
 - 42: names of created classes are added to type list for new method [Valery BOKOV]
 - 43: problem with final/static/abstract methods [Valery BOKOV]
 - 44: fixed some printing issues with the paper format [Robert FISCH]
+- 45: fixed a bug in objectizer concerning non Unimozer objects [Ronny OSWEILER]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]

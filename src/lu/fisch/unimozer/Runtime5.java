@@ -410,6 +410,11 @@ public class Runtime5
         //System.out.println("> "+method);
         return interpreter.eval(method);
     }
+    
+    public void setObject(String name, Object object) throws EvalError
+    {
+        interpreter.set(name, object);
+    }
 
     public Object executeCommand(String cmd) throws EvalError
     {

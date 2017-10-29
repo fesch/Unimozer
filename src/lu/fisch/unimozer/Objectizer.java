@@ -159,6 +159,16 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
         MyObject myo = new MyObject(objectName,object,diagram);
         // put it into the list
         objects.put(objectName,myo);
+        
+        try 
+        {
+            Runtime5.getInstance().setObject(objectName, object);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        
         // repaint the Objectizer
         repaint();
         // return the wrapped object
@@ -1548,7 +1558,7 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
         }*/
         // call a method on the object
         else if(selected!=null && !sourceName.equals("field"))
-        {
+        {            
             //System.out.println("Sel "+selected.getName());
             // get full signature
             String fullSign = ((JMenuItem) e.getSource()).getText();
@@ -1556,8 +1566,12 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
             /*System.out.println(selected);
             System.out.println(selected.getMyClass());
             System.out.println(selected.getMyClass().getSignatureByFullSignature(fullSign));*/
-            String sign = selected.getMyClass().getSignatureByFullSignature(fullSign);
-            //String complete = selected.getMyClass().getCompleteSignatureBySignature(sign);
+            String sign = fullSign;
+            if(selected!=null && selected.getMyClass()!=null)
+            {
+                sign = selected.getMyClass().getSignatureByFullSignature(fullSign);
+                //String complete = selected.getMyClass().getCompleteSignatureBySignature(sign);
+            }
 
             // find method
             Object obj = selected.getObject();
@@ -1600,7 +1614,12 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                     if (succes)
                     {
                         //printHashtable("selected.generics",selected.generics);
-                        LinkedHashMap<String,String> inputs = selected.getMyClass().getInputsBySignature(signi,selected.generics);
+                        LinkedHashMap<String,String> inputs = null;
+                        if(selected.getMyClass()!=null)
+                            inputs = selected.getMyClass().getInputsBySignature(signi,selected.generics);
+                        else {
+                            inputs=genericInputs;
+                        }
                         if(inputs.size()!=genericInputs.size())
                         {
                             inputs=genericInputs;
@@ -1609,7 +1628,10 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                         boolean go = true;
                         if(inputs.size()>0)
                         {
-                            mi = new MethodInputs(frame,inputs,full,selected.getMyClass().getJavaDocBySignature(sign));
+                            if(selected.getMyClass()!=null)
+                                mi = new MethodInputs(frame,inputs,full,selected.getMyClass().getJavaDocBySignature(sign));
+                            else
+                                mi = new MethodInputs(frame,inputs,full,"");
                             go = mi.OK;
                         }
                         if(go==true)
