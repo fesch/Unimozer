@@ -3334,21 +3334,20 @@ Logger.getInstance().log("Diagram repainted ...");
                 {
                     // Use default printer, no dialog
                     PrinterJob prnJob = PrinterJob.getPrinterJob();
-/*
+
                     // get the default page format
-                    PageFormat pageFormat = prnJob.defaultPage();
-                    Paper paper = pageFormat.getPaper();
-                    // resize the paper (for header an footer)
-                    paper.setImageableArea(
-                            paper.getImageableX(),
-                            paper.getImageableY()+30,
-                            paper.getImageableWidth(),
-                            paper.getImageableHeight()-60);
-                    // apply it
-                    pageFormat.setPaper(paper);
- */
+                    PageFormat pf0 = prnJob.defaultPage();
+                    // clone it
+                    PageFormat pf1 = (PageFormat) pf0.clone();
+                    Paper p = pf0.getPaper();
+                    // set to zero margin
+                    p.setImageableArea(0, 0, pf0.getWidth(), pf0.getHeight());
+                    pf1.setPaper(p);
+                    // let the printer validate it
+                    PageFormat pf2 = prnJob.validatePage(pf1);
                     //prnJob.pageDialog(prnJob.defaultPage());
-                    prnJob.setPrintable(this,prnJob.defaultPage());
+                    
+                    prnJob.setPrintable(this,pf2);
                     if (prnJob.printDialog())
                     {
                         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -3373,19 +3372,20 @@ Logger.getInstance().log("Diagram repainted ...");
         // Add header
         g.setColor(Color.BLACK);
         int xOffset = (int)pageFormat.getImageableX();
-        int yOffset = (int)pageFormat.getImageableY();
+        int topOffset = (int)pageFormat.getImageableY()+20;
+        int bottom = (int)(pageFormat.getImageableY()+pageFormat.getImageableHeight());
         // header line
-        g.drawLine(xOffset, yOffset-2, xOffset+(int)pageFormat.getImageableWidth(), yOffset-2);
+        g.drawLine(xOffset, topOffset-8, xOffset+(int)pageFormat.getImageableWidth(), topOffset-8);
         // footer line
-        g.drawLine(xOffset,                                    yOffset+(int)pageFormat.getImageableHeight(),
-                  xOffset+(int)pageFormat.getImageableWidth(), yOffset+(int)pageFormat.getImageableHeight());
+        g.drawLine(xOffset,                                    bottom-11,
+                  xOffset+(int)pageFormat.getImageableWidth(), bottom-11);
         g.setFont(new Font(Font.SANS_SERIF,Font.ITALIC,10));
 
         Graphics2D gg = (Graphics2D) g;
         String pageString = "Page "+origPage;
         int tw = (int) gg.getFont().getStringBounds(pageString,gg.getFontRenderContext()).getWidth();
         // footer text
-        g.drawString(pageString, xOffset+(int)pageFormat.getImageableWidth()-tw, yOffset+(int)pageFormat.getImageableHeight()+10);
+        g.drawString(pageString, xOffset+(int)pageFormat.getImageableWidth()-tw, bottom-2);
 
         //System.err.println("Printing: "+directoryName);
         if(directoryName!=null)
@@ -3394,7 +3394,7 @@ Logger.getInstance().log("Diagram repainted ...");
             String filename = directoryName;
             if(!className.equals("")) filename+=System.getProperty("file.separator")+className+".java";
             // header text
-            g.drawString(filename, xOffset, yOffset-10);
+            g.drawString(filename, xOffset, bottom-2);
             File f = new File(filename);
             //System.err.println("Printing: "+filename);
             if(f.exists())
@@ -3405,7 +3405,7 @@ Logger.getInstance().log("Diagram repainted ...");
                 String myDate = dateFormat.format(date);
                 int w = (int) gg.getFont().getStringBounds(myDate,gg.getFontRenderContext()).getWidth();
                 // header text
-                g.drawString("File last modified on "+myDate, xOffset, yOffset+(int)pageFormat.getImageableHeight()+10);
+                g.drawString("File last modified on "+myDate, xOffset, topOffset-10);
             }
         }
     }
@@ -3485,9 +3485,9 @@ Logger.getInstance().log("Diagram repainted ...");
                           Paper pa = pf.getPaper();
                           pa.setImageableArea(
                                   pa.getImageableX(),
-                                  pa.getImageableY()+30,
+                                  pa.getImageableY()+20,
                                   pa.getImageableWidth(),
-                                  pa.getImageableHeight()-60
+                                  pa.getImageableHeight()-40
                           );
                           pf.setPaper(pa);
 
@@ -3527,33 +3527,29 @@ Logger.getInstance().log("Diagram repainted ...");
 			g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
                         double sX = (pageFormat.getImageableWidth()-1)/getDiagramWidth();
-                        double sY = (pageFormat.getImageableHeight()-1-60)/getDiagramHeight();
+                        double sY = (pageFormat.getImageableHeight()-1-40)/getDiagramHeight();
                         double sca = Math.min(sX,sY);
                         if (sca>1) {sca=1;}
-                        g2d.translate(0, 30);
+                        g2d.translate(0, 20);
                         g2d.scale(sca,sca);
 
 			paint(g2d);
                         
                         g2d.scale(1/sca,1/sca);
-                        g2d.translate(0, -(30));
+                        g2d.translate(0, -(20));
 			g2d.translate(-pageFormat.getImageableX(), -pageFormat.getImageableY());
                         
+                        printHeaderFooter(g2d,pageFormat,page,new String());
                         
-                          PageFormat pf = (PageFormat) pageFormat.clone();
-                          Paper pa = pf.getPaper();
-                          pa.setImageableArea(
-                                  pa.getImageableX(),
-                                  pa.getImageableY()+30,
-                                  pa.getImageableWidth(),
-                                  pa.getImageableHeight()-60
-                          );
-                          pf.setPaper(pa);
-                          
-                        printHeaderFooter(g2d,pf,page,new String());
-
-
-                        // find out what class to print on what page
+                        PageFormat pf = (PageFormat) pageFormat.clone();
+                        Paper pa = pf.getPaper();
+                        pa.setImageableArea(
+                                pa.getImageableX(),
+                                pa.getImageableY()+20,
+                                pa.getImageableWidth(),
+                                pa.getImageableHeight()-40
+                        );
+                        pf.setPaper(pa);
 
                         // reset the paper
                         //pageFormat.setPaper(originalPaper);
@@ -3595,14 +3591,16 @@ Logger.getInstance().log("Diagram repainted ...");
                               }
 
                               edit.setCode(code);
+                              
+                              printHeaderFooter(g,pageFormat,origPage,thisClass.getShortName());
                             
                               PageFormat pf = (PageFormat) pageFormat.clone();
                               Paper pa = pf.getPaper();
                               pa.setImageableArea(
                                       pa.getImageableX(),
-                                      pa.getImageableY()+30,
+                                      pa.getImageableY()+20,
                                       pa.getImageableWidth(),
-                                      pa.getImageableHeight()-60
+                                      pa.getImageableHeight()-40
                               );
                               pf.setPaper(pa);
                             
@@ -3610,11 +3608,6 @@ Logger.getInstance().log("Diagram repainted ...");
                             edit=null;
                             System.gc();
                             
-
-                            //g.drawImage(sheets.get(page+1), 0,0,null);
-
-                            printHeaderFooter(g,pf,origPage,thisClass.getShortName());
-
                             // reset the paper
                             //pageFormat.setPaper(originalPaper);
                             return (PAGE_EXISTS);

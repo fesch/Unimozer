@@ -36,6 +36,7 @@ import java.nio.channels.FileChannel;
 import java.util.Enumeration;
 import java.util.TreeSet;
 import java.util.jar.JarFile;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -90,6 +91,10 @@ public class Main
         Unimozer.messages.add("Vendor = "+System.getProperty("java.vendor"));
         Unimozer.messages.add("Home = "+System.getProperty("java.home"));
         Unimozer.messages.add("User = "+System.getProperty("user.name"));
+        
+        if(System.getProperty("java.version").trim().startsWith("9"))
+            JOptionPane.showMessageDialog(null, "Unimozer is not yet comptiable with Java 9.\nPlease uninstall Java 9 and use Java 8 instead.", "Error", JOptionPane.ERROR_MESSAGE);
+
 
         Unimozer.messages.add("--- JWS");
         // we need to find the file "swing-layout...jar"
