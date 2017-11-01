@@ -1706,7 +1706,7 @@ public class MyClass implements Space
                     sv.visit(cu,null);
 
                     // affect the new diagram to the editor
-                    nsd.setRoot(sv.root,false);
+                    nsd.setRoot(sv.root,false,true);
                     // redraw the diagram
                     //nsd.redraw();
                     // redraw the parent
@@ -1722,7 +1722,7 @@ public class MyClass implements Space
 
             if(ERROR)
             {
-                nsd.setRoot(setErrorNSD(),false);
+                nsd.setRoot(setErrorNSD(),false,true);
                 nsd.getParent().getParent().repaint();
             }
         }

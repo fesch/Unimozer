@@ -137,7 +137,7 @@ public class StructorizerVisitor extends VoidVisitorAdapter
     public StructorizerVisitor(String signature)
     {
         root = new Root();
-        root.isProgram=false;
+        root.setProgram(false);
         lastElement = root;
         queueList = new Vector<Subqueue>();
         queueList.add(root.children);
