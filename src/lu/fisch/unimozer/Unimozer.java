@@ -30,7 +30,7 @@ import lu.fisch.unimozer.utils.StringList;
 public class Unimozer
 {
     public final static String E_NAME = "Unimozer";
-    public final static String E_VERSION = "0.27-45" +
+    public final static String E_VERSION = "0.27-46" +
             "" +
             "";
 

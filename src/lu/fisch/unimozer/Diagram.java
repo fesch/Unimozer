@@ -3067,7 +3067,7 @@ Logger.getInstance().log("Diagram repainted ...");
         if(objectizer!=null) objectizer.removeAllObjects();
         if(nsd!=null)
         {
-            nsd.setRoot(MyClass.setErrorNSD(),false);
+            nsd.setRoot(MyClass.setErrorNSD(),false,true);
             nsd.getParent().getParent().repaint();
         }
         /*

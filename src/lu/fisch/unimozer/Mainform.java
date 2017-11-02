@@ -195,9 +195,9 @@ public class Mainform extends JFrame
                 if(e.getClickCount()==2)
                 {
                     Console.disconnectAll();
-                    lu.fisch.structorizer.gui.Mainform mainform = new lu.fisch.structorizer.gui.Mainform();
+                    lu.fisch.structorizer.gui.Mainform mainform = new lu.fisch.structorizer.gui.Mainform(false);
                     mainform.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    mainform.diagram.setRoot(mf.diagram.getNsd().getRoot(),false);
+                    mainform.diagram.setRoot(mf.diagram.getNsd().getRoot(),false,true);
                     mainform.diagram.redraw();
                     Console.connectAll();
                 }
@@ -758,11 +758,11 @@ public class Mainform extends JFrame
         diagram.setLayout(diagramLayout);
         diagramLayout.setHorizontalGroup(
             diagramLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 340, Short.MAX_VALUE)
+            .add(0, 337, Short.MAX_VALUE)
         );
         diagramLayout.setVerticalGroup(
             diagramLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 394, Short.MAX_VALUE)
+            .add(0, 397, Short.MAX_VALUE)
         );
 
         scrollDiagram.setViewportView(diagram);
@@ -775,11 +775,11 @@ public class Mainform extends JFrame
         objectizer.setLayout(objectizerLayout);
         objectizerLayout.setHorizontalGroup(
             objectizerLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 344, Short.MAX_VALUE)
+            .add(0, 339, Short.MAX_VALUE)
         );
         objectizerLayout.setVerticalGroup(
             objectizerLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 111, Short.MAX_VALUE)
+            .add(0, 23, Short.MAX_VALUE)
         );
 
         splitty_3.setBottomComponent(objectizer);
