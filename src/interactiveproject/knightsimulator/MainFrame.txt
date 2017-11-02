@@ -14,7 +14,7 @@ import javax.swing.Timer;
  *
  * @author Ronny
  */
-public class MainFrame extends javax.swing.JFrame implements lu.fisch.unimozer.interactiveproject.InteractiveMainFrame{
+public class MainFrame extends javax.swing.JFrame{
     public Player player;
     private Board board = new Board();
     private Timer repaintTimer;

@@ -5,6 +5,8 @@
  */
 package lu.fisch.unimozer.interactiveproject;
 
+import bsh.EvalError;
+import interactiveproject.knightsimulator.Player;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +27,7 @@ import javax.xml.xpath.XPathFactory;
 import lu.fisch.unimozer.Diagram;
 import lu.fisch.unimozer.MyClass;
 import lu.fisch.unimozer.Objectizer;
+import lu.fisch.unimozer.Runtime5;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -39,11 +42,15 @@ public class InteractiveProject {
     private String name;
     private ArrayList<String> classes = new ArrayList<>();
     private MyClass interfaceClass;
+    private Object interfaceObject;
+    
     private String myPackage;
     private String main;
     private JFrame frame;
     private String path;
-    private MyClass controller;
+    private MyClass controllerClass;
+    private Object controllerObject;
+    
     
     private Diagram diagram;
     
@@ -136,13 +143,18 @@ public class InteractiveProject {
                     strBuffer.append(str).append("\n");
                 }
                 MyClass myClass = new MyClass(strBuffer.toString(), true);
-                myClass.setDisplaySource(false);
+                
                 if(interfaceClassName.equals(nl.item(i).getTextContent()))
+                {
                     interfaceClass = myClass;
+                    myClass.setDisplaySource(false);
+                }
                 else if(controllerName.equals(nl.item(i).getTextContent()))
-                    controller = myClass;
-                else
+                    controllerClass = myClass;
+                else{
                     myClass.setDisplayUML(false);
+                    myClass.setDisplaySource(false);
+                }
 
                 diagram.addClass(myClass);
                 
@@ -160,19 +172,28 @@ public class InteractiveProject {
     public void runProject() {
         //loads the MainFrame of the called Project
         try {
-            Object obj = Class.forName(myPackage + "." + main).newInstance();
-            //InteractiveMainFrame iFrame = (InteractiveMainFrame) obj;
-            Method method = obj.getClass().getMethod("getPlayer", null);
-            //System.out.println(method.invoke(obj, null).getClass());
-            //Class.forName(myPackage + ".Player").cast(obj);
-            objectizer.addInteractiveObject("player",method.invoke(obj, null));
-            frame = (JFrame) obj;
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setVisible(true);
+            if(diagram.compile())
+            {
+                Runtime5.getInstance().load(myPackage + "." + main);
+                //Class.forName(myPackage + "." + main);
+                //Object obj = Class.forName(myPackage + "." + main).newInstance();
+                Object obj = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
+                
+                Method method = obj.getClass().getMethod("getInterfaceObject", null);
+                interfaceObject = method.invoke(obj, null);
+                objectizer.addInteractiveObject("player", interfaceObject);
+                
+                controllerObject= Runtime5.getInstance().getInstance("Controller", "new " + myPackage + ".Controller()");
+                method = controllerObject.getClass().getMethod("setPlayer", Player.class);
+                method.invoke(controllerObject, interfaceObject);
+                objectizer.addObject("controller", controllerObject);
+                
+                frame = (JFrame) obj;
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setVisible(true);
+            }
             
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
@@ -183,6 +204,8 @@ public class InteractiveProject {
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvocationTargetException ex) {
+            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (EvalError ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
