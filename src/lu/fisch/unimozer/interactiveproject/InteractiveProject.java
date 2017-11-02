@@ -5,15 +5,28 @@
  */
 package lu.fisch.unimozer.interactiveproject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import lu.fisch.unimozer.Diagram;
 import lu.fisch.unimozer.MyClass;
 import lu.fisch.unimozer.Objectizer;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -25,17 +38,33 @@ public class InteractiveProject {
 
     private String name;
     private ArrayList<String> classes = new ArrayList<>();
-    private MyClass interactableClass;
+    private MyClass interfaceClass;
     private String myPackage;
     private String main;
     private JFrame frame;
+    private String path;
+    
+    private Diagram diagram;
+    
+    org.w3c.dom.Document document; //XML Document
 
-    public InteractiveProject(String name, String myPackage, String main) {
-        this.name = name;
-        this.myPackage = myPackage;
-        this.main = main;
+
+    public InteractiveProject(String projectName, Diagram diagram)
+    {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            document = db.parse(getClass().getResourceAsStream("/lu/fisch/unimozer/interactiveproject/projects.xml"));
+            name = projectName;
+            this.diagram = diagram;
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SAXException ex) {
+            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
     public JFrame getFrame() {
         return frame;
     }
@@ -65,13 +94,66 @@ public class InteractiveProject {
     }
 
     public MyClass getInteractableClass() {
-        return interactableClass;
+        return interfaceClass;
     }
 
     public void setInteractableClass(MyClass interactableClass) {
-        this.interactableClass = interactableClass;
+        this.interfaceClass = interactableClass;
     }
 
+    public void loadFromXML()
+    {
+        try {
+            //if file is null, use default xml
+
+            XPathFactory xPathfactory = XPathFactory.newInstance();
+            XPath xpath = xPathfactory.newXPath();
+            
+            myPackage = (String) xpath.compile("/projects/project[@id='"+name+"']/package").evaluate(document, XPathConstants.STRING);
+            main = (String) xpath.compile("/projects/project[@id='"+name+"']/main").evaluate(document, XPathConstants.STRING);
+            String interfaceClassName = (String) xpath.compile("/projects/project[@id='"+name+"']/interface-class").evaluate(document, XPathConstants.STRING);
+            //load all associated files
+            NodeList nl = (NodeList) xpath.compile("/projects/project[@id='"+name+"']/files/file").evaluate(document, XPathConstants.NODESET);
+            
+            if(path == null)
+            {
+                path = myPackage.replace('.', '/');
+                path = "/"+path+"/";
+            }
+            //create a MyClass for each File and add to Diagram
+            for (int i = 0; i < nl.getLength(); i++) {
+                String filePath = path + nl.item(i).getTextContent()+".txt";
+                System.out.println(filePath);
+                InputStream inStream =  getClass().getResourceAsStream(filePath);
+                String str = "";
+                StringBuffer strBuffer = new StringBuffer();
+                BufferedReader br = new BufferedReader(new InputStreamReader(inStream));
+                
+                while((str = br.readLine())!=null)
+                {
+                    strBuffer.append(str).append("\n");
+                }
+                MyClass myClass = new MyClass(strBuffer.toString(), true);
+                myClass.setDisplaySource(false);
+                if(!interfaceClassName.equals(nl.item(i).getTextContent()))
+                    myClass.setDisplayUML(false);
+                else{
+                    interfaceClass = myClass;
+                }
+
+                diagram.addClass(myClass);
+                
+                //add classes to interactiveProject
+                classes.add(nl.item(i).getTextContent());
+            }
+        } catch (XPathExpressionException ex) {
+            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
     public void runProject() {
         //loads the MainFrame of the called Project
         try {

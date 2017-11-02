@@ -131,58 +131,12 @@ public class NewInteractiveProjectDialog extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.setVisible(false);
         String selection = (String) jProjectComboBox.getSelectedItem();
+
+        //create interactiveproject in diagram
+        InteractiveProject ip = new InteractiveProject(selection, diagram);
+        diagram.setInteractiveProject(ip);
+        ip.loadFromXML();
         
-        //use XPath to get information from the selected node in XML file
-        XPathFactory xPathfactory = XPathFactory.newInstance();
-        XPath xpath = xPathfactory.newXPath();
-        try {
-            String name = (String) xpath.compile("/projects/project[@id='Knight Simulator']/name").evaluate(document, XPathConstants.STRING);
-            String className = (String) xpath.compile("/projects/project[@id='Knight Simulator']/interface-class").evaluate(document, XPathConstants.STRING);
-            String path = (String) xpath.compile("/projects/project[@id='Knight Simulator']/path").evaluate(document, XPathConstants.STRING);
-            String myPackage = (String) xpath.compile("/projects/project[@id='Knight Simulator']/package").evaluate(document, XPathConstants.STRING);
-            String main = (String) xpath.compile("/projects/project[@id='Knight Simulator']/main").evaluate(document, XPathConstants.STRING);
-            
-            //all the files
-            NodeList nl = (NodeList) xpath.compile("/projects/project[@id='Knight Simulator']/files/file").evaluate(document, XPathConstants.NODESET);
-            System.out.println(nl.getLength());
-            
-            
-            //create interactiveproject in diagram
-            InteractiveProject ip = new InteractiveProject(name, myPackage, main);
-            diagram.setInteractiveProject(ip);
-            
-            //create a MyClass for each File and add to Diagram
-            for (int i = 0; i < nl.getLength(); i++) {
-                String filePath = path + nl.item(i).getTextContent()+".txt";
-                System.out.println(filePath);
-                InputStream inStream =  getClass().getResourceAsStream(filePath);
-                /*String str = "";
-                StringBuffer strBuffer = new StringBuffer();
-                BufferedReader br = new BufferedReader(new InputStreamReader(inStream));
-                
-                while((str = br.readLine())!=null)
-                {
-                    strBuffer.append(str).append("\n");
-                }
-                */
-                File tmpFile = File.createTempFile("file", "temp");
-                FileUtils.copyInputStreamToFile(inStream, tmpFile);
-                FileInputStream fis = new FileInputStream(tmpFile);
-                MyClass myClass = new MyClass(new FileInputStream(tmpFile), Unimozer.FILE_ENCODING);
-                myClass.setDisplaySource(false);
-                if(!className.equals(nl.item(i).getTextContent()))
-                    myClass.setDisplayUML(false);
-                diagram.addClass(myClass);
-                
-                //add classes to interactiveProject
-                ip.getClasses().add(nl.item(i).getTextContent());
-            }
-            
-        } catch (XPathExpressionException | IOException ex) {
-            Logger.getLogger(NewInteractiveProjectDialog.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(NewInteractiveProjectDialog.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
