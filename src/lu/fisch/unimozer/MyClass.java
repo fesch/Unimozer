@@ -164,7 +164,7 @@ public class MyClass implements Space
         inspect();
     }/**/
 
-    private MyClass (String code, boolean display)
+    public MyClass (String code, boolean display)
     {
         try {
             content.setText(code);
