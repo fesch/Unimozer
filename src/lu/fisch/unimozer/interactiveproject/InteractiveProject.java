@@ -43,6 +43,7 @@ public class InteractiveProject {
     private String main;
     private JFrame frame;
     private String path;
+    private MyClass controller;
     
     private Diagram diagram;
     
@@ -112,6 +113,7 @@ public class InteractiveProject {
             myPackage = (String) xpath.compile("/projects/project[@id='"+name+"']/package").evaluate(document, XPathConstants.STRING);
             main = (String) xpath.compile("/projects/project[@id='"+name+"']/main").evaluate(document, XPathConstants.STRING);
             String interfaceClassName = (String) xpath.compile("/projects/project[@id='"+name+"']/interface-class").evaluate(document, XPathConstants.STRING);
+            String controllerName = (String) xpath.compile("/projects/project[@id='"+name+"']/controller").evaluate(document, XPathConstants.STRING);
             //load all associated files
             NodeList nl = (NodeList) xpath.compile("/projects/project[@id='"+name+"']/files/file").evaluate(document, XPathConstants.NODESET);
             
@@ -135,11 +137,12 @@ public class InteractiveProject {
                 }
                 MyClass myClass = new MyClass(strBuffer.toString(), true);
                 myClass.setDisplaySource(false);
-                if(!interfaceClassName.equals(nl.item(i).getTextContent()))
-                    myClass.setDisplayUML(false);
-                else{
+                if(interfaceClassName.equals(nl.item(i).getTextContent()))
                     interfaceClass = myClass;
-                }
+                else if(controllerName.equals(nl.item(i).getTextContent()))
+                    controller = myClass;
+                else
+                    myClass.setDisplayUML(false);
 
                 diagram.addClass(myClass);
                 
