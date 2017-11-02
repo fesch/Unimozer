@@ -46,7 +46,7 @@ Current version: 0.27-46 (2017.11.01)
 - 33: added a logger to detect hangups [Robert FISCH]
 - 34: disabled editor disabling during "new" 
       (this is where Unimozer freezed up ...) [Robert FISCH]
-- 35: concurrent Hashmap problem [Michel MARCATORIS]
+- 35: concurrent Hashmap problem [Michel MERCATORIS]
 - 36: replacing non thread-safe loops in Diagram [Robert FISCH]
 - 37: fine tuning the "run" button [Fred FABER]
 - 38: minor change in Structorizer to be able to execute FOR loop [Robert FISCH]
