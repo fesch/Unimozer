@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projects>
+	<project id="Knight Simulator">
+		<name>Knight Simulator</name>
+		<path>/interactiveproject/knightsimulator/</path>
+		<interface-class>Player</interface-class>
+		<real-class>RealPlayer</real-class>
+		<main>MainFrame</main>
+		<interface-attribute>player</interface-attribute>
+                <package>interactiveproject.knightsimulator</package>
+                <controller>Controller</controller>
+		<files>
+			<file>Player</file>
+			<file>RealPlayer</file>
+			<file>Board</file>
+			<file>MainFrame</file>
+			<file>DrawPanel</file>
+                        <file>Controller</file>
+		</files>
+	</project>
+</projects>

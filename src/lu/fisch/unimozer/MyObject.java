@@ -43,7 +43,7 @@ public class MyObject
     private int height;
     private String className;
     private MyClass myClass;
-    private Diagram diagram;
+    protected Diagram diagram;
 
     public final static int PADDING = 5;
     

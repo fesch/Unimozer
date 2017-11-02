@@ -60,6 +60,7 @@ import lu.fisch.unimozer.aligner.Grille;
 import lu.fisch.unimozer.compilation.CompilationError;
 import lu.fisch.unimozer.console.Console;
 import lu.fisch.unimozer.dialogs.*;
+import lu.fisch.unimozer.interactiveproject.InteractiveProject;
 import lu.fisch.unimozer.utils.CopyDirectory;
 import lu.fisch.unimozer.utils.StringList;
 import net.iharder.dnd.FileDrop;
@@ -144,6 +145,9 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
     private Point topLeft = new Point(0,0);
     private Point bottomRight = new Point(0,0);
 
+    //is null if it isn't an interactive project
+    private InteractiveProject interactiveProject = null;
+    
     //private Vector<BufferedImage> sheets = new Vector<BufferedImage>();
 
     public Diagram()
@@ -371,6 +375,14 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
         g.drawLine(pFrom.x, pFrom.y, pArrow.x, pArrow.y);
     }
 
+    public void setInteractiveProject(InteractiveProject interactiveProject) {
+        this.interactiveProject = interactiveProject;
+    }
+
+    public InteractiveProject getInteractiveProject() {
+        return interactiveProject;
+    }
+    
     public Point2D getIntersection(Point2D p1, Point2D p2, Point2D p3, Point2D p4)
     {
         double x1 = p1.getX();
@@ -1534,7 +1546,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                     //if(otherClass==null) System.err.println(extendsClass+" not found (1)");
                     //if (otherClass==null) otherClass=findByShortName(extendsClass);
                     //if(otherClass==null) System.err.println(extendsClass+" not found (2)");
-                    if(otherClass!=null)
+                    if(otherClass!=null && thisClass.isDisplayUML() && otherClass.isDisplayUML())
                     {
                         thisClass.setExtendsMyClass(otherClass);
                         // draw arrow from thisClass to otherClass
@@ -1597,7 +1609,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 
                   String extendsClass = thisClass.getExtendsClass();
                   //System.out.println(thisClass.getFullName()+" extends "+extendsClass);
-                  if (!extendsClass.equals(""))
+                  if (!extendsClass.equals("") && thisClass.isDisplayUML())
                   {
                     MyClass otherClass = classes.get(extendsClass);
                     if(otherClass==null) otherClass=findByShortName(extendsClass);
@@ -1811,9 +1823,10 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 {
                     // get the actual class ...
                     MyClass thisClass = entry.getKey();
-                    
-                  Vector<MyClass> otherClasses = classCompositions.get(thisClass);
-                  for(MyClass otherClass : otherClasses) drawComposition(g, thisClass, otherClass, classUsings);
+                  if(thisClass.isDisplayUML()) { 
+                    Vector<MyClass> otherClasses = classCompositions.get(thisClass);
+                    for(MyClass otherClass : otherClasses) drawComposition(g, thisClass, otherClass, classUsings);
+                  }
                 }
             }
 
@@ -1979,6 +1992,12 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
             if(!ce.getPackage().trim().equals(""))
             {
                 mc.addPackage(ce.getPackage());
+            }
+            
+            //automatically import the interactable class of the interactive project
+            if(interactiveProject!=null)
+            {
+                mc.addImport("interactiveproject.knightsimulator.player");
             }
 
             // add JavaDOC Comments
@@ -5381,9 +5400,10 @@ Logger.getInstance().log("Diagram repainted ...");
                                         {
                                             Console.disconnectAll();
                                             System.out.println("Running now: "+myMeth);
+                                            System.out.println(Runtime5.getInstance().toString());
                                             Console.connectAll();
                                             Object retobj = Runtime5.getInstance().executeMethod(myMeth);
-                                            if(retobj!=null) JOptionPane.showMessageDialog(frame, retobj.toString(), "Result", JOptionPane.INFORMATION_MESSAGE,Unimozer.IMG_INFO);
+                                                                                        if(retobj!=null) JOptionPane.showMessageDialog(frame, retobj.toString(), "Result", JOptionPane.INFORMATION_MESSAGE,Unimozer.IMG_INFO);
                                         }
                                         catch (EvalError ex)
                                         {

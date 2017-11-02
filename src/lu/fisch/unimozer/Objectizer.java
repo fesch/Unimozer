@@ -59,6 +59,7 @@ import javax.swing.JSeparator;
 import javax.swing.Timer;
 import lu.fisch.unimozer.console.Console;
 import lu.fisch.unimozer.dialogs.MethodInputs;
+import lu.fisch.unimozer.interactiveproject.MyInteractiveObject;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 /**
@@ -175,6 +176,41 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
         return myo;
     }
     
+   public MyInteractiveObject addInteractiveObject(String objectName, Object object)
+   {
+       // if it is a JFrame
+        if(object instanceof JFrame) 
+        {
+            // set the name
+            ((JFrame) object).setName(objectName);
+            // make the window not to close everything
+            if (((JFrame) object).getDefaultCloseOperation()==JFrame.EXIT_ON_CLOSE ||
+                ((JFrame) object).getDefaultCloseOperation()==JFrame.DISPOSE_ON_CLOSE)
+            {
+                // add this class as listener
+                ((JFrame) object).addWindowListener(this);
+                ((JFrame) object).setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            }
+        }
+        // wrap the object
+        MyInteractiveObject myo = new MyInteractiveObject(objectName,object,diagram, "interactiveproject.knightsimulator.Player");
+        // put it into the list
+        objects.put(objectName,myo);
+        
+        try 
+        {
+            Runtime5.getInstance().setObject(objectName, object);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+        // repaint the Objectizer
+        repaint();
+        // return the wrapped object
+        return myo;
+   }
    public void removeObject(String name)
     {
         MyObject mo = objects.get(name);
@@ -1452,8 +1488,10 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                 popup.add(sep);
 
                 //fillPopupFields(popup, obj.getClass(), myObj);
-
-                fillPopup(popup, obj.getClass(), myObj);
+                if(diagram.getInteractiveProject()==null)
+                    fillPopup(popup, obj.getClass(), myObj);
+                else
+                    fillPopup(popup, obj.getClass().getInterfaces()[0], myObj);
 
                 sep = new JSeparator();
                 popup.add(sep);
