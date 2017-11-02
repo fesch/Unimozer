@@ -56,6 +56,8 @@ import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import lu.fisch.structorizer.elements.Root;
 import lu.fisch.unimozer.aligner.Space;
@@ -162,6 +164,17 @@ public class MyClass implements Space
         inspect();
     }/**/
 
+    private MyClass (String code, boolean display)
+    {
+        try {
+            content.setText(code);
+            cu = JavaParser.parse(new ByteArrayInputStream(getContent().getText().getBytes()));
+            inspect();
+        } catch (ParseException ex) {
+            Logger.getLogger(MyClass.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     private MyClass(FileInputStream fis) throws FileNotFoundException, ParseException, IOException
     {
 
