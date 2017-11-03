@@ -6577,7 +6577,10 @@ Logger.getInstance().log("Diagram repainted ...");
         File file = new File(filename);
         if(file.exists())
         {
-            
+            StringList content = new StringList();
+            content.loadFromFile(filename);
+            interactiveProject = new InteractiveProject(content.get(0), diagram);
+            interactiveProject.loadFromXML(true);
         }
             
     }

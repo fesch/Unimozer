@@ -2324,7 +2324,8 @@ public class Mainform extends JFrame
             diagram.runFast();
         else
         {
-            System.out.println("Here");
+            diagram.getInteractiveProject().setObjectizer(objectizer);
+            diagram.getInteractiveProject().runProject();
         }
     }//GEN-LAST:event_speRunFastActionPerformed
 
