@@ -30,7 +30,6 @@ import lu.fisch.unimozer.MyClass;
 import lu.fisch.unimozer.Objectizer;
 import lu.fisch.unimozer.Unimozer;
 import lu.fisch.unimozer.interactiveproject.InteractiveProject;
-import lu.fisch.unimozer.interactiveproject.VisualizerObject;
 import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -66,9 +65,10 @@ public class NewInteractiveProjectDialog extends javax.swing.JDialog {
             {
                 jProjectComboBox.addItem(nodeList.item(i).getTextContent());
             }
+        }
+            catch (SAXException | IOException ex) {
+            Logger.getLogger(NewInteractiveProjectDialog.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(VisualizerObject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SAXException | IOException ex) {
             Logger.getLogger(NewInteractiveProjectDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

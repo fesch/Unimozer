@@ -26,7 +26,7 @@ public class MyInteractiveObject extends MyObject {
         super(className, object, diagram);
         this.interfaceClass = interfaceClass;
     }
-
+    
     public int paint(Graphics2D g, int x, int y, boolean isUML) {
         String className = interfaceClass;
 
