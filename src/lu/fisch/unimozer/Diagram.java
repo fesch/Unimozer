@@ -45,6 +45,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -4079,12 +4080,16 @@ Logger.getInstance().log("Diagram repainted ...");
         {
             // get the actual class ...
             String str = entry.getKey();
-
-          StringList line = new StringList();
-          line.add(str);
-          line.add(String.valueOf(classes.get(str).getPosition().x));
-          line.add(String.valueOf(classes.get(str).getPosition().y));
-          content.add(line.getCommaText());
+            if(interactiveProject==null 
+                          || interactiveProject.getControllerClass().getFullName().equals(entry.getKey())
+                          || !interactiveProject.getClasses().contains(entry.getKey()))
+            {
+                  StringList line = new StringList();
+                  line.add(str);
+                  line.add(String.valueOf(classes.get(str).getPosition().x));
+                  line.add(String.valueOf(classes.get(str).getPosition().y));
+                  content.add(line.getCommaText());
+            }
         }
 
         return content;
@@ -4426,67 +4431,73 @@ Logger.getInstance().log("Diagram repainted ...");
                 // get the actual class ...
                 String str = entry.getKey();
                 
-                try
+                //when saving an interactive project, don't save the given files
+                if(interactiveProject==null 
+                        || interactiveProject.getControllerClass().getFullName().equals(entry.getKey())
+                        || !interactiveProject.getClasses().contains(entry.getKey())
+                        )
                 {
-                    //String str = itr.next();
-                    //System.out.println("Saving source ... "+classes.get(str).getShortName());
-                    String code;
-                    if(allowEdit==true) code = classes.get(str).getJavaCode();
-                    else code = classes.get(str).getContent().getText();
-
-                    String filename;
-                    FileOutputStream fos;
-                    Writer out;
-
-                    // write standard file
-                    /*
-                    if(!classes.get(str).getPackagename().equals(Package.DEFAULT))
+                    try
                     {
-                        String dirNames = directoryName + System.getProperty("file.separator");
-                        //dirNames += classes.get(str).getPackagename().replaceAll("\\.",System.getProperty("file.separator"))+System.getProperty("file.separator");
-                        dirNames += classes.get(str).getPackagename().replace(".", System.getProperty("file.separator"))+System.getProperty("file.separator");
-                        File dirs = new File(dirNames);
-                        dirs.mkdirs();
+                        //String str = itr.next();
+                        //System.out.println("Saving source ... "+classes.get(str).getShortName());
+                        String code;
+                        if(allowEdit==true) code = classes.get(str).getJavaCode();
+                        else code = classes.get(str).getContent().getText();
 
-                        filename = dirs.getAbsolutePath() + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+                        String filename;
+                        FileOutputStream fos;
+                        Writer out;
+
+                        // write standard file
+                        /*
+                        if(!classes.get(str).getPackagename().equals(Package.DEFAULT))
+                        {
+                            String dirNames = directoryName + System.getProperty("file.separator");
+                            //dirNames += classes.get(str).getPackagename().replaceAll("\\.",System.getProperty("file.separator"))+System.getProperty("file.separator");
+                            dirNames += classes.get(str).getPackagename().replace(".", System.getProperty("file.separator"))+System.getProperty("file.separator");
+                            File dirs = new File(dirNames);
+                            dirs.mkdirs();
+
+                            filename = dirs.getAbsolutePath() + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+                        }
+                        else
+                            filename = directoryName + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+
+
+                        fos = new FileOutputStream(filename);
+                        out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
+                        out.write(code);
+                        out.close();
+                        */
+
+                        // write file to "src" directory
+                        if(!classes.get(str).getPackagename().equals(Package.DEFAULT))
+                        {
+                            String dirNames = directoryName + System.getProperty("file.separator") + "src" + System.getProperty("file.separator");
+                            dirNames += classes.get(str).getPackagename().replace(".", System.getProperty("file.separator"))+System.getProperty("file.separator");
+                            File dirs = new File(dirNames);
+                            dirs.mkdirs();
+
+                            filename = dirs.getAbsolutePath() + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+                        }
+                        else
+                            filename = directoryName + System.getProperty("file.separator") + "src" + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+
+
+                        fos = new FileOutputStream(filename);
+                        out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
+                        out.write(code);
+                        out.close();
+
                     }
-                    else
-                        filename = directoryName + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
-
-
-                    fos = new FileOutputStream(filename);
-                    out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
-                    out.write(code);
-                    out.close();
-                    */
-
-                    // write file to "src" directory
-                    if(!classes.get(str).getPackagename().equals(Package.DEFAULT))
+                    catch (IOException ex)
                     {
-                        String dirNames = directoryName + System.getProperty("file.separator") + "src" + System.getProperty("file.separator");
-                        dirNames += classes.get(str).getPackagename().replace(".", System.getProperty("file.separator"))+System.getProperty("file.separator");
-                        File dirs = new File(dirNames);
-                        dirs.mkdirs();
-
-                        filename = dirs.getAbsolutePath() + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+                        System.err.println("Error while saving ...");
+                        System.err.println(ex.getMessage());
                     }
-                    else
-                        filename = directoryName + System.getProperty("file.separator") + "src" + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
-
-
-                    fos = new FileOutputStream(filename);
-                    out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
-                    out.write(code);
-                    out.close();
-
-                }
-                catch (IOException ex)
-                {
-                    System.err.println("Error while saving ...");
-                    System.err.println(ex.getMessage());
                 }
             }
-
             createBackup();
         }
     }
@@ -4680,6 +4691,29 @@ Logger.getInstance().log("Diagram repainted ...");
             return true;
         } //else System.out.println("Dirname is null???");
         else return saveWithAskingLocation();
+    }
+    
+    public void saveInteractiveProject()
+    {
+        if(directoryName!=null)
+        {
+            FileOutputStream fos = null;
+            try {
+                String filePath = directoryName + System.getProperty("file.separator") + "interactiveproject.pck";
+                fos = new FileOutputStream(filePath);
+                OutputStreamWriter out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
+                out.write(interactiveProject.getName());
+                out.close();
+                
+                
+            } catch (FileNotFoundException ex) {
+                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     public void markClassesAsNotChanged()
@@ -6537,9 +6571,21 @@ Logger.getInstance().log("Diagram repainted ...");
         }
     }
     
+    private void openInteractiveProject(String dirName)
+    {
+        String filename = dirName+System.getProperty("file.separator")+"interactiveproject.pck";
+        File file = new File(filename);
+        if(file.exists())
+        {
+            
+        }
+            
+    }
+    
     public void open(String dirname)
     {
         clear();
+        openInteractiveProject(dirname);
         //allowEdit=true;
         if(frame!=null)
         {
@@ -6919,6 +6965,8 @@ Logger.getInstance().log("Diagram repainted ...");
                     {
                         //System.out.println(dirName);
                         this.save(dirName);
+                        if(interactiveProject!=null)
+                            this.saveInteractiveProject();
                         setChanged(false);
                         return true;
                     }
@@ -7469,7 +7517,11 @@ Logger.getInstance().log("Diagram repainted ...");
             }
         }
     }
-
+    
+    public void resetInteractiveProject()
+    {
+        interactiveProject = null;
+    }
 
 
 }

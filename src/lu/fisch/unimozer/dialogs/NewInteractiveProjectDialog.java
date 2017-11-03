@@ -135,7 +135,7 @@ public class NewInteractiveProjectDialog extends javax.swing.JDialog {
         //create interactiveproject in diagram
         InteractiveProject ip = new InteractiveProject(selection, diagram);
         diagram.setInteractiveProject(ip);
-        ip.loadFromXML();
+        ip.loadFromXML(false);
         
     }//GEN-LAST:event_jButton1ActionPerformed
 

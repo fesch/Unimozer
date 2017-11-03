@@ -1751,12 +1751,14 @@ public class Mainform extends JFrame
 
     private void speOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_speOpenActionPerformed
     {//GEN-HEADEREND:event_speOpenActionPerformed
+        diagram.resetInteractiveProject();
         diagram.openUnimozer();
         setTitleNew();
 }//GEN-LAST:event_speOpenActionPerformed
 
     private void speNewActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_speNewActionPerformed
     {//GEN-HEADEREND:event_speNewActionPerformed
+        diagram.resetInteractiveProject();
         diagram.newUnimozer();
         setTitleNew();
     }//GEN-LAST:event_speNewActionPerformed
@@ -1769,12 +1771,14 @@ public class Mainform extends JFrame
 
     private void miNewActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miNewActionPerformed
     {//GEN-HEADEREND:event_miNewActionPerformed
+        diagram.resetInteractiveProject();
         diagram.newUnimozer();
         setTitleNew();
     }//GEN-LAST:event_miNewActionPerformed
 
     private void miOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miOpenActionPerformed
     {//GEN-HEADEREND:event_miOpenActionPerformed
+        diagram.resetInteractiveProject();
         diagram.openUnimozer();
         setTitleNew();
     }//GEN-LAST:event_miOpenActionPerformed
@@ -2329,6 +2333,7 @@ public class Mainform extends JFrame
     }//GEN-LAST:event_miRunActionPerformed
 
     private void miNewVisualizerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNewVisualizerActionPerformed
+        diagram.resetInteractiveProject();
         NewInteractiveProjectDialog dg = new NewInteractiveProjectDialog(this, rootPaneCheckingEnabled, diagram);
         dg.setVisible(true);
     }//GEN-LAST:event_miNewVisualizerActionPerformed

@@ -77,6 +77,10 @@ public class InteractiveProject {
         return frame;
     }
 
+    public MyClass getControllerClass() {
+        return controllerClass;
+    }
+
     public void setFrame(JFrame frame) {
         this.frame = frame;
     }
@@ -109,8 +113,10 @@ public class InteractiveProject {
         this.interfaceClass = interactableClass;
     }
 
-    public void loadFromXML()
+    public void loadFromXML(boolean open)
     {
+        //boolean specifies if opening a project (true) or creating new project (false)
+        
         try {
             //if file is null, use default xml
 
@@ -131,35 +137,40 @@ public class InteractiveProject {
             }
             //create a MyClass for each File and add to Diagram
             for (int i = 0; i < nl.getLength(); i++) {
-                String filePath = path + nl.item(i).getTextContent()+".txt";
-                System.out.println(filePath);
-                InputStream inStream =  getClass().getResourceAsStream(filePath);
-                String str = "";
-                StringBuffer strBuffer = new StringBuffer();
-                BufferedReader br = new BufferedReader(new InputStreamReader(inStream));
                 
-                while((str = br.readLine())!=null)
+                //when opening a project, don't load the controller, as it is read from the project that is opened
+                if(!open || !nl.item(i).getTextContent().equals(controllerName))
                 {
-                    strBuffer.append(str).append("\n");
-                }
-                MyClass myClass = new MyClass(strBuffer.toString(), true);
-                
-                if(interfaceClassName.equals(nl.item(i).getTextContent()))
-                {
-                    interfaceClass = myClass;
-                    myClass.setDisplaySource(false);
-                }
-                else if(controllerName.equals(nl.item(i).getTextContent()))
-                    controllerClass = myClass;
-                else{
-                    myClass.setDisplayUML(false);
-                    myClass.setDisplaySource(false);
-                }
+                    String filePath = path + nl.item(i).getTextContent()+".txt";
+                    System.out.println(filePath);
+                    InputStream inStream =  getClass().getResourceAsStream(filePath);
+                    String str = "";
+                    StringBuffer strBuffer = new StringBuffer();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(inStream));
 
-                diagram.addClass(myClass);
-                
-                //add classes to interactiveProject
-                classes.add(nl.item(i).getTextContent());
+                    while((str = br.readLine())!=null)
+                    {
+                        strBuffer.append(str).append("\n");
+                    }
+                    MyClass myClass = new MyClass(strBuffer.toString(), true);
+
+                    if(interfaceClassName.equals(nl.item(i).getTextContent()))
+                    {
+                        interfaceClass = myClass;
+                        myClass.setDisplaySource(false);
+                    }
+                    else if(controllerName.equals(nl.item(i).getTextContent()))
+                        controllerClass = myClass;
+                    else{
+                        myClass.setDisplayUML(false);
+                        myClass.setDisplaySource(false);
+                    }
+
+                    diagram.addClass(myClass);
+
+                    //add classes to interactiveProject
+                    classes.add(myPackage+"."+nl.item(i).getTextContent());
+                }
             }
         } catch (XPathExpressionException ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);

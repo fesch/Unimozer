@@ -1488,6 +1488,8 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                 popup.add(sep);
 
                 //fillPopupFields(popup, obj.getClass(), myObj);
+                
+                //If it is a MyInteractiveObject, only the methods of the attached interface should be shown
                 if(!myObj.getClass().equals(lu.fisch.unimozer.interactiveproject.MyInteractiveObject.class))
                     fillPopup(popup, obj.getClass(), myObj);
                 else
