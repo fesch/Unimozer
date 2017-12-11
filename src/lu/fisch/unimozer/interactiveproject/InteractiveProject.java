@@ -46,6 +46,7 @@ public class InteractiveProject {
     private ArrayList<String> classes = new ArrayList<>();
     private MyClass interfaceClass;
     private Object interfaceObject;
+    private String interfaceAttribute;
     
     private String myPackage;
     private String main;
@@ -134,6 +135,7 @@ public class InteractiveProject {
             
             String studentClassName = (String) xpath.compile("/projects/project[@id='"+name+"']/files/file[@type='student-class']").evaluate(document, XPathConstants.STRING);
 
+            interfaceAttribute = (String) xpath.compile("/projects/project[@id='"+name+"']/interface-attribute").evaluate(document, XPathConstants.STRING);
             //load all associated files
             NodeList nl = (NodeList) xpath.compile("/projects/project[@id='"+name+"']/files/file").evaluate(document, XPathConstants.NODESET);
             
@@ -146,7 +148,7 @@ public class InteractiveProject {
             for (int i = 0; i < nl.getLength(); i++) {
                 
                 //when opening a project, don't load the controller, as it is read from the project that is opened
-                if(!open || !nl.item(i).getTextContent().equals(studentClassName))
+                if(!open)// || !nl.item(i).getTextContent().equals(studentClassName))
                 {
                     String filePath = path + nl.item(i).getTextContent()+".txt";
                     System.out.println(filePath);
@@ -194,29 +196,32 @@ public class InteractiveProject {
             {
                 Runtime5.getInstance().load(myPackage + "." + main);
                 //Class.forName(myPackage + "." + main);
-                //Object obj = Class.forName(myPackage + "." + main).newInstance();
-                Object obj = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
+                //Object mainObject = Class.forName(myPackage + "." + main).newInstance();
+                Object mainObject = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
+                
                 if(type.equals("controller-based"))
                 {
-                    Method method = obj.getClass().getMethod("getInterfaceObject", null);
-                    interfaceObject = method.invoke(obj, null);
-                    objectizer.addInteractiveObject("player", interfaceObject);
+                    Method method = mainObject.getClass().getMethod("getInterfaceObject",null);
+                    interfaceObject = method.invoke(mainObject,null);
                     
+                    objectizer.addInteractiveObject(interfaceAttribute, interfaceObject);
                     studentObject= Runtime5.getInstance().getInstance("Controller", "new " + myPackage + ".Controller()");
-                    method = studentObject.getClass().getMethod("set"+interfaceClass.getShortName(), Player.class);
-                    method.invoke(studentObject, interfaceObject);
+                    
+                    System.out.println(interfaceClass.getShortName());
+                    method = studentObject.getClass().getMethod("set"+interfaceClass.getShortName(), Runtime5.getInstance().load(myPackage+"."+interfaceClass.getShortName()));
+                    interfaceObject = method.invoke(studentObject, interfaceObject);
                     objectizer.addObject("controller", studentObject);
                 }
                 else if(type.equals("model-based"))
                 {
-                    Method method = obj.getClass().getMethod("getStudentObject", null);
-                    studentObject = method.invoke(obj, null);
-                    objectizer.addObject("SlotMachine", studentObject);
+                    Method method = mainObject.getClass().getMethod("getStudentObject",null);
+                    studentObject = method.invoke(mainObject,null);
+                    objectizer.addObject(studentClass.getShortName(), studentObject);
                 }
                 
                 
                 
-                frame = (JFrame) obj;
+                frame = (JFrame) mainObject;
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.setAlwaysOnTop(true);
                 frame.setVisible(true);
