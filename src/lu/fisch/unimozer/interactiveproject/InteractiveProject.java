@@ -82,7 +82,7 @@ public class InteractiveProject {
         return frame;
     }
 
-    public MyClass getControllerClass() {
+    public MyClass getStudentClass() {
         return studentClass;
     }
 
@@ -147,8 +147,8 @@ public class InteractiveProject {
             //create a MyClass for each File and add to Diagram
             for (int i = 0; i < nl.getLength(); i++) {
                 
-                //when opening a project, don't load the controller, as it is read from the project that is opened
-                if(!open)// || !nl.item(i).getTextContent().equals(studentClassName))
+                //when opening a project, don't load the student's class, as it is read from the project that is opened
+                if(!open || !nl.item(i).getTextContent().equals(studentClassName))
                 {
                     String filePath = path + nl.item(i).getTextContent()+".txt";
                     System.out.println(filePath);

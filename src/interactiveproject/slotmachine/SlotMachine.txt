@@ -51,7 +51,7 @@ public class SlotMachine {
         return (int) (Math.random() * 6);
     }
 
-    private boolean pullArm() {
+    public boolean pullArm() {
 
         if (credit - pricePerGame < 0) {
             message = "Not enough credit!";

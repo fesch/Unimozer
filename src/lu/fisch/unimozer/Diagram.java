@@ -4081,7 +4081,7 @@ Logger.getInstance().log("Diagram repainted ...");
             // get the actual class ...
             String str = entry.getKey();
             if(interactiveProject==null 
-                          || interactiveProject.getControllerClass().getFullName().equals(entry.getKey())
+                          || interactiveProject.getStudentClass().getFullName().equals(entry.getKey())
                           || !interactiveProject.getClasses().contains(entry.getKey()))
             {
                   StringList line = new StringList();
@@ -4433,7 +4433,7 @@ Logger.getInstance().log("Diagram repainted ...");
                 
                 //when saving an interactive project, don't save the given files
                 if(interactiveProject==null 
-                        || interactiveProject.getControllerClass().getFullName().equals(entry.getKey())
+                        || interactiveProject.getStudentClass().getFullName().equals(entry.getKey())
                         || !interactiveProject.getClasses().contains(entry.getKey())
                         )
                 {
@@ -4680,7 +4680,8 @@ Logger.getInstance().log("Diagram repainted ...");
             saveFiles();
             // save BlueJ Package
             saveBlueJPackages();
-            
+            if(interactiveProject!=null)
+                this.saveInteractiveProject();
             markClassesAsNotChanged();
             updateLastModified();
             /*
@@ -4695,6 +4696,8 @@ Logger.getInstance().log("Diagram repainted ...");
     
     public void saveInteractiveProject()
     {
+        System.out.println("Saving Interactive Project");
+        System.out.println(directoryName);
         if(directoryName!=null)
         {
             FileOutputStream fos = null;
@@ -6967,10 +6970,7 @@ Logger.getInstance().log("Diagram repainted ...");
                 {
                     try
                     {
-                        //System.out.println(dirName);
                         this.save(dirName);
-                        if(interactiveProject!=null)
-                            this.saveInteractiveProject();
                         setChanged(false);
                         return true;
                     }

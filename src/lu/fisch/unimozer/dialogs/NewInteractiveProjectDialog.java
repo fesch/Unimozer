@@ -131,10 +131,11 @@ public class NewInteractiveProjectDialog extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.setVisible(false);
         String selection = (String) jProjectComboBox.getSelectedItem();
-
+        diagram.clear();
         //create interactiveproject in diagram
         InteractiveProject ip = new InteractiveProject(selection, diagram);
         diagram.setInteractiveProject(ip);
+        
         ip.loadFromXML(false);
         
     }//GEN-LAST:event_jButton1ActionPerformed
