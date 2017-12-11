@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projects>
 	<project id="Knight Simulator">
+                <type>controller-based</type>
 		<name>Knight Simulator</name>
 		<path>/interactiveproject/knightsimulator/</path>
 		<interface-class>Player</interface-class>
@@ -8,14 +9,28 @@
 		<main>MainFrame</main>
 		<interface-attribute>player</interface-attribute>
                 <package>interactiveproject.knightsimulator</package>
-                <controller>Controller</controller>
 		<files>
 			<file>Player</file>
 			<file>RealPlayer</file>
 			<file>Board</file>
 			<file>MainFrame</file>
 			<file>DrawPanel</file>
-                        <file>Controller</file>
+                        <file type="student-class">Controller</file>
+		</files>
+	</project>
+        <project id="Slot Machine">
+                <type>model-based</type>
+		<name>Slot Machine</name>
+                <student-class> SlotMachine </student-class>
+		<path>/interactiveproject/slotmachine/</path>
+		<main>MainFrame</main>
+                <package>interactiveproject.slotmachine</package>
+		<files>
+			<file>Reel</file>
+			<file>ReelPanel</file>
+			<file>MainFrame</file>
+			<file>DrawPanel</file>
+                        <file type="student-class">SlotMachine</file>
 		</files>
 	</project>
 </projects>

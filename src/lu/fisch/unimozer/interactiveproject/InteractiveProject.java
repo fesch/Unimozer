@@ -36,7 +36,10 @@ import org.xml.sax.SAXException;
  * @author Ronny
  */
 public class InteractiveProject {
-
+    
+    
+    private String type;
+    
     private Objectizer objectizer;
 
     private String name;
@@ -48,8 +51,9 @@ public class InteractiveProject {
     private String main;
     private JFrame frame;
     private String path;
-    private MyClass controllerClass;
-    private Object controllerObject;
+    
+    private MyClass studentClass;
+    private Object studentObject;
     
     
     private Diagram diagram;
@@ -78,7 +82,7 @@ public class InteractiveProject {
     }
 
     public MyClass getControllerClass() {
-        return controllerClass;
+        return studentClass;
     }
 
     public void setFrame(JFrame frame) {
@@ -123,10 +127,13 @@ public class InteractiveProject {
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
             
+            type =  (String) xpath.compile("/projects/project[@id='"+name+"']/type").evaluate(document, XPathConstants.STRING);
             myPackage = (String) xpath.compile("/projects/project[@id='"+name+"']/package").evaluate(document, XPathConstants.STRING);
             main = (String) xpath.compile("/projects/project[@id='"+name+"']/main").evaluate(document, XPathConstants.STRING);
             String interfaceClassName = (String) xpath.compile("/projects/project[@id='"+name+"']/interface-class").evaluate(document, XPathConstants.STRING);
-            String controllerName = (String) xpath.compile("/projects/project[@id='"+name+"']/controller").evaluate(document, XPathConstants.STRING);
+            
+            String studentClassName = (String) xpath.compile("/projects/project[@id='"+name+"']/files/file[@type='student-class']").evaluate(document, XPathConstants.STRING);
+
             //load all associated files
             NodeList nl = (NodeList) xpath.compile("/projects/project[@id='"+name+"']/files/file").evaluate(document, XPathConstants.NODESET);
             
@@ -139,7 +146,7 @@ public class InteractiveProject {
             for (int i = 0; i < nl.getLength(); i++) {
                 
                 //when opening a project, don't load the controller, as it is read from the project that is opened
-                if(!open || !nl.item(i).getTextContent().equals(controllerName))
+                if(!open || !nl.item(i).getTextContent().equals(studentClassName))
                 {
                     String filePath = path + nl.item(i).getTextContent()+".txt";
                     System.out.println(filePath);
@@ -159,8 +166,8 @@ public class InteractiveProject {
                         interfaceClass = myClass;
                         myClass.setDisplaySource(false);
                     }
-                    else if(controllerName.equals(nl.item(i).getTextContent()))
-                        controllerClass = myClass;
+                    else if(studentClassName.equals(nl.item(i).getTextContent()))
+                        studentClass = myClass;
                     else{
                         myClass.setDisplayUML(false);
                         myClass.setDisplaySource(false);
@@ -189,18 +196,29 @@ public class InteractiveProject {
                 //Class.forName(myPackage + "." + main);
                 //Object obj = Class.forName(myPackage + "." + main).newInstance();
                 Object obj = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
+                if(type.equals("controller-based"))
+                {
+                    Method method = obj.getClass().getMethod("getInterfaceObject", null);
+                    interfaceObject = method.invoke(obj, null);
+                    objectizer.addInteractiveObject("player", interfaceObject);
+                    
+                    studentObject= Runtime5.getInstance().getInstance("Controller", "new " + myPackage + ".Controller()");
+                    method = studentObject.getClass().getMethod("set"+interfaceClass.getShortName(), Player.class);
+                    method.invoke(studentObject, interfaceObject);
+                    objectizer.addObject("controller", studentObject);
+                }
+                else if(type.equals("model-based"))
+                {
+                    Method method = obj.getClass().getMethod("getStudentObject", null);
+                    studentObject = method.invoke(obj, null);
+                    objectizer.addObject("SlotMachine", studentObject);
+                }
                 
-                Method method = obj.getClass().getMethod("getInterfaceObject", null);
-                interfaceObject = method.invoke(obj, null);
-                objectizer.addInteractiveObject("player", interfaceObject);
                 
-                controllerObject= Runtime5.getInstance().getInstance("Controller", "new " + myPackage + ".Controller()");
-                method = controllerObject.getClass().getMethod("setPlayer", Player.class);
-                method.invoke(controllerObject, interfaceObject);
-                objectizer.addObject("controller", controllerObject);
                 
                 frame = (JFrame) obj;
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setAlwaysOnTop(true);
                 frame.setVisible(true);
             }
             

@@ -1,0 +1,87 @@
+package interactiveproject.slotmachine;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ *
+ * @author ronny
+ */
+public class SlotMachine {
+
+    private int startCredit = 50;
+    private int credit;
+    private int pricePerGame = 5;
+    private int gamesPlayed = 0;
+
+    private int reel1;
+    private int reel2;
+    private int reel3;
+
+    private String message;
+
+    public int getCredit() {
+        return credit;
+    }
+
+    public int getReel1() {
+        return reel1;
+    }
+
+    public int getReel2() {
+        return reel2;
+    }
+
+    public int getReel3() {
+        return reel3;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public SlotMachine() {
+        credit = startCredit;
+        message = "";
+    }
+
+    public int getRandomNumber() {
+        return (int) (Math.random() * 6);
+    }
+
+    private boolean pullArm() {
+
+        if (credit - pricePerGame < 0) {
+            message = "Not enough credit!";
+            return false;
+        } else {
+            gamesPlayed++;
+            credit -= 5;
+            message = "Number of played games: " + gamesPlayed;
+            reel1 = getRandomNumber();
+            reel2 = getRandomNumber();
+            reel3 = getRandomNumber();
+           
+            return true;
+        }
+    }
+
+    public boolean hasWon() {
+        if (reel1 == reel2 && reel2 == reel3) {
+            credit += 100;
+            message = "You win the Jackpot of 100 credits!";
+            return true;
+        } else if (reel1 == reel2 || reel1 == reel3 || reel2 == reel3) {
+            System.out.println("Winner");
+            credit += 10;
+            message = "You got a double! That means 10 credits for you!";
+            return true;
+        } else {
+            message = "You lose!";
+            return false;
+        }
+
+    }
+}
