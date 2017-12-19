@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package interactiveproject.knightsimulator;
-/**
- *
- * @author Ronny
- */
-public interface Player {
-    public void move();
-    public void turnClockwise();
-    public void collect();
-}
+package interactiveproject.spacesimulator;
 
+public class Controller {
+    private Player player;
+    
+    public void setPlayer(Player pPlayer)
+    {
+        player = pPlayer;
+    }
+}

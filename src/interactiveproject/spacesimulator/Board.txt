@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package interactiveproject.knightsimulator;
+package interactiveproject.spacesimulator;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -53,7 +53,7 @@ public class Board {
         
         try{
             //To remove Spaces in Path
-            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/interactiveproject/knightsimulator/level/2.txt")));
+            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/interactiveproject/spacesimulator/level/3.txt")));
             String line;
             cols = Integer.valueOf(br.readLine());
             rows = Integer.valueOf(br.readLine());
@@ -95,8 +95,9 @@ public class Board {
             g.drawLine(offsetLeft+j*cellSize,offsetTop, offsetLeft+j*cellSize, offsetTop +rows*cellSize);
         
         try {
-            BufferedImage wall = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/knightsimulator/images/wall red.png"));
-            BufferedImage gold = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/knightsimulator/images/gold.png"));
+            BufferedImage wall = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/wall red.png"));
+            BufferedImage gold = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/gold.png"));
+            BufferedImage enemy = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/enemy.png"));
             for(int i=0; i<rows;i++)
                 for(int j=0;j<cols;j++)
                 {
@@ -107,6 +108,10 @@ public class Board {
                     else if(map[i][j].equals("x"))
                     {
                         g.drawImage(gold, offsetLeft+j*cellSize, offsetTop+i*cellSize, cellSize, cellSize, null);
+                    }
+                    else if(map[i][j].equals("E"))
+                    {
+                        g.drawImage(enemy, offsetLeft+j*cellSize, offsetTop+(int) ((i+0.2)*cellSize), cellSize, (int) (0.7*cellSize), null);
                     }
                 }
             if(player != null)

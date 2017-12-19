@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projects>
-	<project id="Knight Simulator">
+	<project id="Space Simulator">
                 <type>controller-based</type>
-		<name>Knight Simulator</name>
-		<path>/interactiveproject/knightsimulator/</path>
+		<name>Space Simulator</name>
+		<path>/interactiveproject/spacesimulator/</path>
 		<interface-class>Player</interface-class>
 		<real-class>RealPlayer</real-class>
 		<main>MainFrame</main>
 		<interface-attribute>player</interface-attribute>
-                <package>interactiveproject.knightsimulator</package>
+                <package>interactiveproject.spacesimulator</package>
 		<files>
 			<file>Player</file>
 			<file>RealPlayer</file>

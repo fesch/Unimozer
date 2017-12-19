@@ -6,7 +6,6 @@
 package lu.fisch.unimozer.interactiveproject;
 
 import bsh.EvalError;
-import interactiveproject.knightsimulator.Player;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -136,6 +135,7 @@ public class InteractiveProject {
             String studentClassName = (String) xpath.compile("/projects/project[@id='"+name+"']/files/file[@type='student-class']").evaluate(document, XPathConstants.STRING);
 
             interfaceAttribute = (String) xpath.compile("/projects/project[@id='"+name+"']/interface-attribute").evaluate(document, XPathConstants.STRING);
+            
             //load all associated files
             NodeList nl = (NodeList) xpath.compile("/projects/project[@id='"+name+"']/files/file").evaluate(document, XPathConstants.NODESET);
             
@@ -198,7 +198,6 @@ public class InteractiveProject {
                 //Class.forName(myPackage + "." + main);
                 //Object mainObject = Class.forName(myPackage + "." + main).newInstance();
                 Object mainObject = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
-                
                 if(type.equals("controller-based"))
                 {
                     Method method = mainObject.getClass().getMethod("getInterfaceObject",null);

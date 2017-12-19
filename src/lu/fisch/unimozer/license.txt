@@ -94,3 +94,36 @@ Used third party components licenses
         with "iconfinder" have been found on this site:
         http://www.iconfinder.net
 
+    Images in interactive projects
+    °°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°
+
+    * interactiveprojet.slotmachine.images
+        *slomachine.png
+            CC0
+            https://pixabay.com/en/slot-machine-gambling-gaming-casino-2304135/
+        *0.png 
+            CC0
+            https://openclipart.org/detail/189010/two-cherries
+        *1.png
+            CC0
+            https://openclipart.org/detail/22309/apple-icon
+        *2.png
+            CC0
+            https://openclipart.org/detail/189326/seven
+        *3.png
+            CC0
+            https://openclipart.org/detail/20004/lemon
+        *4.png
+            CC0
+            https://openclipart.org/detail/20001/orange
+        *5.png
+            CC0
+            https://openclipart.org/detail/181306/bananas
+
+    * interactiveproject.spaceSimulator.images
+        *ship.png
+            CC0
+            https://openclipart.org/detail/289987/spaceship
+        *enemy.png
+            CC0
+            https://openclipart.org/detail/10330/ufo
