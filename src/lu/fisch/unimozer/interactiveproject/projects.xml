@@ -18,6 +18,21 @@
                         <file type="student-class">Controller</file>
 		</files>
 	</project>
+        <project id="Turtle Box">
+                <type>controller-based</type>
+		<name>Turtle Box</name>
+		<path>/interactiveproject/turtlebox/</path>
+		<interface-class>TurtleBox</interface-class>
+		<real-class>RealTurtleBox</real-class>
+		<main>RealTurtleBox</main>
+		<interface-attribute>turtleBox</interface-attribute>
+                <package>interactiveproject.turtlebox</package>
+		<files>
+			<file>RealTurtleBox</file>
+                        <file>TurtleBox</file>
+                        <file type="student-class">Controller</file>
+		</files>
+	</project>
         <project id="Bank Account">
                 <type>model-based</type>
 		<name>Bank Account</name>

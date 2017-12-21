@@ -193,7 +193,7 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
             }
         }
         // wrap the object
-        MyInteractiveObject myo = new MyInteractiveObject(objectName,object,diagram, "interactiveproject.knightsimulator.Player");
+        MyInteractiveObject myo = new MyInteractiveObject(objectName,object,diagram, diagram.getInteractiveProject().getInteractableClass().getFullName());
         // put it into the list
         objects.put(objectName,myo);
         
@@ -1382,7 +1382,7 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                           toFullStringReplaced(m[i], myObj));
             }
         }
-
+        
         //Sort using a TreeSet ??
         Iterator<String> tit = new TreeSet (items.keySet()).iterator();
         while (tit.hasNext())
@@ -1494,7 +1494,6 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                     fillPopup(popup, obj.getClass(), myObj);
                 else
                     fillPopup(popup, obj.getClass().getInterfaces()[0], myObj);
-
                 sep = new JSeparator();
                 popup.add(sep);
 

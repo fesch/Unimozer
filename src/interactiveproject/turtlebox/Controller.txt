@@ -1,0 +1,40 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package interactiveproject.turtlebox;
+
+public class Controller {
+    private TurtleBox turtleBox;
+    
+    public void setTurtleBox(TurtleBox pTurtleBox)
+    {
+        turtleBox = pTurtleBox;
+    }
+
+    public void drawHouse()
+    {
+        //Exemple qui dessine une maison
+        turtleBox.penDown();
+        turtleBox.clear();
+        turtleBox.home();
+        turtleBox.forward(100);
+        turtleBox.right(135);
+        turtleBox.forward(Math.sqrt(2)*100);
+        turtleBox.left(135);
+        turtleBox.forward(100);
+        turtleBox.left(45);
+        turtleBox.forward(Math.sqrt(2)*50);
+        turtleBox.left(90);
+        turtleBox.forward(Math.sqrt(2)*50);
+        turtleBox.left(135);
+        turtleBox.forward(100);
+        turtleBox.right(135);
+        turtleBox.forward(Math.sqrt(2)*100);
+        turtleBox.left(135);
+        turtleBox.forward(100);
+    }
+    
+    
+}

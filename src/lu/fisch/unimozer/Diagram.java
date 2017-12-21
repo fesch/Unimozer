@@ -1996,10 +1996,11 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
             }
             
             //automatically import the interactable class of the interactive project
-            if(interactiveProject!=null)
+            //Obseolete??
+            /*if(interactiveProject!=null)
             {
                 mc.addImport("interactiveproject.knightsimulator.player");
-            }
+            }*/
 
             // add JavaDOC Comments
             if(ce.genDoc())

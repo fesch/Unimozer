@@ -201,8 +201,8 @@ public class InteractiveProject {
                 Object mainObject = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
                 if(type.equals("controller-based"))
                 {
-                    Method method = mainObject.getClass().getMethod("getInterfaceObject",null);
-                    interfaceObject = method.invoke(mainObject,null);
+                    Method method = mainObject.getClass().getMethod("getInterfaceObject");
+                    interfaceObject = method.invoke(mainObject);
                     
                     objectizer.addInteractiveObject(interfaceAttribute, interfaceObject);
                     studentObject= Runtime5.getInstance().getInstance("Controller", "new " + myPackage + ".Controller()");
@@ -214,8 +214,8 @@ public class InteractiveProject {
                 }
                 else if(type.equals("model-based"))
                 {
-                    Method method = mainObject.getClass().getMethod("getStudentObject",null);
-                    studentObject = method.invoke(mainObject,null);
+                    Method method = mainObject.getClass().getMethod("getStudentObject");
+                    studentObject = method.invoke(mainObject);
                     objectizer.addObject(studentClass.getShortName(), studentObject);
                 }
                 
