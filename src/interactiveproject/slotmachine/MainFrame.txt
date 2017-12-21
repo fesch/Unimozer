@@ -26,18 +26,23 @@ public class MainFrame extends javax.swing.JFrame {
     private Reel reel2 = new Reel(3, 6);
     private Reel reel3 = new Reel(0, 6);
 
+    private int reel1Number = 0;
+    private int reel2Number = 0;
+    private int reel3Number = 0;
+        
     //sizes for the Panel
-    double ratioWidth = 0.173;
-    double ratioHeight = 0.273;
+    private double ratioWidth = 0.173;
+    private double ratioHeight = 0.273;
     
     
     //To see if error messages in updateView have already been shown
-    boolean messageError = false;
-    boolean creditError = false;
+    private boolean messageError = false;
+    private boolean creditError = false;
+    private boolean reelError = false;
 
     //link to the students implementation
-    Object studentObject;
-    Class studentClass;
+    private Object studentObject;
+    private Class studentClass;
 
     
     
@@ -46,6 +51,15 @@ public class MainFrame extends javax.swing.JFrame {
 
     private int timeCounter = 0;
     
+    private Timer checkTimer = new Timer(50, new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            getReels();
+            reel1.setReel(reel1Number);
+            reel2.setReel(reel2Number);
+            reel3.setReel(reel3Number);
+            updateView();
+        }
+    });
     
     private Timer timer = new Timer(10, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -53,7 +67,7 @@ public class MainFrame extends javax.swing.JFrame {
             if (timeCounter > transitionTime+100) {
                 timer.stop();
                 timeCounter = 0;
-                
+                checkTimer.start();
                 try {
                     Method method;
                     method = studentClass.getMethod("hasWon");
@@ -73,6 +87,7 @@ public class MainFrame extends javax.swing.JFrame {
     /**
      * Creates new form MainFrame
      */
+    
     public MainFrame() {
         this.setResizable(false);
         try {
@@ -83,7 +98,7 @@ public class MainFrame extends javax.swing.JFrame {
 
             studentClass = Class.forName("interactiveproject.slotmachine.SlotMachine");
             studentObject = studentClass.newInstance();
-
+            checkTimer.start();
             updateView();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -97,7 +112,6 @@ public class MainFrame extends javax.swing.JFrame {
     
     public void updateView() {
         Method method;
-        
         try {
             method = studentClass.getMethod("getMessage");
             Object o = method.invoke(studentObject);
@@ -132,19 +146,47 @@ public class MainFrame extends javax.swing.JFrame {
         reelPanel3.repaint();
     }
     
-    public Object getStudentObject()
+    public boolean getReels()
     {
-        return studentObject;
-    }
+        boolean working = true;
+        Method method;
+        try {
+            method = studentClass.getMethod("getReel1");
+            reel1Number = (int) method.invoke(studentObject);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            if(!reelError)
+                System.out.println("La méthode public int getReel1() n'existe pas dans SlotMachine");
+            working = false;
+        }
 
+        try {
+            method = studentClass.getMethod("getReel2");
+            reel2Number = (int) method.invoke(studentObject);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            if(!reelError)
+                System.out.println("La méthode int getReel2() n'existe pas dans SlotMachine");
+            working = false;
+        }
+
+        try {
+            method = studentClass.getMethod("getReel3");
+            reel3Number = (int) method.invoke(studentObject);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            if(!reelError)
+                System.out.println("La méthode int getReel3() n'existe pas dans SlotMachine");
+            working = false;
+        }
+        if(!working)
+            reelError = true;
+        return working;
+    }
+    
     public void pullArm()
     {
         if(timer.isRunning())
             return;
         Method method;
-        int reel1Number = 0;
-        int reel2Number = 0;
-        int reel3Number = 0;
+        
 
         boolean enoughCredit = false;
         
@@ -158,38 +200,29 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
 
-        try {
-            method = studentClass.getMethod("getReel1");
-            reel1Number = (int) method.invoke(studentObject);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            System.out.println("La méthode public int getReel1() n'existe pas dans SlotMachine");
+        if(!getReels())
             return;
-        }
-
-        try {
-            method = studentClass.getMethod("getReel2");
-            reel2Number = (int) method.invoke(studentObject);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            System.out.println("La méthode int getReel2() n'existe pas dans SlotMachine");
-            return;
-        }
-
-        try {
-            method = studentClass.getMethod("getReel3");
-            reel3Number = (int) method.invoke(studentObject);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            System.out.println("La méthode int getReel3() n'existe pas dans SlotMachine");
-            return;
-        }
-
-        if (enoughCredit) {
+        
+        if (enoughCredit) 
+        {
+            checkTimer.stop();
             reel1.goToDestination(reel1Number, transitionTime);
             reel2.goToDestination(reel2Number, transitionTime);
             reel3.goToDestination(reel3Number, transitionTime);
             timer.start();
+            
         }
     }
 
+    public Object getStudentObject() {
+        return studentObject;
+    }
+
+    public Class getStudentClass() {
+        return studentClass;
+    }
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -221,33 +254,33 @@ public class MainFrame extends javax.swing.JFrame {
         reelPanel2.setLayout(reelPanel2Layout);
         reelPanel2Layout.setHorizontalGroup(
             reelPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 156, Short.MAX_VALUE)
+            .addGap(0, 71, Short.MAX_VALUE)
         );
         reelPanel2Layout.setVerticalGroup(
             reelPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 144, Short.MAX_VALUE)
+            .addGap(0, 76, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout reelPanel1Layout = new javax.swing.GroupLayout(reelPanel1);
         reelPanel1.setLayout(reelPanel1Layout);
         reelPanel1Layout.setHorizontalGroup(
             reelPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 152, Short.MAX_VALUE)
+            .addGap(0, 66, Short.MAX_VALUE)
         );
         reelPanel1Layout.setVerticalGroup(
             reelPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 144, Short.MAX_VALUE)
+            .addGap(0, 76, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout reelPanel3Layout = new javax.swing.GroupLayout(reelPanel3);
         reelPanel3.setLayout(reelPanel3Layout);
         reelPanel3Layout.setHorizontalGroup(
             reelPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 159, Short.MAX_VALUE)
+            .addGap(0, 66, Short.MAX_VALUE)
         );
         reelPanel3Layout.setVerticalGroup(
             reelPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 144, Short.MAX_VALUE)
+            .addGap(0, 76, Short.MAX_VALUE)
         );
 
         armPanel.setOpaque(false);
@@ -261,11 +294,11 @@ public class MainFrame extends javax.swing.JFrame {
         armPanel.setLayout(armPanelLayout);
         armPanelLayout.setHorizontalGroup(
             armPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 57, Short.MAX_VALUE)
+            .addGap(0, 38, Short.MAX_VALUE)
         );
         armPanelLayout.setVerticalGroup(
             armPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 405, Short.MAX_VALUE)
+            .addGap(0, 210, Short.MAX_VALUE)
         );
 
         creditLabel.setBackground(new java.awt.Color(153, 153, 0));
@@ -283,49 +316,59 @@ public class MainFrame extends javax.swing.JFrame {
         drawPanel1Layout.setHorizontalGroup(
             drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(drawPanel1Layout.createSequentialGroup()
-                .addGap(169, 169, 169)
-                .addGroup(drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(drawPanel1Layout.createSequentialGroup()
+                        .addGap(260, 260, 260)
+                        .addComponent(reelPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(reelPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(reelPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addComponent(reelPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(creditLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(messageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(61, 61, 61)
-                .addComponent(armPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(59, Short.MAX_VALUE))
+                        .addGap(70, 70, 70)
+                        .addComponent(armPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(drawPanel1Layout.createSequentialGroup()
+                        .addGap(93, 93, 93)
+                        .addComponent(messageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(68, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, drawPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(creditLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(112, 112, 112))
         );
         drawPanel1Layout.setVerticalGroup(
             drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, drawPanel1Layout.createSequentialGroup()
-                .addGap(55, 55, 55)
-                .addComponent(armPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(55, 55, 55))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, drawPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(creditLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(drawPanel1Layout.createSequentialGroup()
                 .addGroup(drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(reelPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(reelPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(reelPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(messageLabel)
-                .addGap(70, 70, 70))
+                    .addGroup(drawPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(creditLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(drawPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(reelPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(reelPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(reelPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(203, 203, 203))
+                    .addGroup(drawPanel1Layout.createSequentialGroup()
+                        .addGap(190, 190, 190)
+                        .addComponent(armPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)))
+                .addComponent(messageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(drawPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(drawPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 116, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(drawPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(drawPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -364,7 +407,6 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */

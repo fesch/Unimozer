@@ -36,7 +36,7 @@ public class ReelPanel extends javax.swing.JPanel {
     
     public void paintComponent(Graphics g)
     {
-        g.setColor(Color.red);
+        g.setColor(Color.white);
         g.fillRect(0, 0, getWidth(), getHeight());
         if(reel!=null)
             reel.draw(g, getWidth(), getHeight());

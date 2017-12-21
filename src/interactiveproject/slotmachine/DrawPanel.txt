@@ -27,7 +27,7 @@ public class DrawPanel extends javax.swing.JPanel {
     public DrawPanel() {
         initComponents();
         try {
-            image = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/slotmachine/images/slotmachine.jpg"));
+            image = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/slotmachine/images/slotmachine.png"));
         } catch (IOException ex) {
             Logger.getLogger(DrawPanel.class.getName()).log(Level.SEVERE, null, ex);
         }

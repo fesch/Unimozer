@@ -18,10 +18,23 @@
                         <file type="student-class">Controller</file>
 		</files>
 	</project>
+        <project id="Bank Account">
+                <type>model-based</type>
+		<name>Bank Account</name>
+                <student-class>BankAccount</student-class>
+		<path>/interactiveproject/bankaccount/</path>
+		<main>MainFrame</main>
+                <package>interactiveproject.bankaccount</package>
+		<files>
+			<file>MainFrame</file>
+			<file>bankNotePanel</file>
+                        <file type="student-class">Account</file>
+		</files>
+	</project>
         <project id="Slot Machine">
                 <type>model-based</type>
 		<name>Slot Machine</name>
-                <student-class> SlotMachine </student-class>
+                <student-class>SlotMachine</student-class>
 		<path>/interactiveproject/slotmachine/</path>
 		<main>MainFrame</main>
                 <package>interactiveproject.slotmachine</package>

@@ -12,4 +12,16 @@ public class Controller {
     {
         player = pPlayer;
     }
+    
+    public void level1Solution()
+    {
+        //Cette méthode sert à avancer 3 fois en total
+        player.move();
+        player.move();
+        player.move();
+        
+        //Si le joueur est sur un diamand, il le receuille
+        if(player.isAtGem())
+            player.collect();
+    }
 }

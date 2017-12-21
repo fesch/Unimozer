@@ -120,10 +120,20 @@ Used third party components licenses
             CC0
             https://openclipart.org/detail/181306/bananas
 
-    * interactiveproject.spaceSimulator.images
+    * interactiveproject.spacesimulator.images
         *ship.png
             CC0
             https://openclipart.org/detail/289987/spaceship
         *enemy.png
             CC0
             https://openclipart.org/detail/10330/ufo
+    * interactiveproject.bankaccount
+        *10euro.jpg
+            CC0
+            https://pixabay.com/en/euro-10-money-banknote-bills-rich-2388626/
+        *20euro.jpg
+            CC0
+            https://pixabay.com/en/euro-money-banknote-currency-1118082/
+        *50euro.jpg
+            CC0
+            https://pixabay.com/en/dollar-bill-50-euro-money-banknote-166309/

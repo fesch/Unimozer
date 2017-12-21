@@ -85,6 +85,11 @@ public class Reel {
         
     }
     
+    public void setReel(int reel)
+    {
+        this.currentNumber = reel;
+    }
+    
     public void draw(Graphics g, int width, int height)
     {
         g.drawImage(images[currentNumber], 0, 0, width, height, null);

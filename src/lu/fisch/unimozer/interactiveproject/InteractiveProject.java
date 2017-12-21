@@ -151,7 +151,7 @@ public class InteractiveProject {
                 if(!open || !nl.item(i).getTextContent().equals(studentClassName))
                 {
                     String filePath = path + nl.item(i).getTextContent()+".txt";
-                    System.out.println(filePath);
+                    //System.out.println(filePath);
                     InputStream inStream =  getClass().getResourceAsStream(filePath);
                     String str = "";
                     StringBuffer strBuffer = new StringBuffer();
@@ -197,6 +197,7 @@ public class InteractiveProject {
                 Runtime5.getInstance().load(myPackage + "." + main);
                 //Class.forName(myPackage + "." + main);
                 //Object mainObject = Class.forName(myPackage + "." + main).newInstance();
+                
                 Object mainObject = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
                 if(type.equals("controller-based"))
                 {
@@ -206,7 +207,7 @@ public class InteractiveProject {
                     objectizer.addInteractiveObject(interfaceAttribute, interfaceObject);
                     studentObject= Runtime5.getInstance().getInstance("Controller", "new " + myPackage + ".Controller()");
                     
-                    System.out.println(interfaceClass.getShortName());
+                    //System.out.println(interfaceClass.getShortName());
                     method = studentObject.getClass().getMethod("set"+interfaceClass.getShortName(), Runtime5.getInstance().load(myPackage+"."+interfaceClass.getShortName()));
                     interfaceObject = method.invoke(studentObject, interfaceObject);
                     objectizer.addObject("controller", studentObject);

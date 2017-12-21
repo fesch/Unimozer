@@ -16,25 +16,55 @@ import javax.swing.Timer;
  */
 public class MainFrame extends javax.swing.JFrame {
     public RealPlayer player;
-    private Board board = new Board();
+    private int level = 1;
+    private int maxLevels = 5;
+    private Board board;
     private Timer repaintTimer;
+    private boolean debugMode = false;
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
+        levelSelect.removeAllItems();
+        for(int i = 1; i<=maxLevels;i++)
+        {
+            levelSelect.addItem("Level " + i);
+        }
+        
+        board = new Board(level);
         player = board.player;
         this.repaintTimer = new Timer(300, repainter);
         repaintTimer.start();
         drawPanel.setBoard(board);
+        
+        
+        if(!debugMode)
+        {
+            turnButton.setVisible(false);
+            moveButton.setVisible(false);
+            attackButton.setVisible(false);
+            collectButton.setVisible(false);
+        }
         //this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     ActionListener repainter = new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           drawPanel.repaint();
+          if(board.isOver())
+          {
+            repaintTimer.stop();
+          }
         }
     };
     
+    
+    public void reset()
+    {
+        level = levelSelect.getSelectedIndex()+1;
+        board.reset(level);
+        repaintTimer.start();
+    }
     public Object getInterfaceObject()
     {
         return player;
@@ -49,41 +79,69 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         drawPanel = new interactiveproject.spacesimulator.DrawPanel();
+        turnButton = new javax.swing.JButton();
+        attackButton = new javax.swing.JButton();
+        moveButton = new javax.swing.JButton();
+        resetButton = new javax.swing.JButton();
+        collectButton = new javax.swing.JButton();
+        levelSelect = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Space Simulator");
 
         javax.swing.GroupLayout drawPanelLayout = new javax.swing.GroupLayout(drawPanel);
         drawPanel.setLayout(drawPanelLayout);
         drawPanelLayout.setHorizontalGroup(
             drawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         drawPanelLayout.setVerticalGroup(
             drawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 273, Short.MAX_VALUE)
+            .addGap(0, 374, Short.MAX_VALUE)
         );
 
-        jButton1.setText("turn");
+        turnButton.setText("turn");
+        turnButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                turnButtonActionPerformed(evt);
+            }
+        });
+
+        attackButton.setText("attack");
+        attackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                attackButtonActionPerformed(evt);
+            }
+        });
+
+        moveButton.setText("move");
+        moveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveButtonActionPerformed(evt);
+            }
+        });
+
+        resetButton.setText("Reset");
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
+
+        collectButton.setText("collect");
+        collectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                collectButtonActionPerformed(evt);
+            }
+        });
+
+        levelSelect.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jButton1.setText("Load Level");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("attack");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("move");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
             }
         });
 
@@ -93,21 +151,33 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(drawPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(levelSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
+                .addComponent(collectButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(turnButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
-                .addGap(24, 24, 24))
+                .addComponent(moveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(attackButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resetButton)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(turnButton)
+                    .addComponent(attackButton)
+                    .addComponent(moveButton)
+                    .addComponent(resetButton)
+                    .addComponent(collectButton)
+                    .addComponent(levelSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(drawPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -115,17 +185,29 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void turnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_turnButtonActionPerformed
         player.turnClockwise();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_turnButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void attackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attackButtonActionPerformed
         player.attack();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_attackButtonActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void moveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveButtonActionPerformed
         player.move();
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_moveButtonActionPerformed
+
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        reset();
+    }//GEN-LAST:event_resetButtonActionPerformed
+
+    private void collectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collectButtonActionPerformed
+        player.collect();
+    }//GEN-LAST:event_collectButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        reset();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -163,9 +245,13 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton attackButton;
+    private javax.swing.JButton collectButton;
     private interactiveproject.spacesimulator.DrawPanel drawPanel;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JComboBox<String> levelSelect;
+    private javax.swing.JButton moveButton;
+    private javax.swing.JButton resetButton;
+    private javax.swing.JButton turnButton;
     // End of variables declaration//GEN-END:variables
 }
