@@ -2102,7 +2102,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 Area area = grille.findFreeAreaFor(myClass);
                 // set the class to this position
                 if(area!=null)
-                myClass.setPosition(area.getPosition());
+                    myClass.setPosition(area.getPosition());
                 /**/
             }
             //main.setSpace(myClass);
@@ -3001,6 +3001,11 @@ Logger.getInstance().log("Diagram repainted ...");
     public MyClass getClass(String className)
     {
         return classes.get(className);
+    }
+    
+    public MyClass getClass(int index)
+    {
+        return classes.get(classes.keySet().toArray()[index]);
     }
 
     /**

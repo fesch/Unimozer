@@ -6,6 +6,7 @@
 package lu.fisch.unimozer.interactiveproject;
 
 import bsh.EvalError;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -145,6 +146,7 @@ public class InteractiveProject {
                 path = "/"+path+"/";
             }
             //create a MyClass for each File and add to Diagram
+            boolean first = true;
             for (int i = 0; i < nl.getLength(); i++) {
                 
                 //when opening a project, don't load the student's class, as it is read from the project that is opened
@@ -174,12 +176,23 @@ public class InteractiveProject {
                         myClass.setDisplayUML(false);
                         myClass.setDisplaySource(false);
                     }
-
+                    
                     diagram.addClass(myClass);
 
                     //add classes to interactiveProject
                     classes.add(myPackage+"."+nl.item(i).getTextContent());
                 }
+            }
+            
+            // reposition all classes
+            diagram.repaint();
+            for (int i = 0; i < diagram.getClassCount(); i++) {
+                MyClass myc = diagram.getClass(i);
+                Point pos = myc.getPosition();
+                pos.x+=50;
+                pos.y+=50;
+                myc.setPosition(pos);
+                
             }
         } catch (XPathExpressionException ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
