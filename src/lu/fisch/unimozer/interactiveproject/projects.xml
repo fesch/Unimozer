@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projects>
+	<project id="Space Simulator">
+                <type>controller-based</type>
+		<name>Space Simulator</name>
+		<path>/interactiveproject/spacesimulator/</path>
+		<interface-class>Player</interface-class>
+		<real-class>RealPlayer</real-class>
+		<main>MainFrame</main>
+		<interface-attribute>player</interface-attribute>
+                <package>interactiveproject.spacesimulator</package>
+		<files>
+			<file>Player</file>
+			<file>RealPlayer</file>
+			<file>Board</file>
+			<file>MainFrame</file>
+			<file>DrawPanel</file>
+                        <file type="student-class">Controller</file>
+		</files>
+	</project>
+        <project id="Turtle Box">
+                <type>controller-based</type>
+		<name>Turtle Box</name>
+		<path>/interactiveproject/turtlebox/</path>
+		<interface-class>TurtleBox</interface-class>
+		<real-class>RealTurtleBox</real-class>
+		<main>RealTurtleBox</main>
+		<interface-attribute>turtleBox</interface-attribute>
+                <package>interactiveproject.turtlebox</package>
+		<files>
+			<file>RealTurtleBox</file>
+                        <file>TurtleBox</file>
+                        <file type="student-class">Controller</file>
+		</files>
+	</project>
+        <project id="Bank Account">
+                <type>model-based</type>
+		<name>Bank Account</name>
+                <student-class>BankAccount</student-class>
+		<path>/interactiveproject/bankaccount/</path>
+		<main>MainFrame</main>
+                <package>interactiveproject.bankaccount</package>
+		<files>
+			<file>MainFrame</file>
+			<file>bankNotePanel</file>
+                        <file type="student-class">Account</file>
+		</files>
+	</project>
+        <project id="Slot Machine">
+                <type>model-based</type>
+		<name>Slot Machine</name>
+                <student-class>SlotMachine</student-class>
+		<path>/interactiveproject/slotmachine/</path>
+		<main>MainFrame</main>
+                <package>interactiveproject.slotmachine</package>
+		<files>
+			<file>Reel</file>
+			<file>ReelPanel</file>
+			<file>MainFrame</file>
+			<file>DrawPanel</file>
+                        <file type="student-class">SlotMachine</file>
+		</files>
+	</project>
+</projects>

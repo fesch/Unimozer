@@ -34,7 +34,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.InputMap;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -47,6 +50,7 @@ import lu.fisch.unimozer.compilation.CompilationError;
 import lu.fisch.unimozer.console.Console;
 import lu.fisch.unimozer.dialogs.BootLogReport;
 import lu.fisch.unimozer.dialogs.JSliderOnJOptionPane;
+import lu.fisch.unimozer.dialogs.NewInteractiveProjectDialog;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaUIBackgroundDrawer;
 
 /**
@@ -534,6 +538,7 @@ public class Mainform extends JFrame
         jMenuBar = new javax.swing.JMenuBar();
         mFile = new javax.swing.JMenu();
         miNew = new javax.swing.JMenuItem();
+        miNewVisualizer = new javax.swing.JMenuItem();
         miOpen = new javax.swing.JMenuItem();
         miAddFile = new javax.swing.JMenuItem();
         miSave = new javax.swing.JMenuItem();
@@ -1087,6 +1092,14 @@ public class Mainform extends JFrame
             }
         });
         mFile.add(miNew);
+
+        miNewVisualizer.setText("New Interactive Project ...");
+        miNewVisualizer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miNewVisualizerActionPerformed(evt);
+            }
+        });
+        mFile.add(miNewVisualizer);
 
         miOpen.setText("Open Project ...");
         miOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -1738,12 +1751,14 @@ public class Mainform extends JFrame
 
     private void speOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_speOpenActionPerformed
     {//GEN-HEADEREND:event_speOpenActionPerformed
+        diagram.resetInteractiveProject();
         diagram.openUnimozer();
         setTitleNew();
 }//GEN-LAST:event_speOpenActionPerformed
 
     private void speNewActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_speNewActionPerformed
     {//GEN-HEADEREND:event_speNewActionPerformed
+        diagram.resetInteractiveProject();
         diagram.newUnimozer();
         setTitleNew();
     }//GEN-LAST:event_speNewActionPerformed
@@ -1756,12 +1771,14 @@ public class Mainform extends JFrame
 
     private void miNewActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miNewActionPerformed
     {//GEN-HEADEREND:event_miNewActionPerformed
+        diagram.resetInteractiveProject();
         diagram.newUnimozer();
         setTitleNew();
     }//GEN-LAST:event_miNewActionPerformed
 
     private void miOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miOpenActionPerformed
     {//GEN-HEADEREND:event_miOpenActionPerformed
+        diagram.resetInteractiveProject();
         diagram.openUnimozer();
         setTitleNew();
     }//GEN-LAST:event_miOpenActionPerformed
@@ -1860,7 +1877,13 @@ public class Mainform extends JFrame
 
     private void miRunFastActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miRunFastActionPerformed
     {//GEN-HEADEREND:event_miRunFastActionPerformed
-        diagram.runFast();
+        if(diagram.getInteractiveProject()==null)
+            diagram.runFast();
+        else
+        {
+            diagram.getInteractiveProject().setObjectizer(objectizer);
+            diagram.getInteractiveProject().runProject();
+        }
     }//GEN-LAST:event_miRunFastActionPerformed
 
     private void speCleanActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_speCleanActionPerformed
@@ -2297,12 +2320,24 @@ public class Mainform extends JFrame
     }//GEN-LAST:event_formWindowActivated
 
     private void speRunFastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speRunFastActionPerformed
-        diagram.runFast();
+        if(diagram.getInteractiveProject()==null)
+            diagram.runFast();
+        else
+        {
+            diagram.getInteractiveProject().setObjectizer(objectizer);
+            diagram.getInteractiveProject().runProject();
+        }
     }//GEN-LAST:event_speRunFastActionPerformed
 
     private void miRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRunActionPerformed
         diagram.run();
     }//GEN-LAST:event_miRunActionPerformed
+
+    private void miNewVisualizerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNewVisualizerActionPerformed
+        diagram.resetInteractiveProject();
+        NewInteractiveProjectDialog dg = new NewInteractiveProjectDialog(this, rootPaneCheckingEnabled, diagram);
+        dg.setVisible(true);
+    }//GEN-LAST:event_miNewVisualizerActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2364,6 +2399,7 @@ public class Mainform extends JFrame
     private javax.swing.JMenuItem miJavaDoc;
     private javax.swing.JMenuItem miMake;
     private javax.swing.JMenuItem miNew;
+    private javax.swing.JMenuItem miNewVisualizer;
     private javax.swing.JMenuItem miOpen;
     private javax.swing.JMenuItem miPaste;
     private javax.swing.JMenuItem miPrintDiagram;

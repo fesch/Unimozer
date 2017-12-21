@@ -119,6 +119,7 @@ public class MyClass implements Space
     private boolean isUML = true;
     private boolean isInterface = false;
     private boolean displaySource = true;
+    private boolean displayUML = true;
 
     private String packagename = Package.DEFAULT;
     
@@ -315,6 +316,10 @@ public class MyClass implements Space
         this.displaySource = displaySource;
     }
 
+    public void setDisplayUML(boolean displayUML) {
+        this.displayUML = displayUML;
+    }
+    
     public boolean hasCyclicInheritance()
     {
         if (this.getExtendsClass().trim().equals("")) return false;
@@ -578,6 +583,10 @@ public class MyClass implements Space
         else return new StringList();
     }
 
+    public boolean isDisplayUML() {
+        return displayUML;
+    }
+    
     public String getShortName()
     {
         if(classes.size()>0) 
@@ -1262,205 +1271,210 @@ public class MyClass implements Space
 
     public void draw(Graphics graphics, boolean showFields, boolean showMethods, int mode)
     {
-        // save state
-        boolean compiled = this.isCompiled();
-        boolean selected = this.selected;
-        Element selEle = this.getSelected();
-        Point position = (Point) this.getPosition().clone();
-        
-        // reset
-        this.deselectAll();
-        this.setCompiled(false);
-        this.selected = false;
-        this.setPosition(new Point(0,0));
-        
-        // selected depending on the mode
-        if(mode==1)
+        if(displayUML)
         {
-            this.selected = true;
-            for(int i=0;i<classes.size();i++)
-                { Element ele = classes.get(i); ele.setSelected(true); }
+            // save state
+            boolean compiled = this.isCompiled();
+            boolean selected = this.selected;
+            Element selEle = this.getSelected();
+            Point position = (Point) this.getPosition().clone();
+
+            // reset
+            this.deselectAll();
+            this.setCompiled(false);
+            this.selected = false;
+            this.setPosition(new Point(0,0));
+
+            // selected depending on the mode
+            if(mode==1)
+            {
+                this.selected = true;
+                for(int i=0;i<classes.size();i++)
+                    { Element ele = classes.get(i); ele.setSelected(true); }
+            }
+            else if (mode==2)
+            {
+                this.setCompiled(true);
+                this.setPosition(new Point(2,2));
+            }
+
+            draw(graphics,showFields,showMethods);
+
+            // reset
+            this.deselectAll();
+            this.setCompiled(false);
+            this.selected = false;
+
+
+            // restore state
+            this.setCompiled(compiled);
+            this.selected = selected;
+            if (selEle!=null) selEle.setSelected(true);
+            this.setPosition(position);
         }
-        else if (mode==2)
-        {
-            this.setCompiled(true);
-            this.setPosition(new Point(2,2));
-        }
-        
-        draw(graphics,showFields,showMethods);
-        
-        // reset
-        this.deselectAll();
-        this.setCompiled(false);
-        this.selected = false;
-        
-        
-        // restore state
-        this.setCompiled(compiled);
-        this.selected = selected;
-        if (selEle!=null) selEle.setSelected(true);
-        this.setPosition(position);
     }
 
     public void draw(Graphics graphics, boolean showFields, boolean showMethods)
     {
-        Graphics2D g = (Graphics2D) graphics;
-        Color drawColor = new Color(255,245,235);
-        if(!isValidCode())
+        if(displayUML)
         {
-            drawColor = Color.RED;
-        }
-        else if(selected==true)
-        {
-            drawColor = Color.YELLOW;
-        }
-        else if(isCompiled()==true)
-        {
-            drawColor = new Color(235,255,235);
-        }
-
-        boolean cleanIt=false;
-        if(!isValidCode() && classes.isEmpty())
-        {
-            cleanIt=true;
-            Element ele = new Element(Element.CLASS);
-            ele.setName("public class "+internalName);
-            ele.setUmlName(internalName);
-            ele.setUML(isUML);
-            classes.add(ele);
-        }
-
-        // inspect the class
-
-        // dertermine ervery values
-        int totalHeight = 0;
-        int maxWidth = 0;
-        int classesHeight = 0*PAD;
-        int fieldsHeight = 0*PAD;
-        int methodsHeight = 0*PAD;
-
-        if(isInterface())
-        {
-            Element ele = new Element(Element.INTERFACE);
-            ele.setUmlName("<interface>");
-            ele.setName("<interface>");
-            classes.add(0, ele);
-        }
-
-        for(int i=0;i<classes.size();i++)
-        //for(Element ele : classes)
-        {
-            Element ele = classes.get(i);
-            
-            //int fontStyle = g.getFont().getStyle();
-            //if (ModifierSet.isAbstract(getModifiers())) g.setFont(new Font(g.getFont().getFontName(),Font.ITALIC,g.getFont().getSize()));
-            g.setFont(new Font(g.getFont().getFamily(),ele.getFontStyle(),Unimozer.DRAW_FONT_SIZE));
-            int h = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getHeight()+PAD;
-            int w = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getWidth()+Element.ICONSIZE;
-            //g.setFont(new Font(g.getFont().getFontName(),fontStyle,g.getFont().getSize()));
-            g.setFont(new Font(g.getFont().getFamily(),Font.PLAIN,Unimozer.DRAW_FONT_SIZE));
-
-            ele.setHeight(h);
-            ele.setPosition(new Point(position.x,position.y+totalHeight));
-            if (w>maxWidth) maxWidth=w;
-            classesHeight+=h;
-            totalHeight+=h;
-        }
-        if(showFields)
-        {
-            totalHeight+=0*PAD;
-            for(int i=0;i<fields.size();i++)                
-            //for(Element ele : fields)
+            Graphics2D g = (Graphics2D) graphics;
+            Color drawColor = new Color(255,245,235);
+            if(!isValidCode())
             {
-                Element ele = fields.get(i);
+                drawColor = Color.RED;
+            }
+            else if(selected==true)
+            {
+                drawColor = Color.YELLOW;
+            }
+            else if(isCompiled()==true)
+            {
+                drawColor = new Color(235,255,235);
+            }
+
+            boolean cleanIt=false;
+            if(!isValidCode() && classes.isEmpty())
+            {
+                cleanIt=true;
+                Element ele = new Element(Element.CLASS);
+                ele.setName("public class "+internalName);
+                ele.setUmlName(internalName);
+                ele.setUML(isUML);
+                classes.add(ele);
+            }
+
+            // inspect the class
+
+            // dertermine ervery values
+            int totalHeight = 0;
+            int maxWidth = 0;
+            int classesHeight = 0*PAD;
+            int fieldsHeight = 0*PAD;
+            int methodsHeight = 0*PAD;
+
+            if(isInterface())
+            {
+                Element ele = new Element(Element.INTERFACE);
+                ele.setUmlName("<interface>");
+                ele.setName("<interface>");
+                classes.add(0, ele);
+            }
+
+            for(int i=0;i<classes.size();i++)
+            //for(Element ele : classes)
+            {
+                Element ele = classes.get(i);
+
+                //int fontStyle = g.getFont().getStyle();
+                //if (ModifierSet.isAbstract(getModifiers())) g.setFont(new Font(g.getFont().getFontName(),Font.ITALIC,g.getFont().getSize()));
                 g.setFont(new Font(g.getFont().getFamily(),ele.getFontStyle(),Unimozer.DRAW_FONT_SIZE));
                 int h = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getHeight()+PAD;
                 int w = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getWidth()+Element.ICONSIZE;
+                //g.setFont(new Font(g.getFont().getFontName(),fontStyle,g.getFont().getSize()));
                 g.setFont(new Font(g.getFont().getFamily(),Font.PLAIN,Unimozer.DRAW_FONT_SIZE));
+
                 ele.setHeight(h);
                 ele.setPosition(new Point(position.x,position.y+totalHeight));
                 if (w>maxWidth) maxWidth=w;
-                fieldsHeight+=h;
+                classesHeight+=h;
                 totalHeight+=h;
             }
-        }
-        if(showMethods)
-        {
-            totalHeight+=0*PAD;
-            if(fieldsHeight==0) totalHeight+= fieldsHeight = PAD;
-            for(int i=0;i<methods.size();i++)
-            //for(Element ele : methods)
+            if(showFields)
             {
-                Element ele = methods.get(i);
-                g.setFont(new Font(g.getFont().getFamily(),ele.getFontStyle(),Unimozer.DRAW_FONT_SIZE));
-                int h = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getHeight()+PAD;
-                int w = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getWidth()+Element.ICONSIZE;
-                g.setFont(new Font(g.getFont().getFamily(),Font.PLAIN,Unimozer.DRAW_FONT_SIZE));
-                ele.setHeight(h);
-                ele.setPosition(new Point(position.x,position.y+totalHeight));
-                if (w>maxWidth) maxWidth=w;
-                methodsHeight+=h;
-                totalHeight+=h;
+                totalHeight+=0*PAD;
+                for(int i=0;i<fields.size();i++)                
+                //for(Element ele : fields)
+                {
+                    Element ele = fields.get(i);
+                    g.setFont(new Font(g.getFont().getFamily(),ele.getFontStyle(),Unimozer.DRAW_FONT_SIZE));
+                    int h = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getHeight()+PAD;
+                    int w = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getWidth()+Element.ICONSIZE;
+                    g.setFont(new Font(g.getFont().getFamily(),Font.PLAIN,Unimozer.DRAW_FONT_SIZE));
+                    ele.setHeight(h);
+                    ele.setPosition(new Point(position.x,position.y+totalHeight));
+                    if (w>maxWidth) maxWidth=w;
+                    fieldsHeight+=h;
+                    totalHeight+=h;
+                }
             }
-            totalHeight+=0;
-            if(methodsHeight==0) totalHeight+= methodsHeight = PAD;
+            if(showMethods)
+            {
+                totalHeight+=0*PAD;
+                if(fieldsHeight==0) totalHeight+= fieldsHeight = PAD;
+                for(int i=0;i<methods.size();i++)
+                //for(Element ele : methods)
+                {
+                    Element ele = methods.get(i);
+                    g.setFont(new Font(g.getFont().getFamily(),ele.getFontStyle(),Unimozer.DRAW_FONT_SIZE));
+                    int h = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getHeight()+PAD;
+                    int w = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getWidth()+Element.ICONSIZE;
+                    g.setFont(new Font(g.getFont().getFamily(),Font.PLAIN,Unimozer.DRAW_FONT_SIZE));
+                    ele.setHeight(h);
+                    ele.setPosition(new Point(position.x,position.y+totalHeight));
+                    if (w>maxWidth) maxWidth=w;
+                    methodsHeight+=h;
+                    totalHeight+=h;
+                }
+                totalHeight+=0;
+                if(methodsHeight==0) totalHeight+= methodsHeight = PAD;
+            }
+
+            this.width=maxWidth+2*PAD;
+            this.height=totalHeight;
+
+            // set widths
+            for(int i=0;i<classes.size();i++) //for(Element ele : classes) 
+                { classes.get(i).setWidth(this.getWidth()); }
+            for(int i=0;i<fields.size();i++) //if(showFields) for(Element ele : fields) 
+                { fields.get(i).setWidth(this.getWidth()); }
+            for(int i=0;i<methods.size();i++) //if(showMethods)for(Element ele : methods) 
+                { methods.get(i).setWidth(this.getWidth()); }
+
+            // draw background
+            g.setColor(drawColor);
+            g.fillRect(position.x,position.y,this.getWidth(), this.getHeight());
+
+            g.setColor(drawColor);
+
+            for(int i=0;i<classes.size();i++) //for(Element ele : classes) 
+                { classes.get(i).draw(g); }
+            if(showFields) for(int i=0;i<fields.size();i++) //for(Element ele : fields) 
+                { fields.get(i).draw(g); }
+            if(showMethods)for(int i=0;i<methods.size();i++) //for(Element ele : methods) 
+                { methods.get(i).draw(g); }
+
+            // draw boxes
+            Stroke oldStroke = g.getStroke();
+            if(isInterface()) g.setStroke(Diagram.dashed);
+
+            g.setColor(Color.BLACK);
+            g.drawRect(position.x,position.y,this.getWidth(),classesHeight);
+            g.drawRect(position.x,position.y+classesHeight,this.getWidth(),fieldsHeight);
+            g.drawRect(position.x,position.y+classesHeight+fieldsHeight,this.getWidth(),methodsHeight);
+            if(isCompiled()==true)
+            {
+                g.drawRect(position.x-2,position.y-2,this.getWidth()+4,this.getHeight()+4);
+            }
+
+            g.setStroke(oldStroke);
+
+            if(!isValidCode() && cleanIt)
+            {
+                classes.clear();
+            }
+
+            if(!isEnabled())
+            {
+                g.setColor(new Color(128,128,128,128));
+                g.fillRect(this.getPosition().x,this.getPosition().y,getWidth(),getHeight());
+            }
+
+            if(isInterface())
+            {
+                classes.remove(0);
+            }
         }
-
-        this.width=maxWidth+2*PAD;
-        this.height=totalHeight;
-
-        // set widths
-        for(int i=0;i<classes.size();i++) //for(Element ele : classes) 
-            { classes.get(i).setWidth(this.getWidth()); }
-        for(int i=0;i<fields.size();i++) //if(showFields) for(Element ele : fields) 
-            { fields.get(i).setWidth(this.getWidth()); }
-        for(int i=0;i<methods.size();i++) //if(showMethods)for(Element ele : methods) 
-            { methods.get(i).setWidth(this.getWidth()); }
-
-        // draw background
-        g.setColor(drawColor);
-        g.fillRect(position.x,position.y,this.getWidth(), this.getHeight());
-
-        g.setColor(drawColor);
-
-        for(int i=0;i<classes.size();i++) //for(Element ele : classes) 
-            { classes.get(i).draw(g); }
-        if(showFields) for(int i=0;i<fields.size();i++) //for(Element ele : fields) 
-            { fields.get(i).draw(g); }
-        if(showMethods)for(int i=0;i<methods.size();i++) //for(Element ele : methods) 
-            { methods.get(i).draw(g); }
-
-        // draw boxes
-        Stroke oldStroke = g.getStroke();
-        if(isInterface()) g.setStroke(Diagram.dashed);
-        
-        g.setColor(Color.BLACK);
-        g.drawRect(position.x,position.y,this.getWidth(),classesHeight);
-        g.drawRect(position.x,position.y+classesHeight,this.getWidth(),fieldsHeight);
-        g.drawRect(position.x,position.y+classesHeight+fieldsHeight,this.getWidth(),methodsHeight);
-        if(isCompiled()==true)
-        {
-            g.drawRect(position.x-2,position.y-2,this.getWidth()+4,this.getHeight()+4);
-        }
-
-        g.setStroke(oldStroke);
-
-        if(!isValidCode() && cleanIt)
-        {
-            classes.clear();
-        }
-
-        if(!isEnabled())
-        {
-            g.setColor(new Color(128,128,128,128));
-            g.fillRect(this.getPosition().x,this.getPosition().y,getWidth(),getHeight());
-        }
-
-        if(isInterface())
-        {
-            classes.remove(0);
-        }
-
     }
 
     public boolean isInside(Point pt)
@@ -2019,7 +2033,14 @@ public class MyClass implements Space
         code="package "+myPack+";\n\n"+code;
         loadFromString(code);
     }
-
+    
+    public void addImport(String myPack)
+    {
+        String code = getContent().getText();
+        code="import "+myPack+";\n\n"+code;
+        loadFromString(code);
+    }
+    
     public void addClassJavaDoc()
     {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");

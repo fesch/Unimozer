@@ -1,0 +1,98 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package interactiveproject.slotmachine;
+
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.Timer;
+
+/**
+ *
+ * @author ronny
+ */
+public class Reel {
+    //a double is used here to be able make transitions
+    private int currentNumber;
+    private int numberOfSymbols; 
+    private int imageTransition;
+    private int destination=0;
+    private BufferedImage[] images;
+
+    private int timeCounter;
+    
+    
+    public Reel(int currentNumber, int numberOfSymbols) {
+        this.currentNumber = currentNumber;
+        this.numberOfSymbols = numberOfSymbols;
+        
+        images = new BufferedImage[numberOfSymbols];
+        for(int i=0;i<numberOfSymbols;i++)
+        {
+            try {
+                images[i] = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/slotmachine/images/"+i+".png"));
+                
+            } catch (IOException ex) {
+                Logger.getLogger(Reel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    
+    private Timer timer= new Timer(50, new ActionListener() 
+    { 
+        public void actionPerformed(ActionEvent e) 
+        {
+            imageTransition++;
+            if(imageTransition%10 == 0)
+            {
+                imageTransition = 0;
+                currentNumber = (currentNumber+1)%numberOfSymbols;
+            }
+            timeCounter -= timer.getDelay();
+            if(timeCounter <= 0)
+            {
+                timer.stop();
+                currentNumber = destination;
+            }
+            
+        }
+    });  
+
+    public void goToDestination(int destinationNumber, int time)
+    {
+        destination = destinationNumber;
+        int minimumTurns = 3;
+        int symbolsToShow = (minimumTurns* numberOfSymbols) + 
+                (destinationNumber - currentNumber)%numberOfSymbols;
+        //calculate the interval for one transition
+        int timeInterval = (int) (time / (double) symbolsToShow);
+        
+        int animationInterval = (int) (timeInterval / 10.0);
+        
+        timeCounter = time;
+        timer.setDelay(animationInterval);
+        timer.start();
+        
+        
+    }
+    
+    public void setReel(int reel)
+    {
+        this.currentNumber = reel;
+    }
+    
+    public void draw(Graphics g, int width, int height)
+    {
+        g.drawImage(images[currentNumber], 0, 0, width, height, null);
+    }
+    
+}

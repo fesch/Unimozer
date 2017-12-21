@@ -1,0 +1,178 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package interactiveproject.spacesimulator;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author Ronny
+ */
+public class Board {
+    private int rows;
+    private int cols;
+    public RealPlayer player;
+    private int gems=0;
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+    
+    String[][] map;
+
+    public String[][] getMap() {
+        return map;
+    }
+
+    public Board(int level) {
+        player  = new RealPlayer(this);
+        reset(level);
+        
+        
+    }
+    
+    public void drawStars(Graphics g, int width, int height, int number)
+    {
+        for(int i = 0; i<number;i++)
+        {
+            g.setColor(Color.yellow);
+            int x = (int) (Math.random()*width);
+            int y = (int)(Math.random()*height);
+            g.fillOval(x, y, 5, 5);
+        }
+    }
+    
+    public void reset(int level)
+    {
+        try{
+            //To remove Spaces in Path
+            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/interactiveproject/spacesimulator/level/"+level+".txt")));
+            String line;
+            cols = Integer.valueOf(br.readLine());
+            rows = Integer.valueOf(br.readLine());
+            //System.out.println(rows+" "+cols);
+            map = new String[rows][cols];
+            
+            for(int i=0;i<rows;i++)
+            {
+                line = br.readLine();
+                for(int j=0;j<cols;j++)
+                {
+                    if(line.substring(j, j+1).equals("P"))
+                    {
+                        player.setY(i);
+                        player.setX(j);
+                        map[i][j] = ".";
+                    }
+                    else{
+                        map[i][j] = line.substring(j, j+1);
+                        if(map[i][j].equals("x"))
+                            gems++;
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public boolean isOver()
+    {
+        return gems==player.getGems();
+    }
+    
+    public void draw(Graphics g, int width, int height)
+    {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, width, height);
+        
+        drawStars(g, width, height, 100);
+        
+        g.setColor(Color.yellow);
+        
+        
+        int cellSize = Math.min(width/cols, height/rows);
+        int offsetLeft = (width-cols*cellSize)/2;
+        int offsetTop = (height - rows*cellSize)/2;
+        for(int i=0;i<=rows;i++)
+            g.drawLine(offsetLeft, offsetTop +  i*cellSize, offsetLeft+cols*cellSize, offsetTop +i*cellSize);
+        for(int j=0;j<=cols;j++)
+            g.drawLine(offsetLeft+j*cellSize,offsetTop, offsetLeft+j*cellSize, offsetTop +rows*cellSize);
+        
+        try {
+            BufferedImage wall = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/wall.png"));
+            BufferedImage gold = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/gem.png"));
+            BufferedImage enemy = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/enemy.png"));
+            for(int i=0; i<rows;i++)
+                for(int j=0;j<cols;j++)
+                {
+                    if(map[i][j].equals("#"))
+                    { 
+                        g.drawImage(wall, offsetLeft+j*cellSize, offsetTop+i*cellSize, cellSize, cellSize, null);
+                    }
+                    else if(map[i][j].equals("x"))
+                    {
+                        g.drawImage(gold, offsetLeft+j*cellSize, offsetTop+i*cellSize, cellSize, cellSize, null);
+                    }
+                    else if(map[i][j].equals("E"))
+                    {
+                        g.drawImage(enemy, offsetLeft+j*cellSize, offsetTop+(int) ((i+0.2)*cellSize), cellSize, (int) (0.7*cellSize), null);
+                    }
+                }
+            
+            if(player != null)
+                player.draw(g, offsetLeft, offsetTop, cellSize);
+            } catch (IOException ex) {
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+            if(isOver())
+            {
+                g.setColor(Color.YELLOW);
+                int fontSize=height/7;
+                String winString = "Good job! You Win!";
+                Font font = new Font("TimesRoman", Font.PLAIN, fontSize);
+                g.setFont(font);
+                FontMetrics metrics = g.getFontMetrics();
+                
+                // Determine the X coordinate for the text
+                int x = 0 + (width - metrics.stringWidth(winString)) / 2;
+                // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
+                int y = 0 + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
+                // Set the font
+                
+                // Draw the String
+                g.drawString(winString, x, y);
+            }
+            
+    }
+    
+}

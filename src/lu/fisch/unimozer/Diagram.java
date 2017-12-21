@@ -45,6 +45,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -60,6 +61,7 @@ import lu.fisch.unimozer.aligner.Grille;
 import lu.fisch.unimozer.compilation.CompilationError;
 import lu.fisch.unimozer.console.Console;
 import lu.fisch.unimozer.dialogs.*;
+import lu.fisch.unimozer.interactiveproject.InteractiveProject;
 import lu.fisch.unimozer.utils.CopyDirectory;
 import lu.fisch.unimozer.utils.StringList;
 import net.iharder.dnd.FileDrop;
@@ -144,6 +146,9 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
     private Point topLeft = new Point(0,0);
     private Point bottomRight = new Point(0,0);
 
+    //is null if it isn't an interactive project
+    private InteractiveProject interactiveProject = null;
+    
     //private Vector<BufferedImage> sheets = new Vector<BufferedImage>();
 
     public Diagram()
@@ -371,6 +376,14 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
         g.drawLine(pFrom.x, pFrom.y, pArrow.x, pArrow.y);
     }
 
+    public void setInteractiveProject(InteractiveProject interactiveProject) {
+        this.interactiveProject = interactiveProject;
+    }
+
+    public InteractiveProject getInteractiveProject() {
+        return interactiveProject;
+    }
+    
     public Point2D getIntersection(Point2D p1, Point2D p2, Point2D p3, Point2D p4)
     {
         double x1 = p1.getX();
@@ -1534,7 +1547,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                     //if(otherClass==null) System.err.println(extendsClass+" not found (1)");
                     //if (otherClass==null) otherClass=findByShortName(extendsClass);
                     //if(otherClass==null) System.err.println(extendsClass+" not found (2)");
-                    if(otherClass!=null)
+                    if(otherClass!=null && thisClass.isDisplayUML() && otherClass.isDisplayUML())
                     {
                         thisClass.setExtendsMyClass(otherClass);
                         // draw arrow from thisClass to otherClass
@@ -1597,7 +1610,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
 
                   String extendsClass = thisClass.getExtendsClass();
                   //System.out.println(thisClass.getFullName()+" extends "+extendsClass);
-                  if (!extendsClass.equals(""))
+                  if (!extendsClass.equals("") && thisClass.isDisplayUML())
                   {
                     MyClass otherClass = classes.get(extendsClass);
                     if(otherClass==null) otherClass=findByShortName(extendsClass);
@@ -1811,9 +1824,10 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 {
                     // get the actual class ...
                     MyClass thisClass = entry.getKey();
-                    
-                  Vector<MyClass> otherClasses = classCompositions.get(thisClass);
-                  for(MyClass otherClass : otherClasses) drawComposition(g, thisClass, otherClass, classUsings);
+                  if(thisClass.isDisplayUML()) { 
+                    Vector<MyClass> otherClasses = classCompositions.get(thisClass);
+                    for(MyClass otherClass : otherClasses) drawComposition(g, thisClass, otherClass, classUsings);
+                  }
                 }
             }
 
@@ -1980,6 +1994,13 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
             {
                 mc.addPackage(ce.getPackage());
             }
+            
+            //automatically import the interactable class of the interactive project
+            //Obseolete??
+            /*if(interactiveProject!=null)
+            {
+                mc.addImport("interactiveproject.knightsimulator.player");
+            }*/
 
             // add JavaDOC Comments
             if(ce.genDoc())
@@ -4060,12 +4081,16 @@ Logger.getInstance().log("Diagram repainted ...");
         {
             // get the actual class ...
             String str = entry.getKey();
-
-          StringList line = new StringList();
-          line.add(str);
-          line.add(String.valueOf(classes.get(str).getPosition().x));
-          line.add(String.valueOf(classes.get(str).getPosition().y));
-          content.add(line.getCommaText());
+            if(interactiveProject==null 
+                          || interactiveProject.getStudentClass().getFullName().equals(entry.getKey())
+                          || !interactiveProject.getClasses().contains(entry.getKey()))
+            {
+                  StringList line = new StringList();
+                  line.add(str);
+                  line.add(String.valueOf(classes.get(str).getPosition().x));
+                  line.add(String.valueOf(classes.get(str).getPosition().y));
+                  content.add(line.getCommaText());
+            }
         }
 
         return content;
@@ -4407,67 +4432,73 @@ Logger.getInstance().log("Diagram repainted ...");
                 // get the actual class ...
                 String str = entry.getKey();
                 
-                try
+                //when saving an interactive project, don't save the given files
+                if(interactiveProject==null 
+                        || interactiveProject.getStudentClass().getFullName().equals(entry.getKey())
+                        || !interactiveProject.getClasses().contains(entry.getKey())
+                        )
                 {
-                    //String str = itr.next();
-                    //System.out.println("Saving source ... "+classes.get(str).getShortName());
-                    String code;
-                    if(allowEdit==true) code = classes.get(str).getJavaCode();
-                    else code = classes.get(str).getContent().getText();
-
-                    String filename;
-                    FileOutputStream fos;
-                    Writer out;
-
-                    // write standard file
-                    /*
-                    if(!classes.get(str).getPackagename().equals(Package.DEFAULT))
+                    try
                     {
-                        String dirNames = directoryName + System.getProperty("file.separator");
-                        //dirNames += classes.get(str).getPackagename().replaceAll("\\.",System.getProperty("file.separator"))+System.getProperty("file.separator");
-                        dirNames += classes.get(str).getPackagename().replace(".", System.getProperty("file.separator"))+System.getProperty("file.separator");
-                        File dirs = new File(dirNames);
-                        dirs.mkdirs();
+                        //String str = itr.next();
+                        //System.out.println("Saving source ... "+classes.get(str).getShortName());
+                        String code;
+                        if(allowEdit==true) code = classes.get(str).getJavaCode();
+                        else code = classes.get(str).getContent().getText();
 
-                        filename = dirs.getAbsolutePath() + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+                        String filename;
+                        FileOutputStream fos;
+                        Writer out;
+
+                        // write standard file
+                        /*
+                        if(!classes.get(str).getPackagename().equals(Package.DEFAULT))
+                        {
+                            String dirNames = directoryName + System.getProperty("file.separator");
+                            //dirNames += classes.get(str).getPackagename().replaceAll("\\.",System.getProperty("file.separator"))+System.getProperty("file.separator");
+                            dirNames += classes.get(str).getPackagename().replace(".", System.getProperty("file.separator"))+System.getProperty("file.separator");
+                            File dirs = new File(dirNames);
+                            dirs.mkdirs();
+
+                            filename = dirs.getAbsolutePath() + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+                        }
+                        else
+                            filename = directoryName + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+
+
+                        fos = new FileOutputStream(filename);
+                        out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
+                        out.write(code);
+                        out.close();
+                        */
+
+                        // write file to "src" directory
+                        if(!classes.get(str).getPackagename().equals(Package.DEFAULT))
+                        {
+                            String dirNames = directoryName + System.getProperty("file.separator") + "src" + System.getProperty("file.separator");
+                            dirNames += classes.get(str).getPackagename().replace(".", System.getProperty("file.separator"))+System.getProperty("file.separator");
+                            File dirs = new File(dirNames);
+                            dirs.mkdirs();
+
+                            filename = dirs.getAbsolutePath() + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+                        }
+                        else
+                            filename = directoryName + System.getProperty("file.separator") + "src" + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+
+
+                        fos = new FileOutputStream(filename);
+                        out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
+                        out.write(code);
+                        out.close();
+
                     }
-                    else
-                        filename = directoryName + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
-
-
-                    fos = new FileOutputStream(filename);
-                    out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
-                    out.write(code);
-                    out.close();
-                    */
-
-                    // write file to "src" directory
-                    if(!classes.get(str).getPackagename().equals(Package.DEFAULT))
+                    catch (IOException ex)
                     {
-                        String dirNames = directoryName + System.getProperty("file.separator") + "src" + System.getProperty("file.separator");
-                        dirNames += classes.get(str).getPackagename().replace(".", System.getProperty("file.separator"))+System.getProperty("file.separator");
-                        File dirs = new File(dirNames);
-                        dirs.mkdirs();
-
-                        filename = dirs.getAbsolutePath() + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
+                        System.err.println("Error while saving ...");
+                        System.err.println(ex.getMessage());
                     }
-                    else
-                        filename = directoryName + System.getProperty("file.separator") + "src" + System.getProperty("file.separator") + classes.get(str).getShortName() + ".java";
-
-
-                    fos = new FileOutputStream(filename);
-                    out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
-                    out.write(code);
-                    out.close();
-
-                }
-                catch (IOException ex)
-                {
-                    System.err.println("Error while saving ...");
-                    System.err.println(ex.getMessage());
                 }
             }
-
             createBackup();
         }
     }
@@ -4650,7 +4681,8 @@ Logger.getInstance().log("Diagram repainted ...");
             saveFiles();
             // save BlueJ Package
             saveBlueJPackages();
-            
+            if(interactiveProject!=null)
+                this.saveInteractiveProject();
             markClassesAsNotChanged();
             updateLastModified();
             /*
@@ -4661,6 +4693,31 @@ Logger.getInstance().log("Diagram repainted ...");
             return true;
         } //else System.out.println("Dirname is null???");
         else return saveWithAskingLocation();
+    }
+    
+    public void saveInteractiveProject()
+    {
+        System.out.println("Saving Interactive Project");
+        System.out.println(directoryName);
+        if(directoryName!=null)
+        {
+            FileOutputStream fos = null;
+            try {
+                String filePath = directoryName + System.getProperty("file.separator") + "interactiveproject.pck";
+                fos = new FileOutputStream(filePath);
+                OutputStreamWriter out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
+                out.write(interactiveProject.getName());
+                out.close();
+                
+                
+            } catch (FileNotFoundException ex) {
+                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     public void markClassesAsNotChanged()
@@ -5381,9 +5438,10 @@ Logger.getInstance().log("Diagram repainted ...");
                                         {
                                             Console.disconnectAll();
                                             System.out.println("Running now: "+myMeth);
+                                            System.out.println(Runtime5.getInstance().toString());
                                             Console.connectAll();
                                             Object retobj = Runtime5.getInstance().executeMethod(myMeth);
-                                            if(retobj!=null) JOptionPane.showMessageDialog(frame, retobj.toString(), "Result", JOptionPane.INFORMATION_MESSAGE,Unimozer.IMG_INFO);
+                                                                                        if(retobj!=null) JOptionPane.showMessageDialog(frame, retobj.toString(), "Result", JOptionPane.INFORMATION_MESSAGE,Unimozer.IMG_INFO);
                                         }
                                         catch (EvalError ex)
                                         {
@@ -6517,9 +6575,25 @@ Logger.getInstance().log("Diagram repainted ...");
         }
     }
     
+    private void openInteractiveProject(String dirName)
+    {
+        String filename = dirName+System.getProperty("file.separator")+"interactiveproject.pck";
+        System.out.println(filename);
+        File file = new File(filename);
+        if(file.exists())
+        {
+            StringList content = new StringList();
+            content.loadFromFile(filename);
+            interactiveProject = new InteractiveProject(content.get(0), diagram);
+            interactiveProject.loadFromXML(true);
+        }
+            
+    }
+    
     public void open(String dirname)
     {
         clear();
+        openInteractiveProject(dirname);
         //allowEdit=true;
         if(frame!=null)
         {
@@ -6897,7 +6971,6 @@ Logger.getInstance().log("Diagram repainted ...");
                 {
                     try
                     {
-                        //System.out.println(dirName);
                         this.save(dirName);
                         setChanged(false);
                         return true;
@@ -7449,7 +7522,11 @@ Logger.getInstance().log("Diagram repainted ...");
             }
         }
     }
-
+    
+    public void resetInteractiveProject()
+    {
+        interactiveProject = null;
+    }
 
 
 }

@@ -1,0 +1,237 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package interactiveproject.spacesimulator;
+
+import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author ronny
+ */
+public class RealPlayer implements Player{
+    private int x;
+    private int y;
+    private boolean isAlive = true;
+    // 0:UP 1:RIGHT 2:DOWN 3:LEFT
+    private int direction;
+    //backreference to the board
+    private Board board;
+    BufferedImage img; 
+
+    
+    //constants
+    /*private static final int UP = 0;
+    private static final int RIGHT = 1;
+    private static final int DOWN = 2;
+    private static final int LEFT = 3;*/
+    
+    private int dX =1;
+    private int dY =0;
+    
+    private int gems = 0;
+    public RealPlayer(Board board)
+    {
+        this.board = board;
+        direction = 1;
+        try {
+            img = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/ship.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(RealPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+    
+    public void move()
+    {
+        if(x+dX <board.getCols() 
+                && x+dX >0
+                && y+dY<board.getRows() 
+                && y+dY>0
+                && isAlive)
+        {
+            x+=dX;
+            y+=dY;
+        }
+        if(board.getMap()[y][x].equals("E") || board.getMap()[y][x].equals("#"))
+        {
+            isAlive = false;
+            board.getMap()[y][x] = ".";
+        }
+        try {   
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(RealPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+   
+    
+    public void attack()
+    {
+        if(x+dX <board.getCols() 
+                && x+dX >0
+                && y+dY<board.getRows() 
+                && y+dY>0
+                && ((board.getMap())[y+dY][x+dX].equals("E")))
+        {
+                    board.getMap()[y+dY][x+dX]=".";
+        }
+        try {   
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(RealPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public boolean hasEnemyInFront()
+    {
+        return board.getMap()[y][x].equals("E");
+    }
+    
+    public void turnClockwise()
+    {
+        if(dX==1)
+        {
+            dX=0;
+            dY=1;
+        }
+        else if(dX==-1)
+        {
+            dX=0;
+            dY=-1;
+        }
+        else if(dY==-1)
+        {
+            dX=1;
+            dY=0;
+        }
+        else if(dY==1)
+        {
+            dX=-1;
+            dY=0;
+        }
+        try {   
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(RealPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void turnCounterClockwise()
+    {
+        if(dX==1)
+        {
+            dX=0;
+            dY=-1;
+        }
+        else if(dX==-1)
+        {
+            dX=0;
+            dY=1;
+        }
+        else if(dY==-1)
+        {
+            dX=-1;
+            dY=0;
+        }
+        else if(dY==1)
+        {
+            dX=1;
+            dY=0;
+        }
+        try {   
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(RealPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public boolean isAtGem() 
+    {
+        return board.getMap()[y][x].equals("x");
+    }
+    
+    public void collect()
+    {
+        if(isAtGem())
+        {
+            board.getMap()[y][x]=".";
+            gems++;
+        }
+        try {   
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(RealPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public int getGems()
+    {
+        return gems;
+    }
+    public void draw(Graphics g, int offsetLeft, int offsetTop, int cellSize)
+    {
+        //translation for the image
+        
+        double rotationRequired = 0; 
+        if(dX==1)
+        {
+            rotationRequired = 90;
+        }
+        else if(dX==-1)
+        {
+            rotationRequired = 270;
+        }
+        else if(dY==1)
+        {
+            rotationRequired =180;
+        }
+        else if(dY==-1)
+        {
+            rotationRequired = 0;
+        }
+        
+        if(!isAlive)
+            try {
+                img = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/boom.png"));
+                rotationRequired = 0;
+        } catch (IOException ex) {
+            Logger.getLogger(RealPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        rotationRequired = Math.toRadians(rotationRequired);
+        
+        double locationX = img.getWidth() / 2;
+        double locationY = img.getHeight() / 2;
+        AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+        
+        g.drawImage(op.filter(img, null), offsetLeft+x*cellSize, offsetTop+y*cellSize, cellSize, cellSize, null);
+
+    }
+    
+}

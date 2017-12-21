@@ -1,0 +1,440 @@
+package interactiveproject.turtlebox;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Transparency;
+import java.awt.Image;
+import java.awt.geom.Point2D.Double;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage; 
+import java.util.Vector;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+/**
+ * RealTurtleBox is a small class which implements a kind of "Logo".
+ *
+ * @author Robert Fisch (modif. by Fred Faber)
+ */
+public class RealTurtleBox extends JFrame implements TurtleBox
+{
+
+    private static final int LINE = 0;
+    private static final int MOVE = 1;  
+
+    protected JPanel surface;
+
+    protected Point2D.Double turtlePos=null;
+
+    protected boolean turtleHidden = false;
+    protected boolean penIsDown    = true;
+
+    protected double angle = -90.0;
+
+    protected int    speed;  //drawing speed: 0 ... 100
+
+
+    /**
+     * This data structure contains the different elements to move.
+     * Let's admit, that this approach IS NOT object oriented, but
+ the goal was to achive a RealTurtleBox in a single file without
+ using inner classes.
+ <br><br>
+     * The inner vector contains alway 5 elements: the type of the
+     * element as well as the starting and ending coordinates.
+     * 
+     */
+    protected Vector<Vector<Integer>> elements = new Vector<Vector<Integer>>();
+
+ 
+    /** 
+     * Constructs a new TurtleBox
+     * @param   width   the width of the box
+     * @param   height  the height of the box
+     */
+    public RealTurtleBox(int width, int height) 
+    {
+        surface = new JPanel();
+        surface.setBackground(Color.WHITE);
+        this.setBounds(0,0,width,height);
+        this.getContentPane().add(surface);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setVisible(true);
+        this.setSpeed(10);
+
+        turtlePos = new Point2D.Double(getWidth()/2.0, getHeight()/2.0);
+    }
+
+    //Needed for Interactive Projects
+    public RealTurtleBox()
+    {  
+        surface = new JPanel();
+        surface.setBackground(Color.WHITE);
+        this.setBounds(0,0,600,600);
+        this.getContentPane().add(surface);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setVisible(true);
+        this.setSpeed(10);
+
+        turtlePos = new Point2D.Double(getWidth()/2.0, getHeight()/2.0);
+        this.forward(100);
+        this.right(135);
+        this.forward(Math.sqrt(2)*100);
+        this.left(135);
+        this.forward(100);
+        this.left(45);
+        this.forward(Math.sqrt(2)*50);
+        this.left(90);
+        this.forward(Math.sqrt(2)*50);
+        this.left(135);
+        this.forward(100);
+        this.right(135);
+        this.forward(Math.sqrt(2)*100);
+        this.left(135);
+        this.forward(100);  
+    }
+
+    //Added for Interactive Projects
+    public Object getInterfaceObject()
+    {
+        return this;
+    }
+    /**
+     * Method for drawing a thick line in Java.
+     * <br>
+     * <a href="http://www.rgagnon.com/javadetails/java-0260.html">http://www.rgagnon.com/javadetails/java-0260.html<a>
+     */
+    private void drawThickLine(Graphics g, double x1, double y1, double x2, double y2, int thickness, Color c) 
+    {
+        // The thick line is in fact a filled polygon
+      g.setColor(c);
+      double dX = x2 - x1;
+      double dY = y2 - y1;
+      // line length
+      double lineLength = Math.sqrt(dX * dX + dY * dY);
+
+      double scale = (double)(thickness) / (2 * lineLength);
+
+      // The x,y increments from an endpoint needed to create a rectangle...
+      double ddx = -scale * dY;
+      double ddy = scale * dX;
+      ddx += (ddx > 0) ? 0.5 : -0.5;
+      ddy += (ddy > 0) ? 0.5 : -0.5;
+      double dx = ddx;
+      double dy = ddy;
+
+      // Now we can compute the corner points...
+      int xPoints[] = new int[4];
+      int yPoints[] = new int[4];
+
+      xPoints[0] = (int)Math.round(x1 + dx); yPoints[0] = (int)Math.round(y1 + dy);
+      xPoints[1] = (int)Math.round(x1 - dx); yPoints[1] = (int)Math.round(y1 - dy);
+      xPoints[2] = (int)Math.round(x2 - dx); yPoints[2] = (int)Math.round(y2 - dy);
+      xPoints[3] = (int)Math.round(x2 + dx); yPoints[3] = (int)Math.round(y2 + dy);
+
+      g.fillPolygon(xPoints, yPoints, 4);
+    }
+
+	/**
+     * Draws the turtle with given colors
+     */
+	private void drawTurtle(Graphics2D graphics, Color innerColor, Color outerColor)
+	{
+            // Create a buffered image that supports transparency  (TYPE_INT_ARGB)
+			BufferedImage image = 
+			    new BufferedImage(21, 25, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D gi = image.createGraphics();             
+			
+			// draw the turtle   
+            gi.setColor(new Color(255, 255, 255, 0));  //white but completely transparent
+            gi.fillRect(0, 0, 21,25);
+            drawThickLine(gi, 0, 7, 20,24 ,3,outerColor);
+            drawThickLine(gi, 20,7, 0 ,24 ,3,outerColor); 
+            gi.setColor(innerColor); 
+            gi.fillOval(2,6,16,16);
+            gi.setColor(outerColor);
+            gi.fillOval(7,0,6,8);
+
+            // paint the buffered image rotated on the canvas
+            double x =  turtlePos.x - (image.getWidth (this) / 2.0);
+            double y =  turtlePos.y - (image.getHeight(this) / 2.0);
+            double xRot = x + image.getWidth (this) / 2.0;
+            double yRot = y + image.getHeight(this) / 2.0;
+            graphics.rotate((270 - angle) / 180 * Math.PI, xRot, yRot);
+            graphics.drawImage(image, (int)Math.round(x), (int)Math.round(y), this);
+	}
+
+
+    /**
+     * Paints the box with stored elements
+     */
+    @Override
+    public void paint(Graphics graphics) 
+    {
+        Graphics2D g = (Graphics2D) graphics;
+        
+        // draw background 
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        
+        // draw elements
+        g.setColor(Color.BLACK);
+        
+		for(int e=0 ; e<elements.size() ; e++)
+        {
+            int type = elements.get(e).get(0);
+            Point2D.Double from = 
+                new Point2D.Double( elements.get(e).get(1), 
+                                    elements.get(e).get(2));
+            Point2D.Double to   = 
+                new Point2D.Double( elements.get(e).get(3), 
+                                    elements.get(e).get(4));
+
+            if(type==LINE) 
+                   graphics.drawLine((int)Math.round(from.x), (int)Math.round(from.y), 
+                                     (int)Math.round(to.x),   (int)Math.round(to.y));
+        }
+        
+		// draw the turtle - legs and head a little bit translucent
+        if (turtleHidden == false)
+        {
+          	if (penIsDown)
+            	drawTurtle(g, new Color(0, 160,32, 255), new Color(32, 196,96,  200));
+            else 
+                drawTurtle(g, new Color(96,228,96, 255), new Color(128,255,128, 200));
+        }
+
+
+
+    } 
+
+
+    /**
+     * Get the actual angle of the turtle (in degrees)
+     */
+    private double getAngle() 
+    {
+        return 180 + angle;
+    }
+
+
+    /**
+     * Sets a new angle for the turtle (in degrees)
+     *
+     * @param   angle   the angle given in degree
+     */
+    private void setAngle(double angle) 
+    {
+        this.angle=180-angle;
+        this.repaint();
+    }
+
+    /**
+     * Sets the drawing speed to a value between 0 and 100
+     * 
+     * @param pSpeed    the new speed value
+     */
+    public void setSpeed(int pSpeed)
+    {
+    	if (pSpeed>100) speed=100;
+    	else if (pSpeed<0) speed=0;
+    	     else speed = pSpeed;
+    }
+
+
+    /**
+     * Turns the turle left
+     *
+     * @param   angle   the angle to turn left
+     */
+    public void left(double angle) 
+    {
+        this.angle += angle;
+        this.repaint();
+    }
+
+
+    /**
+     * Turns the turle right
+     *
+     * @param   angle   the angle to turn right
+     */
+    public void right(double angle) 
+    {
+        this.left(-angle);
+        this.repaint();
+    }
+
+
+    /**
+     * Hides the turtle
+     */
+    public void hideTurtle() 
+    {
+        turtleHidden = true;
+        this.repaint();
+    }
+
+
+    /**
+     * Shows the turtle
+     */
+    public void showTurtle() 
+    {
+        turtleHidden = false;
+        this.repaint();
+    }
+
+
+    /**
+     * Takes the pen up (move without drawing)
+     */
+    public void penUp() 
+    {
+        penIsDown = false;
+        this.repaint();
+    }
+
+
+    /**
+     * Takes the pen down (draw while moving)
+     */
+    public void penDown() 
+    {
+        penIsDown = true;
+        this.repaint();
+    }
+
+
+    /**
+     * adds an element to the list
+     *
+     * @param  kind  MOVE or LINE
+     * @param  x1,y1,x2,y2    coords of new element
+     */
+    private void addElement(int kind, double x1, double y1, double x2, double y2) 
+    {
+        Vector<Integer> element = new Vector<Integer>();
+        element.add(kind);
+        element.add( (int)Math.round(x1) );
+        element.add( (int)Math.round(y1) );
+        element.add( (int)Math.round(x2) );
+        element.add( (int)Math.round(y2) );        
+        elements.add(element);
+    }
+
+
+    /**
+     * Forward the turtle by some pixels
+     *
+     * @param   pixels  the number of pixels the turtle has to move
+     */     
+    public void forward(double pixels) 
+    {
+        Point2D.Double newPos = new Point2D.Double(turtlePos.x - (Math.cos(angle / 180 * Math.PI) * pixels),
+                                                   turtlePos.y + (Math.sin(angle / 180 * Math.PI) * pixels));
+        if (penIsDown)  addElement(LINE, turtlePos.x,turtlePos.y,newPos.x,newPos.y);
+        else            addElement(MOVE, turtlePos.x,turtlePos.y,newPos.x,newPos.y);        
+        turtlePos = newPos;        
+        this.repaint(); 
+
+        //draw slowly          
+        try
+    		{
+    		  	Thread.currentThread().sleep(100-speed); //sleep for ... ms
+    		}
+    	catch(Exception e)
+			{
+				System.out.println(e);
+			}			
+
+
+   }
+
+
+    /**
+     * Moves the turtle by some pixels backwards
+     *
+     * @param   pixels  the number of pixels the turtle has to move backwards
+     */
+    public void backward(double pixels) 
+    {
+        forward(-pixels);
+    }
+
+
+    /**
+     * Positions the turtle to a given place
+     *
+     * @param   x   the X coordinate
+     * @param   y   the Y coordinate
+     */
+    private void gotoXY(double  x, double y) 
+    {
+        Point2D.Double newPos = new Point2D.Double(x, y);
+        addElement(MOVE, turtlePos.x,turtlePos.y,newPos.x,newPos.y);
+        turtlePos = newPos;
+        this.repaint(); 
+    }
+
+
+    /**
+     * Clear drawing surface (turtle remains at the same position)
+     * 
+     */
+    public void clear()
+    {
+    	elements = new Vector<Vector<Integer>>();
+    	this.repaint();
+    }
+
+
+    /**
+     * Set turtle back to home position and orientation
+     * 
+     */
+    public void home()
+    {
+    	gotoXY(getWidth()/2.0,getHeight()/2.0);
+    	setAngle(-90);
+    }
+
+
+    /**
+     * The main entry point for executing this program.
+     */
+    public static void main(String[] args) 
+    {
+       RealTurtleBox tb=new RealTurtleBox(600,600);
+       tb.forward(100);
+       tb.right(135);
+       tb.forward(Math.sqrt(2)*100);
+       tb.left(135);
+       tb.forward(100);
+       tb.left(45);
+       tb.forward(Math.sqrt(2)*50);
+       tb.left(90);
+       tb.forward(Math.sqrt(2)*50);
+       tb.left(135);
+       tb.forward(100);
+       tb.right(135);
+       tb.forward(Math.sqrt(2)*100);
+       tb.left(135);
+       tb.forward(100);      
+       
+    }
+
+
+
+
+/**
+ * ================================================================================//
+ * Ajoutez votre code ci-dessous ...
+ *
+ */
+
+
+
+}
