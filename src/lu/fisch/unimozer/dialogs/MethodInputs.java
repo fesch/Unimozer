@@ -48,6 +48,7 @@ public class MethodInputs extends javax.swing.JDialog implements KeyListener
         initComponents();
         Unimozer.switchButtons(btnOK, btnCancel);
         this.setTitle(title);
+        this.setAlwaysOnTop(true);
 
         String jc = new String(comment.trim());
         StringList sl = StringList.explode(jc,"\n");

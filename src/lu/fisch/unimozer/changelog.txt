@@ -5,7 +5,7 @@ Todo:
 - find/replace in selection
 
 
-Current version: 0.27-46 (2017.11.01)
+Current version: 0.27-48 (2017.12.01)
 - 01: printing was broken due to editor update [Lux BREDIMUS]
 - 02: copy diagrams cut outer lines for compiled projects [Fred FABER]
 - 03: added error message if save operations fails [Fred FABER]
@@ -58,6 +58,8 @@ Current version: 0.27-46 (2017.11.01)
 - 45: fixed a bug in objectizer concerning non Unimozer objects [Ronny OSWEILER]
 - 45: added feature to now allow class editing [Ronny OSWEILER]
 - 46: fixed due to Structorizer 3.27 integration [Robert FISCH]
+- 47: fix in rsyntaxtextarea [David Mancini]
+- 48: remove BlueJ save file [Fred FABER]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]
