@@ -3092,6 +3092,7 @@ Logger.getInstance().log("Diagram repainted ...");
         classes.clear();
         removedClasses.clear();
         directoryName=null;
+        interactiveProject=null;
         Console.cls();
 
         if(frame!=null)

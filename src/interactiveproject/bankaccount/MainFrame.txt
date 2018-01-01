@@ -36,6 +36,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     //booleans to show messages only once
     boolean messageError = false;
+    boolean balanceError = false;
     
     private Timer checkTimer = new Timer(500, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -74,10 +75,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
     public void updateMessage()
     {
-        
-        Method method;
+
         try {
-            method = studentClass.getMethod("getMessage");
+            Method method = studentClass.getMethod("getMessage");
             Object o = method.invoke(studentObject);
             messagePanel.setText((String) o);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -96,15 +96,16 @@ public class MainFrame extends javax.swing.JFrame {
     
     public void updateBalance()
     {
-        Method method;
         try {
-            method = studentClass.getMethod("getBalance");
+            Method method = studentClass.getMethod("getBalance");
             Object o = method.invoke(studentObject);
             balancePanel1.setText("Account Balance: "+String.valueOf((double) o)+"€");
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-
-            System.out.println("Le credit ne peut pas etre affiche, comme la methode getBalance n'a pas ete implementee");
-
+            if(!balanceError)
+            {
+                System.out.println("Le credit ne peut pas etre affiche, comme la methode getBalance n'a pas ete implementee");
+                balanceError = true;
+            }
         }
     }
 

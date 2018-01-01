@@ -48,6 +48,8 @@ public class InteractiveProject {
     private Object interfaceObject;
     private String interfaceAttribute;
     
+    private Object mainObject;
+    
     private String myPackage;
     private String main;
     private JFrame frame;
@@ -194,9 +196,7 @@ public class InteractiveProject {
                 myc.setPosition(pos);
                 
             }
-        } catch (XPathExpressionException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (XPathExpressionException | IOException ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -211,7 +211,7 @@ public class InteractiveProject {
                 //Class.forName(myPackage + "." + main);
                 //Object mainObject = Class.forName(myPackage + "." + main).newInstance();
                 
-                Object mainObject = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
+                mainObject = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
                 if(type.equals("controller-based"))
                 {
                     Method method = mainObject.getClass().getMethod("getInterfaceObject");
@@ -229,7 +229,9 @@ public class InteractiveProject {
                 {
                     Method method = mainObject.getClass().getMethod("getStudentObject");
                     studentObject = method.invoke(mainObject);
-                    objectizer.addObject(studentClass.getShortName(), studentObject);
+                    String objectName = studentClass.getShortName();
+                    objectName= Character.toLowerCase(objectName.charAt(0)) + objectName.substring(1);
+                    objectizer.addObject(objectName , studentObject);
                 }
                 
                 
@@ -240,20 +242,19 @@ public class InteractiveProject {
                 frame.setVisible(true);
             }
             
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchMethodException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (EvalError ex) {
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException | EvalError ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-}
+    
+    public void setOnTop(boolean visibility)
+    {
+        frame.setAlwaysOnTop(visibility);
+    }
+    
+    public void clean()
+    {
+        if(frame!=null)
+            frame.dispose();
+    }
+ }

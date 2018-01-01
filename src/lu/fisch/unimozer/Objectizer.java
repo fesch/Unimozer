@@ -315,6 +315,9 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
 
     public void removeAllObjects()
     {
+        if(diagram.getInteractiveProject()!=null)
+            diagram.getInteractiveProject().clean();
+        
         // stop threads
         //stopAllThreadsAndPRepareConsole();
         // remove objects
@@ -1729,7 +1732,15 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                                         try
                                         {
                                             Object retobj = Runtime5.getInstance().executeMethod(myMeth);
-                                            if(retobj!=null) JOptionPane.showMessageDialog(frame, retobj.toString(), "Result", JOptionPane.INFORMATION_MESSAGE,Unimozer.IMG_INFO);
+                                            if(retobj!=null && diagram.getInteractiveProject()!=null)
+                                            {
+                                                //To prevent that the Popup is blocked by the Project Window
+                                                diagram.getInteractiveProject().setOnTop(false);
+                                                JOptionPane.showMessageDialog(frame, retobj.toString(), "Result", JOptionPane.INFORMATION_MESSAGE,Unimozer.IMG_INFO);
+                                                diagram.getInteractiveProject().setOnTop(true);
+                                            }
+                                            else if(retobj!=null) 
+                                                JOptionPane.showMessageDialog(frame, retobj.toString(), "Result", JOptionPane.INFORMATION_MESSAGE,Unimozer.IMG_INFO);
                                             else if(!meto.getReturnType().getSimpleName().equals("void")) JOptionPane.showMessageDialog(frame, "NULL", "Result", JOptionPane.INFORMATION_MESSAGE,Unimozer.IMG_INFO);
                                         }
                                         catch (EvalError ex)
