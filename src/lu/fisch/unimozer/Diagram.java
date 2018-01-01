@@ -6584,7 +6584,6 @@ Logger.getInstance().log("Diagram repainted ...");
     private void openInteractiveProject(String dirName)
     {
         String filename = dirName+System.getProperty("file.separator")+"interactiveproject.pck";
-        System.out.println(filename);
         File file = new File(filename);
         if(file.exists())
         {
