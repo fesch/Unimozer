@@ -725,7 +725,7 @@ public class MainFrame extends javax.swing.JFrame {
                 updateMessage();
                 updateBalance();
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Le code PIN ne peut pas etre verifie, comme la methode boolean isPinValid n'a pas ete implementee.");
             }
         }
     }//GEN-LAST:event_enterButtonActionPerformed

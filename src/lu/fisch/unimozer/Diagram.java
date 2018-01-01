@@ -4703,8 +4703,6 @@ Logger.getInstance().log("Diagram repainted ...");
     
     public void saveInteractiveProject()
     {
-        System.out.println("Saving Interactive Project");
-        System.out.println(directoryName);
         if(directoryName!=null)
         {
             FileOutputStream fos = null;
@@ -6598,7 +6596,6 @@ Logger.getInstance().log("Diagram repainted ...");
     public void open(String dirname)
     {
         clear();
-        openInteractiveProject(dirname);
         //allowEdit=true;
         if(frame!=null)
         {
@@ -6763,6 +6760,7 @@ Logger.getInstance().log("Diagram repainted ...");
             }
             addLibs();
         }
+        openInteractiveProject(dirname);
         updateEditor();
         if(frame!=null)
             frame.setCanSave();

@@ -184,6 +184,9 @@ public class InteractiveProject {
                     //add classes to interactiveProject
                     classes.add(myPackage+"."+nl.item(i).getTextContent());
                 }
+                else if(open){
+                    studentClass = diagram.getClass(myPackage+"."+studentClassName);
+                }
             }
             
             // reposition all classes
