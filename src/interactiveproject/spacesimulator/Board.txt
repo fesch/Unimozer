@@ -12,12 +12,18 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -37,6 +43,15 @@ public class Board {
     private int cols;
     public RealPlayer player;
     private int gems = 0;
+    private String level;
+
+    private int width = 0;
+    private int height = 0;
+    private int offsetLeft = 0;
+    private int offsetTop = 0;
+    private int cellSize = 0;
+    
+    
     BufferedImage wall;
     BufferedImage gold;
     BufferedImage enemy;
@@ -55,13 +70,14 @@ public class Board {
         return map;
     }
 
-    public Board(int level) {
+    public Board(String filePath) {
         try {
             wall = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/wall.png"));
             gold = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/gem.png"));
             enemy = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/enemy.png"));
             player = new RealPlayer(this);
-            reset(level);
+            level = filePath;
+            reset(filePath, true);
         } catch (IOException ex) {
             Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -77,10 +93,34 @@ public class Board {
         }
     }
 
-    public void reset(int level) {
+    public void emptyLevel(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        String[][] newMap = new String[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+
+                newMap[i][j] = ".";
+            }
+        }
+        map = newMap;
+        player.setX(0);
+        player.setY(0);
+    }
+
+    public void reset(String filePath, boolean isBuildIn) {
+        level = filePath;
         try {
-            //To remove Spaces in Path
-            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/interactiveproject/spacesimulator/level/" + level + ".txt")));
+            BufferedReader br = null;
+
+            if (isBuildIn) {
+                br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/interactiveproject/spacesimulator/level/" + filePath + ".lvl")));
+            } else {
+                File f = new File(filePath);
+                URL url = f.toURI().toURL();
+                br = new BufferedReader(new InputStreamReader(url.openStream()));
+            }
             String line;
             cols = Integer.valueOf(br.readLine());
             rows = Integer.valueOf(br.readLine());
@@ -117,10 +157,13 @@ public class Board {
 
         //drawStars(g, width, height, 100);
         g.setColor(Color.yellow);
-
-        int cellSize = Math.min(width / cols, height / rows);
-        int offsetLeft = (width - cols * cellSize) / 2;
-        int offsetTop = (height - rows * cellSize) / 2;
+        this.width = width;
+        this.height = height;
+        
+        cellSize = Math.min(width / cols, height / rows);
+        offsetLeft = (width - cols * cellSize) / 2;
+        offsetTop = (height - rows * cellSize) / 2;
+        
         for (int i = 0; i <= rows; i++) {
             g.drawLine(offsetLeft, offsetTop + i * cellSize, offsetLeft + cols * cellSize, offsetTop + i * cellSize);
         }
@@ -164,4 +207,118 @@ public class Board {
 
     }
 
+    private int getRow(int y)
+    {
+        if(y < offsetTop || y > height-offsetTop)
+        {
+            return -1;
+        }
+        else{
+            y -= offsetTop;
+            int row = (int) (y/ cellSize);
+            return row;
+        }
+    }
+    
+    private int getCol(int x)
+    {
+        if(x < offsetLeft || x > width-offsetLeft)
+        {
+            return -1;
+        }
+        else{
+            x -= offsetLeft;
+            int col = (int) (x/ cellSize);
+            return col;
+        }
+    }
+    
+    public void placeAsteroid(int x, int y)
+    {
+        int row = getRow(y);
+        int col = getCol(x);
+        if(row != -1 && col!=-1)
+            map[row][col] = "#";
+    }
+    
+    public void placeEnnemy(int x, int y)
+    {
+        int row = getRow(y);
+        int col = getCol(x);
+        if(row != -1 && col!=-1)
+            map[row][col] = "E";
+        System.out.println("HERE");
+    }
+    public void placePlayer(int x, int y)
+    {
+        int row = getRow(y);
+        int col = getCol(x);
+        if(row != -1 && col!=-1)
+        {
+            if(map[row][col].equals("#") || map[row][col].equals("E") )
+                System.out.println("Cannot place Player on asteroids or ennemies");
+            else
+            {
+                player.setX(col);
+                player.setY(row);
+            }
+        }
+    }
+    
+    public void placeGem(int x, int y)
+    {
+        int row = getRow(y);
+        int col = getCol(x);
+        if(row != -1 && col!=-1)
+            map[row][col] = "x";
+    }
+    
+    public void remove(int x, int y)
+    {
+        int row = getRow(y);
+        int col = getCol(x);
+        if(row != -1 && col!=-1)
+            map[row][col] = ".";
+        
+    }
+    
+    
+    public void saveToFile(String filePath)
+    {
+        try {
+            filePath = filePath+".lvl";
+            System.out.println(filePath);
+            File f = new File(filePath);
+            FileOutputStream fos = new FileOutputStream(filePath);
+            OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+            out.write(cols+"\n");
+            out.write(rows+"");
+            
+            for (int i = 0; i < rows; i++) {
+                out.write("\n");
+                for (int j = 0; j < cols; j++) {
+                    if(player.isAt(i, j)){
+                        out.write("P");                    
+                    }
+                    else
+                        out.write(map[i][j]+"");
+                    
+                }
+            }
+            
+            out.close();
+            fos.close();
+            
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+ 
+ 
 }
