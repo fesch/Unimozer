@@ -586,7 +586,7 @@ public class MyClass implements Space
     public boolean isDisplayUML() {
         return displayUML;
     }
-    
+
     public String getShortName()
     {
         if(classes.size()>0) 

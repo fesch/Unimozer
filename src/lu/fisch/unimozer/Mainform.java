@@ -49,6 +49,7 @@ import javax.swing.event.ChangeListener;
 import lu.fisch.unimozer.compilation.CompilationError;
 import lu.fisch.unimozer.console.Console;
 import lu.fisch.unimozer.dialogs.BootLogReport;
+import lu.fisch.unimozer.dialogs.CreateInteractiveProjectDialog;
 import lu.fisch.unimozer.dialogs.JSliderOnJOptionPane;
 import lu.fisch.unimozer.dialogs.NewInteractiveProjectDialog;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaUIBackgroundDrawer;
@@ -559,6 +560,8 @@ public class Mainform extends JFrame
         miJavaDoc = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JSeparator();
         miClean = new javax.swing.JMenuItem();
+        jSeparator11 = new javax.swing.JPopupMenu.Separator();
+        miCreateInteractive = new javax.swing.JMenuItem();
         mEdit = new javax.swing.JMenu();
         miUndo = new javax.swing.JMenuItem();
         miRedo = new javax.swing.JMenuItem();
@@ -1245,6 +1248,15 @@ public class Mainform extends JFrame
             }
         });
         mProject.add(miClean);
+        mProject.add(jSeparator11);
+
+        miCreateInteractive.setText("Create Interactive Project");
+        miCreateInteractive.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miCreateInteractiveActionPerformed(evt);
+            }
+        });
+        mProject.add(miCreateInteractive);
 
         jMenuBar.add(mProject);
 
@@ -2339,6 +2351,11 @@ public class Mainform extends JFrame
         dg.setVisible(true);
     }//GEN-LAST:event_miNewVisualizerActionPerformed
 
+    private void miCreateInteractiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCreateInteractiveActionPerformed
+        CreateInteractiveProjectDialog dg = new CreateInteractiveProjectDialog(this, rootPaneCheckingEnabled, diagram);
+        dg.setVisible(true);
+    }//GEN-LAST:event_miCreateInteractiveActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup actionGroup;
@@ -2354,6 +2371,7 @@ public class Mainform extends JFrame
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
+    private javax.swing.JSeparator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
@@ -2385,6 +2403,7 @@ public class Mainform extends JFrame
     private javax.swing.JMenuItem miCompile;
     private javax.swing.JCheckBoxMenuItem miCompileOnTheFly;
     private javax.swing.JMenuItem miCopy;
+    private javax.swing.JMenuItem miCreateInteractive;
     private javax.swing.JMenuItem miCut;
     private javax.swing.JMenu miDiagramStandard;
     private javax.swing.JCheckBoxMenuItem miDiagramStandardJava;
