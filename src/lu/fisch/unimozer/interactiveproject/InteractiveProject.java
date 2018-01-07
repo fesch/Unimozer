@@ -8,9 +8,14 @@ package lu.fisch.unimozer.interactiveproject;
 import bsh.EvalError;
 import java.awt.Point;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -28,6 +33,8 @@ import lu.fisch.unimozer.Diagram;
 import lu.fisch.unimozer.MyClass;
 import lu.fisch.unimozer.Objectizer;
 import lu.fisch.unimozer.Runtime5;
+import lu.fisch.unimozer.Unimozer;
+import lu.fisch.unimozer.utils.StringList;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -55,6 +62,7 @@ public class InteractiveProject {
     private String path;
 
     private MyClass studentClass;
+    private String studentClassName="Controller";
     private Object studentObject;
 
     private Diagram diagram;
@@ -67,6 +75,11 @@ public class InteractiveProject {
         this.diagram = diagram;
     }
 
+    public InteractiveProject(Diagram diagram, boolean builtIn) {
+        this.diagram = diagram;
+        this.buildIn = builtIn;
+    }
+    
     public InteractiveProject(String type, String name, MyClass interfaceClass, String interfaceAttribute, String myPackage, String main, String path, MyClass studentClass, Diagram diagram, boolean builtIn) {
         this.type = type;
         this.name = name;
@@ -121,23 +134,35 @@ public class InteractiveProject {
         this.interfaceClass = interactableClass;
     }
 
+    public boolean isBuildIn() {
+        return buildIn;
+    }
+    
     public void loadFromXML(boolean open) {
         //boolean specifies if opening a project (true) or creating new project (false)
 
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
-            document = db.parse(getClass().getResourceAsStream("/lu/fisch/unimozer/interactiveproject/projects.xml"));
-
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
+            
+            if(buildIn)
+                document = db.parse(getClass().getResourceAsStream("/lu/fisch/unimozer/interactiveproject/projects.xml"));
+            else{
+                File f = new File(diagram.getDirectoryName()+System.getProperty("file.separator") + "interactiveproject.pck");
+                document = db.parse(f);
+                name = (String) xpath.compile("/projects/project/name").evaluate(document, XPathConstants.STRING);
+            }
+            
 
             type = (String) xpath.compile("/projects/project[@id='" + name + "']/type").evaluate(document, XPathConstants.STRING);
             myPackage = (String) xpath.compile("/projects/project[@id='" + name + "']/package").evaluate(document, XPathConstants.STRING);
             main = (String) xpath.compile("/projects/project[@id='" + name + "']/main").evaluate(document, XPathConstants.STRING);
             String interfaceClassName = (String) xpath.compile("/projects/project[@id='" + name + "']/interface-class").evaluate(document, XPathConstants.STRING);
 
-            String studentClassName = (String) xpath.compile("/projects/project[@id='" + name + "']/files/file[@type='student-class']").evaluate(document, XPathConstants.STRING);
+            if(!type.equals("controller-based"))
+                studentClassName = (String) xpath.compile("/projects/project[@id='" + name + "']/files/file[@type='student-class']").evaluate(document, XPathConstants.STRING);
 
             interfaceAttribute = (String) xpath.compile("/projects/project[@id='" + name + "']/interface-attribute").evaluate(document, XPathConstants.STRING);
 
@@ -150,38 +175,60 @@ public class InteractiveProject {
             }
             //create a MyClass for each File and add to Diagram
             boolean first = true;
-            for (int i = 0; i < nl.getLength(); i++) {
+            System.out.println(buildIn);
+            if(buildIn)
+            {
+                for (int i = 0; i < nl.getLength(); i++) {
 
-                //when opening a project, don't load the student's class, as it is read from the project that is opened
-                if (!open || !nl.item(i).getTextContent().equals(studentClassName)) {
-                    String filePath = path + nl.item(i).getTextContent() + ".txt";
-                    //System.out.println(filePath);
-                    InputStream inStream = getClass().getResourceAsStream(filePath);
-                    String str = "";
-                    StringBuffer strBuffer = new StringBuffer();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(inStream));
+                    //when opening a project, don't load the student's class, as it is read from the project that is opened
+                    if (!open || !nl.item(i).getTextContent().equals(studentClassName)) {
+                        String filePath = path + nl.item(i).getTextContent() + ".txt";
+                        //System.out.println(filePath);
+                        InputStream inStream = getClass().getResourceAsStream(filePath);
+                        String str = "";
+                        StringBuffer strBuffer = new StringBuffer();
+                        BufferedReader br = new BufferedReader(new InputStreamReader(inStream));
 
-                    while ((str = br.readLine()) != null) {
-                        strBuffer.append(str).append("\n");
+                        while ((str = br.readLine()) != null) {
+                            strBuffer.append(str).append("\n");
+                        }
+                        MyClass myClass = new MyClass(strBuffer.toString(), true);
+
+                        if (interfaceClassName.equals(nl.item(i).getTextContent())) {
+                            interfaceClass = myClass;
+                            myClass.setDisplaySource(false);
+                        } else if (studentClassName.equals(nl.item(i).getTextContent())) {
+                            studentClass = myClass;
+                        } else {
+                            myClass.setDisplayUML(false);
+                            myClass.setDisplaySource(false);
+                        }
+
+                        diagram.addClass(myClass);
+
+                        //add classes to interactiveProject
+                        classes.add(myPackage + "." + nl.item(i).getTextContent());
+                    } else if (open) {
+                        studentClass = diagram.getClass(myPackage + "." + studentClassName);
                     }
-                    MyClass myClass = new MyClass(strBuffer.toString(), true);
-
-                    if (interfaceClassName.equals(nl.item(i).getTextContent())) {
+                }
+            }
+            else{
+                for (int i = 0; i < diagram.getClassCount(); i++) {
+                    MyClass myClass = diagram.getClass(i);
+                    if(myClass.getShortName().equals(interfaceClassName))
+                    {
                         interfaceClass = myClass;
                         myClass.setDisplaySource(false);
-                    } else if (studentClassName.equals(nl.item(i).getTextContent())) {
-                        studentClass = myClass;
-                    } else {
-                        myClass.setDisplayUML(false);
-                        myClass.setDisplaySource(false);
                     }
-
-                    diagram.addClass(myClass);
-
-                    //add classes to interactiveProject
-                    classes.add(myPackage + "." + nl.item(i).getTextContent());
-                } else if (open) {
-                    studentClass = diagram.getClass(myPackage + "." + studentClassName);
+                    else if(myClass.getShortName().equals(studentClassName))
+                    {
+                        studentClass = myClass;
+                    }
+                    else{
+                        myClass.setDisplaySource(false);
+                        myClass.setDisplayUML(false);
+                    }
                 }
             }
 
@@ -193,7 +240,6 @@ public class InteractiveProject {
                 pos.x += 50;
                 pos.y += 50;
                 myc.setPosition(pos);
-
             }
         } catch (XPathExpressionException | IOException ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
@@ -291,4 +337,52 @@ public class InteractiveProject {
             frame.dispose();
         }
     }
+    
+    
+    public void save(String directoryName)
+    {
+        FileOutputStream fos = null;
+            try {
+                String filePath = directoryName + System.getProperty("file.separator") + "interactiveproject.pck";
+                fos = new FileOutputStream(filePath);
+                OutputStreamWriter out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
+                
+                if(buildIn)
+                    out.write(name);
+                else{
+                    out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<projects>\n");
+                    
+                    out.write("<project id=\""+name+"\">\n");
+                    out.write("<type>"+type+"</type>\n"); 
+                    out.write("<name>"+name+"</name>\n");
+                    out.write("<path>"+path+"</path>\n");
+                    out.write("<interface-class>"+interfaceClass.getShortName()+"</interface-class>\n");
+                    out.write("<main>"+main+"</main>\n");
+                    out.write("<interface-attribute>"+interfaceAttribute+"</interface-attribute>\n");
+                    out.write("<package>"+myPackage+"</package>\n");
+                    out.write("<files>\n");
+                    
+                    for (int i = 0; i < diagram.getClassCount(); i++) {
+                        MyClass myClass = diagram.getClass(i);
+                        out.write("<file>"+myClass.getShortName()+"</file>\n");
+                    }
+                    out.write("</files>\n");
+                    out.write("</project>\n</projects>");
+                }
+                
+                
+                
+                out.close();
+                
+                
+            } catch (FileNotFoundException ex) {
+                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }
+    
+    
 }

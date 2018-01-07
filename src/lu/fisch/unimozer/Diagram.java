@@ -4442,6 +4442,7 @@ Logger.getInstance().log("Diagram repainted ...");
                 if(interactiveProject==null 
                         || interactiveProject.getStudentClass().getFullName().equals(entry.getKey())
                         || !interactiveProject.getClasses().contains(entry.getKey())
+                        || !interactiveProject.isBuildIn()
                         )
                 {
                     try
@@ -4688,7 +4689,7 @@ Logger.getInstance().log("Diagram repainted ...");
             // save BlueJ Package
             saveBlueJPackages();
             if(interactiveProject!=null)
-                this.saveInteractiveProject();
+                interactiveProject.save(directoryName);
             markClassesAsNotChanged();
             updateLastModified();
             /*
@@ -4701,28 +4702,7 @@ Logger.getInstance().log("Diagram repainted ...");
         else return saveWithAskingLocation();
     }
     
-    public void saveInteractiveProject()
-    {
-        if(directoryName!=null)
-        {
-            FileOutputStream fos = null;
-            try {
-                String filePath = directoryName + System.getProperty("file.separator") + "interactiveproject.pck";
-                fos = new FileOutputStream(filePath);
-                OutputStreamWriter out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
-                out.write(interactiveProject.getName());
-                out.close();
-                
-                
-            } catch (FileNotFoundException ex) {
-                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedEncodingException ex) {
-                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
+   
     
     public void markClassesAsNotChanged()
     {
@@ -6587,7 +6567,11 @@ Logger.getInstance().log("Diagram repainted ...");
         {
             StringList content = new StringList();
             content.loadFromFile(filename);
-            interactiveProject = new InteractiveProject(content.get(0), diagram);
+            
+            if(!content.get(0).contains("xml"))
+                interactiveProject = new InteractiveProject(content.get(0), diagram);
+            else
+                interactiveProject = new InteractiveProject(diagram, false);
             interactiveProject.loadFromXML(true);
         }
             
