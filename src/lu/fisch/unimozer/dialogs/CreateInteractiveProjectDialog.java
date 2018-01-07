@@ -22,9 +22,10 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
 
     private Diagram diagram;
 
+    private boolean controllerBased = true;
     private String packageString;
     private MyClass interfaceClass;
-    private MyClass controller;
+    private MyClass studentClass;
     private String interfaceAttribute;
     /**
      * Creates new form CreateInteractiveProjectDialog
@@ -41,17 +42,34 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
     private void loadProject() {
         createButton.setEnabled(true);
         warningLabel.setText("");
-        checkController();
-        checkInterfaces();
         if(getPackage()!=null)
         {
             packageString=getPackage();
             if(packageString.equals("<default>"))
                 packageString="";
         }
+        
+        realClassLabel.setVisible(controllerBased);
+        realClassBox.setVisible(controllerBased);
+        mainClassBox.setVisible(controllerBased);
+        mainClassLabel.setVisible(controllerBased);
+        
+        if(controllerBased)
+        {
+            interfaceLabel.setText("Interface class:");
+            checkController();
+            checkInterfaces();
+            checkRealClass();
+            checkAttribute();
+        }
+        else{
+            checkStudentClass();
+            interfaceLabel.setText("Student class:");
+        }
+        
+        
         checkMain();
-        checkRealClass();
-        checkAttribute();
+        
     }
 
     private void createInteractiveProject()
@@ -73,6 +91,24 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
                 path = "/" + path + "/";
             }
             
+            if(!controllerBased)
+            {
+                for (int i = 0; i < diagram.getClassCount(); i++) {
+                MyClass myClass = diagram.getClass(i);
+                if(myClass.getShortName().equals(interfaceBox.getSelectedItem()))
+                    studentClass = myClass;
+                }
+            }
+            else{
+                if(interfaceBox.getItemCount() == 0
+                        || realClassBox.getItemCount() == 0
+                        || mainClassBox.getItemCount() == 0)
+                {
+                    JOptionPane.showMessageDialog(null, "Some of the required classes are missing", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            
             
             InteractiveProject interactiveProject= new InteractiveProject(
                     type,
@@ -82,7 +118,7 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
                     packageString, 
                     main, 
                     path, 
-                    controller, 
+                    studentClass, 
                     diagram,
                     false);
             diagram.setInteractiveProject(interactiveProject);
@@ -129,11 +165,20 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
         warningLabel.setText(warningLabel.getText() + "No attribute of type "+realClassBox.getSelectedItem().toString()+" found in the main class.\n");
     }
     
+    
+    private void checkStudentClass()
+    {
+        for (int i = 0; i < diagram.getClassCount(); i++) {
+            MyClass myClass = diagram.getClass(i);
+            interfaceBox.addItem(myClass.getShortName());
+        }
+    }
+    
     private void checkController() {
         for (int i = 0; i < diagram.getClassCount(); i++) {
             MyClass myClass = diagram.getClass(i);
             if (myClass.getShortName().equals("Controller")) {
-                controller = myClass;
+                studentClass = myClass;
                 return;
             }
         }
@@ -154,7 +199,7 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
                 break;
             }
         }
-        if(myClass != null)
+        if(interfaceClass != null)
         {
             for (int i = 0; i < diagram.getClassCount(); i++) {
                 myClass = diagram.getClass(i);
@@ -223,15 +268,14 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
         jSeparator1 = new javax.swing.JSeparator();
         jLabel2 = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        interfaceLabel = new javax.swing.JLabel();
         createButton = new javax.swing.JButton();
         interfaceBox = new javax.swing.JComboBox<>();
         jScrollPane2 = new javax.swing.JScrollPane();
         warningLabel = new javax.swing.JTextArea();
-        jLabel4 = new javax.swing.JLabel();
+        mainClassLabel = new javax.swing.JLabel();
         mainClassBox = new javax.swing.JComboBox<>();
-        jLabel5 = new javax.swing.JLabel();
+        realClassLabel = new javax.swing.JLabel();
         realClassBox = new javax.swing.JComboBox<>();
 
         jTextArea1.setColumns(20);
@@ -244,16 +288,24 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
 
         projectTypeButtonGroup.add(modelRadioButton);
         modelRadioButton.setText("Model-based Project (Student has to write the model class)");
+        modelRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modelRadioButtonActionPerformed(evt);
+            }
+        });
 
         projectTypeButtonGroup.add(controllerRadioButton);
         controllerRadioButton.setSelected(true);
         controllerRadioButton.setText("Controller-based Project (Student has to write the controller class)");
+        controllerRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                controllerRadioButtonActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Name:");
 
-        jLabel3.setText("Interface-Class:");
-
-        jToggleButton1.setText("Help");
+        interfaceLabel.setText("Interface-Class:");
 
         createButton.setText("Create Project");
         createButton.addActionListener(new java.awt.event.ActionListener() {
@@ -267,10 +319,10 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
         warningLabel.setRows(5);
         jScrollPane2.setViewportView(warningLabel);
 
-        jLabel4.setText("Main class:");
-        jLabel4.setToolTipText("The class that contains a default constructor and inherits from a JFrame");
+        mainClassLabel.setText("Main class:");
+        mainClassLabel.setToolTipText("The class that contains a default constructor and inherits from a JFrame");
 
-        jLabel5.setText("Real-Class:");
+        realClassLabel.setText("Real-Class:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -280,47 +332,43 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(94, 94, 94)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jToggleButton1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(171, 171, 171)
-                                .addComponent(createButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(30, 30, 30)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(controllerRadioButton)
-                                    .addComponent(modelRadioButton))))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
+                            .addComponent(interfaceLabel)
+                            .addComponent(mainClassLabel)
+                            .addComponent(realClassLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(realClassBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(interfaceBox, 0, 212, Short.MAX_VALUE)
                             .addComponent(nameTextField)
-                            .addComponent(interfaceBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(mainClassBox, 0, 201, Short.MAX_VALUE))))
+                            .addComponent(mainClassBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(realClassBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(94, 94, 94)
+                                .addComponent(jLabel1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(30, 30, 30)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(controllerRadioButton)
+                                    .addComponent(modelRadioButton)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(171, 171, 171)
+                                .addComponent(createButton)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jToggleButton1))
+                .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(controllerRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -335,16 +383,16 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
                     .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(interfaceLabel)
                     .addComponent(interfaceBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(realClassBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mainClassLabel)
+                    .addComponent(mainClassBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(mainClassBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(realClassLabel)
+                    .addComponent(realClassBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14)
                 .addComponent(createButton)
                 .addContainerGap())
@@ -357,6 +405,22 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
         createInteractiveProject();
     }//GEN-LAST:event_createButtonActionPerformed
 
+    private void modelRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelRadioButtonActionPerformed
+        if(modelRadioButton.isSelected())
+        {
+            controllerBased = false;
+        }
+        loadProject();
+    }//GEN-LAST:event_modelRadioButtonActionPerformed
+
+    private void controllerRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controllerRadioButtonActionPerformed
+        if(controllerRadioButton.isSelected())
+        {
+            controllerBased = true;
+        }
+        loadProject();
+    }//GEN-LAST:event_controllerRadioButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -365,21 +429,20 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
     private javax.swing.JRadioButton controllerRadioButton;
     private javax.swing.JButton createButton;
     private javax.swing.JComboBox<String> interfaceBox;
+    private javax.swing.JLabel interfaceLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JComboBox<String> mainClassBox;
+    private javax.swing.JLabel mainClassLabel;
     private javax.swing.JRadioButton modelRadioButton;
     private javax.swing.JTextField nameTextField;
     private javax.swing.ButtonGroup projectTypeButtonGroup;
     private javax.swing.JComboBox<String> realClassBox;
+    private javax.swing.JLabel realClassLabel;
     private javax.swing.JTextArea warningLabel;
     // End of variables declaration//GEN-END:variables
 }

@@ -357,15 +357,20 @@ public class InteractiveProject {
                     out.write("<type>"+type+"</type>\n"); 
                     out.write("<name>"+name+"</name>\n");
                     out.write("<path>"+path+"</path>\n");
-                    out.write("<interface-class>"+interfaceClass.getShortName()+"</interface-class>\n");
+                    if(type.equals("controller-based"))
+                        out.write("<interface-class>"+interfaceClass.getShortName()+"</interface-class>\n");
                     out.write("<main>"+main+"</main>\n");
-                    out.write("<interface-attribute>"+interfaceAttribute+"</interface-attribute>\n");
+                    if(type.equals("controller-based"))
+                        out.write("<interface-attribute>"+interfaceAttribute+"</interface-attribute>\n");
                     out.write("<package>"+myPackage+"</package>\n");
                     out.write("<files>\n");
                     
                     for (int i = 0; i < diagram.getClassCount(); i++) {
                         MyClass myClass = diagram.getClass(i);
-                        out.write("<file>"+myClass.getShortName()+"</file>\n");
+                        if(studentClass.equals(myClass))
+                            out.write("<file type=\"student-class\">"+myClass.getShortName()+"</file>\n");
+                        else
+                            out.write("<file>"+myClass.getShortName()+"</file>\n");
                     }
                     out.write("</files>\n");
                     out.write("</project>\n</projects>");
