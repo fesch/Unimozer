@@ -1456,23 +1456,26 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
             packages.clear();
             for(MyClass myClass : classes.values())
             {
-                Package myPackage = null;
-                if(!packages.containsKey(myClass.getPackagename()))
+                if(myClass.isDisplayUML())
                 {
-                    myPackage = new Package(myClass.getPackagename(),
-                            myClass.getPosition().y,
-                            myClass.getPosition().x,
-                            myClass.getWidth(),
-                            myClass.getHeight());
-                    packages.put(myPackage.getName(),myPackage);
+                    Package myPackage = null;
+                    if(!packages.containsKey(myClass.getPackagename()))
+                    {
+                        myPackage = new Package(myClass.getPackagename(),
+                                myClass.getPosition().y,
+                                myClass.getPosition().x,
+                                myClass.getWidth(),
+                                myClass.getHeight());
+                        packages.put(myPackage.getName(),myPackage);
+                    }
+                    else myPackage=packages.get(myClass.getPackagename());
+
+                    if(myClass.getPosition().x+myClass.getWidth() >myPackage.getRight())   myPackage.setRight(myClass.getPosition().x+myClass.getWidth());
+                    if(myClass.getPosition().y+myClass.getHeight()>myPackage.getBottom())  myPackage.setBottom(myClass.getPosition().y+myClass.getHeight());
+
+                    if(myClass.getPosition().x<myPackage.getLeft())   myPackage.setLeft(myClass.getPosition().x);
+                    if(myClass.getPosition().y<myPackage.getTop())    myPackage.setTop(myClass.getPosition().y);
                 }
-                else myPackage=packages.get(myClass.getPackagename());
-
-                if(myClass.getPosition().x+myClass.getWidth() >myPackage.getRight())   myPackage.setRight(myClass.getPosition().x+myClass.getWidth());
-                if(myClass.getPosition().y+myClass.getHeight()>myPackage.getBottom())  myPackage.setBottom(myClass.getPosition().y+myClass.getHeight());
-
-                if(myClass.getPosition().x<myPackage.getLeft())   myPackage.setLeft(myClass.getPosition().x);
-                if(myClass.getPosition().y<myPackage.getTop())    myPackage.setTop(myClass.getPosition().y);
             }
 
             // draw classes
@@ -1845,9 +1848,11 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 {
                     // get the actual class ...
                     MyClass thisClass = entry.getKey();
-                    
-                  Vector<MyClass> otherClasses = classAggregations.get(thisClass);
-                  for(MyClass otherClass : otherClasses) drawAggregation(g, thisClass, otherClass, classUsings);
+                  if(thisClass.isDisplayUML())  
+                  {
+                    Vector<MyClass> otherClasses = classAggregations.get(thisClass);
+                    for(MyClass otherClass : otherClasses) drawAggregation(g, thisClass, otherClass, classUsings);
+                  }
                 }
             }
             

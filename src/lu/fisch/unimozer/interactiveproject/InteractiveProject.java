@@ -241,6 +241,7 @@ public class InteractiveProject {
                 pos.y += 50;
                 myc.setPosition(pos);
             }
+            diagram.repaint();
         } catch (XPathExpressionException | IOException ex) {
             Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParserConfigurationException ex) {
