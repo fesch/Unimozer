@@ -54,6 +54,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -585,6 +586,10 @@ public class MyClass implements Space
 
     public boolean isDisplayUML() {
         return displayUML;
+    }
+
+    public Vector<Element> getFields() {
+        return fields;
     }
 
     public String getShortName()

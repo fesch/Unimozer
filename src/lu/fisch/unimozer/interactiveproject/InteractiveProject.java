@@ -67,6 +67,20 @@ public class InteractiveProject {
         this.diagram = diagram;
     }
 
+    public InteractiveProject(String type, String name, MyClass interfaceClass, String interfaceAttribute, String myPackage, String main, String path, MyClass studentClass, Diagram diagram, boolean builtIn) {
+        this.type = type;
+        this.name = name;
+        this.interfaceClass = interfaceClass;
+        this.interfaceAttribute = interfaceAttribute;
+        this.myPackage = myPackage;
+        this.main = main;
+        this.path = path;
+        this.studentClass = studentClass;
+        this.diagram = diagram;
+        this.buildIn = builtIn;
+    }
+
+    
     public JFrame getFrame() {
         return frame;
     }
@@ -222,17 +236,31 @@ public class InteractiveProject {
                 Runtime5.getInstance().load(myPackage + "." + main);
                 //Class.forName(myPackage + "." + main);
                 //Object mainObject = Class.forName(myPackage + "." + main).newInstance();
+                if (!myPackage.isEmpty()) {
+                    mainObject = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
+                } else {
+                    mainObject = Runtime5.getInstance().getInstance("MainFrame", "new " + main + "()");
+                }
 
-                mainObject = Runtime5.getInstance().getInstance("MainFrame", "new " + myPackage + "." + main + "()");
                 if (type.equals("controller-based")) {
                     Method method = mainObject.getClass().getMethod("getInterfaceObject");
                     interfaceObject = method.invoke(mainObject);
 
                     objectizer.addInteractiveObject(interfaceAttribute, interfaceObject);
-                    studentObject = Runtime5.getInstance().getInstance("Controller", "new " + myPackage + ".Controller()");
+
+                    if (!myPackage.isEmpty()) {
+                        studentObject = Runtime5.getInstance().getInstance("Controller", "new " + myPackage + ".Controller()");
+                    } else {
+                        studentObject = Runtime5.getInstance().getInstance("Controller", "new Controller()");
+                    }
 
                     //System.out.println(interfaceClass.getShortName());
-                    method = studentObject.getClass().getMethod("set" + interfaceClass.getShortName(), Runtime5.getInstance().load(myPackage + "." + interfaceClass.getShortName()));
+                    if (!myPackage.isEmpty()) {
+                        method = studentObject.getClass().getMethod("set" + interfaceClass.getShortName(), Runtime5.getInstance().load(myPackage + "." + interfaceClass.getShortName()));
+                    } else {
+                        method = studentObject.getClass().getMethod("set" + interfaceClass.getShortName(), Runtime5.getInstance().load(interfaceClass.getShortName()));
+                    }
+
                     interfaceObject = method.invoke(studentObject, interfaceObject);
                     objectizer.addObject("controller", studentObject);
                 } else if (type.equals("model-based")) {
