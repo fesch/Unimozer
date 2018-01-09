@@ -252,30 +252,6 @@ public class InteractiveProject {
 
     }
 
-    //used to load an not built-in interactive project from disk
-    public void loadFromDisk(String directory) {
-        try {
-
-            //read the contest from the pck file
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            document = db.parse(getClass().getResourceAsStream(directory + "/interactiveproject.pck"));
-
-            XPathFactory xPathfactory = XPathFactory.newInstance();
-            XPath xpath = xPathfactory.newXPath();
-            type = (String) xpath.compile("/projects/project[@id='" + name + "']/type").evaluate(document, XPathConstants.STRING);
-
-        } catch (XPathExpressionException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SAXException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(InteractiveProject.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     public void runProject() {
         //loads the MainFrame of the called Project
         try {
