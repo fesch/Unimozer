@@ -51,12 +51,12 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
         
         realClassLabel.setVisible(controllerBased);
         realClassBox.setVisible(controllerBased);
-        mainClassBox.setVisible(controllerBased);
-        mainClassLabel.setVisible(controllerBased);
+        /*mainClassBox.setVisible(controllerBased);
+        mainClassLabel.setVisible(controllerBased);*/
         
         if(controllerBased)
         {
-            interfaceLabel.setText("Interface class:");
+            interfaceLabel.setText("Interface Class:");
             checkController();
             checkInterfaces();
             checkRealClass();
@@ -64,7 +64,7 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
         }
         else{
             checkStudentClass();
-            interfaceLabel.setText("Student class:");
+            interfaceLabel.setText("Student Class:");
         }
         
         
@@ -305,7 +305,7 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Name:");
 
-        interfaceLabel.setText("Interface-Class:");
+        interfaceLabel.setText("Interface Class:");
 
         createButton.setText("Create Project");
         createButton.addActionListener(new java.awt.event.ActionListener() {
@@ -322,7 +322,7 @@ public class CreateInteractiveProjectDialog extends javax.swing.JDialog {
         mainClassLabel.setText("Main class:");
         mainClassLabel.setToolTipText("The class that contains a default constructor and inherits from a JFrame");
 
-        realClassLabel.setText("Real-Class:");
+        realClassLabel.setText("Real Class:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

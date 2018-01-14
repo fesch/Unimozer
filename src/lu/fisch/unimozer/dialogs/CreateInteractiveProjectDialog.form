@@ -171,7 +171,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="interfaceLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Interface-Class:"/>
+        <Property name="text" type="java.lang.String" value="Interface Class:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="createButton">
@@ -228,7 +228,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="realClassLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Real-Class:"/>
+        <Property name="text" type="java.lang.String" value="Real Class:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JComboBox" name="realClassBox">
