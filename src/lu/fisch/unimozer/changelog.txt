@@ -5,7 +5,7 @@ Todo:
 - find/replace in selection
 
 
-Current version: 0.27-49 (2018.01.01)
+Current version: 0.27-50 (2018.01.17)
 - 01: printing was broken due to editor update [Lux BREDIMUS]
 - 02: copy diagrams cut outer lines for compiled projects [Fred FABER]
 - 03: added error message if save operations fails [Fred FABER]
@@ -61,6 +61,7 @@ Current version: 0.27-49 (2018.01.01)
 - 47: fix in rsyntaxtextarea [David Mancini]
 - 48: remove BlueJ save file [Fred FABER]
 - 49: added interactive project feature <Ronny OSWEILER>
+- 50: bug when UML class is out of screen [Thomas MARITS]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]

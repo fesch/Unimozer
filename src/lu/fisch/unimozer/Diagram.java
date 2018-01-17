@@ -6614,6 +6614,11 @@ Logger.getInstance().log("Diagram repainted ...");
         {
             StringList content = new StringList();
             content.loadFromFile(filename);
+            
+            // init min position
+            int minx = 0;
+            int miny = 0;
+            
             // load files
             for(int i = 0;i<content.count();i++)
             {
@@ -6684,6 +6689,8 @@ Logger.getInstance().log("Diagram repainted ...");
                         {
                             mc.setPosition(new Point(Integer.valueOf(line.get(1)), Integer.valueOf(line.get(2))));
                             addClass(mc);
+                            if(Integer.valueOf(line.get(1))<minx) minx=Integer.valueOf(line.get(1));
+                            if(Integer.valueOf(line.get(2))<miny) miny=Integer.valueOf(line.get(2));
                         }
                         else System.err.println("Unable to find the file: "+line.get(0) + ".java");
                     }
@@ -6693,6 +6700,29 @@ Logger.getInstance().log("Diagram repainted ...");
                     }
                 }
             }
+            
+            // translate min position
+            if (minx<0)
+                for(Entry<String,MyClass> entry : classes.entrySet()) 
+                {
+                    // get the actual class ...
+                    String acuClassMame = entry.getKey();
+                    MyClass acuMyClass = classes.get(acuClassMame);
+                    Point pos = acuMyClass.getPosition();
+                    pos.x-=minx;
+                    acuMyClass.setPosition(pos);
+                }
+            if (miny<0)
+                for(Entry<String,MyClass> entry : classes.entrySet()) 
+                {
+                    // get the actual class ...
+                    String acuClassMame = entry.getKey();
+                    MyClass acuMyClass = classes.get(acuClassMame);
+                    Point pos = acuMyClass.getPosition();
+                    pos.y-=miny;
+                    acuMyClass.setPosition(pos);
+                }
+            
             // in case we load a modified project (by NetBeans?) we need to make shure all classes are loaded, so
             // add the src directory again.
             addDir(new File(directoryName+System.getProperty("file.separator")+"src"),false);
