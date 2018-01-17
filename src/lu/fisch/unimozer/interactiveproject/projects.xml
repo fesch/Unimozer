@@ -15,6 +15,9 @@
 			<file>Board</file>
 			<file>MainFrame</file>
 			<file>DrawPanel</file>
+                        <file>LevelSelectDialog</file>
+                        <file>NewLevelDialog</file>
+                        <file>OpenLevelDialog</file>
                         <file type="student-class">Controller</file>
 		</files>
 	</project>

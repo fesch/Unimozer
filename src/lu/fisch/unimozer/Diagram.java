@@ -1456,23 +1456,26 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
             packages.clear();
             for(MyClass myClass : classes.values())
             {
-                Package myPackage = null;
-                if(!packages.containsKey(myClass.getPackagename()))
+                if(myClass.isDisplayUML())
                 {
-                    myPackage = new Package(myClass.getPackagename(),
-                            myClass.getPosition().y,
-                            myClass.getPosition().x,
-                            myClass.getWidth(),
-                            myClass.getHeight());
-                    packages.put(myPackage.getName(),myPackage);
+                    Package myPackage = null;
+                    if(!packages.containsKey(myClass.getPackagename()))
+                    {
+                        myPackage = new Package(myClass.getPackagename(),
+                                myClass.getPosition().y,
+                                myClass.getPosition().x,
+                                myClass.getWidth(),
+                                myClass.getHeight());
+                        packages.put(myPackage.getName(),myPackage);
+                    }
+                    else myPackage=packages.get(myClass.getPackagename());
+
+                    if(myClass.getPosition().x+myClass.getWidth() >myPackage.getRight())   myPackage.setRight(myClass.getPosition().x+myClass.getWidth());
+                    if(myClass.getPosition().y+myClass.getHeight()>myPackage.getBottom())  myPackage.setBottom(myClass.getPosition().y+myClass.getHeight());
+
+                    if(myClass.getPosition().x<myPackage.getLeft())   myPackage.setLeft(myClass.getPosition().x);
+                    if(myClass.getPosition().y<myPackage.getTop())    myPackage.setTop(myClass.getPosition().y);
                 }
-                else myPackage=packages.get(myClass.getPackagename());
-
-                if(myClass.getPosition().x+myClass.getWidth() >myPackage.getRight())   myPackage.setRight(myClass.getPosition().x+myClass.getWidth());
-                if(myClass.getPosition().y+myClass.getHeight()>myPackage.getBottom())  myPackage.setBottom(myClass.getPosition().y+myClass.getHeight());
-
-                if(myClass.getPosition().x<myPackage.getLeft())   myPackage.setLeft(myClass.getPosition().x);
-                if(myClass.getPosition().y<myPackage.getTop())    myPackage.setTop(myClass.getPosition().y);
             }
 
             // draw classes
@@ -1845,9 +1848,11 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 {
                     // get the actual class ...
                     MyClass thisClass = entry.getKey();
-                    
-                  Vector<MyClass> otherClasses = classAggregations.get(thisClass);
-                  for(MyClass otherClass : otherClasses) drawAggregation(g, thisClass, otherClass, classUsings);
+                  if(thisClass.isDisplayUML())  
+                  {
+                    Vector<MyClass> otherClasses = classAggregations.get(thisClass);
+                    for(MyClass otherClass : otherClasses) drawAggregation(g, thisClass, otherClass, classUsings);
+                  }
                 }
             }
             
@@ -4442,6 +4447,7 @@ Logger.getInstance().log("Diagram repainted ...");
                 if(interactiveProject==null 
                         || interactiveProject.getStudentClass().getFullName().equals(entry.getKey())
                         || !interactiveProject.getClasses().contains(entry.getKey())
+                        || !interactiveProject.isBuildIn()
                         )
                 {
                     try
@@ -4688,7 +4694,7 @@ Logger.getInstance().log("Diagram repainted ...");
             // save BlueJ Package
             saveBlueJPackages();
             if(interactiveProject!=null)
-                this.saveInteractiveProject();
+                interactiveProject.save(directoryName);
             markClassesAsNotChanged();
             updateLastModified();
             /*
@@ -4701,28 +4707,7 @@ Logger.getInstance().log("Diagram repainted ...");
         else return saveWithAskingLocation();
     }
     
-    public void saveInteractiveProject()
-    {
-        if(directoryName!=null)
-        {
-            FileOutputStream fos = null;
-            try {
-                String filePath = directoryName + System.getProperty("file.separator") + "interactiveproject.pck";
-                fos = new FileOutputStream(filePath);
-                OutputStreamWriter out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
-                out.write(interactiveProject.getName());
-                out.close();
-                
-                
-            } catch (FileNotFoundException ex) {
-                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedEncodingException ex) {
-                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(Diagram.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
+   
     
     public void markClassesAsNotChanged()
     {
@@ -6587,7 +6572,11 @@ Logger.getInstance().log("Diagram repainted ...");
         {
             StringList content = new StringList();
             content.loadFromFile(filename);
-            interactiveProject = new InteractiveProject(content.get(0), diagram);
+            
+            if(!content.get(0).contains("xml"))
+                interactiveProject = new InteractiveProject(content.get(0), diagram);
+            else
+                interactiveProject = new InteractiveProject(diagram, false);
             interactiveProject.loadFromXML(true);
         }
             
