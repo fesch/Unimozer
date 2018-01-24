@@ -1968,7 +1968,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
     public void addClass()
     {
         ClassEditor ce = ClassEditor.showModal(this.frame, "Add a new class", true);
-        Ini.set("javaDocCClass", Boolean.toString(ce.genDoc()));
+        Ini.set("javaDocClass", Boolean.toString(ce.genDoc()));
         Ini.set("mainClass", Boolean.toString(ce.genMain()));
         if (ce.OK==true)
         {
@@ -2035,12 +2035,13 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 }
                  */
             }
+            //System.out.println(mc.getJavaCode());
             mc.updateContent();
             
             String code = mc.getJavaCode();
             code = code.replace(" {", "\n{");
             mc.setContent(StringList.explode(code, "\n"));
-
+            
             this.addClass(mc);
             this.selectClass(mc);
             updateEditor();

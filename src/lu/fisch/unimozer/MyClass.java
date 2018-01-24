@@ -53,6 +53,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -91,7 +92,7 @@ public class MyClass implements Space
     private CompilationUnit cu;
     private boolean validCode = true;
     private boolean changed = false;
-    private long lastModified = -1;
+    private long lastModified = Calendar.getInstance().getTimeInMillis();
     
 
     private Point position = new Point(0,0);
