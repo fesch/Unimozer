@@ -175,7 +175,7 @@ public class InteractiveProject {
             }
             //create a MyClass for each File and add to Diagram
             boolean first = true;
-            System.out.println(buildIn);
+            //System.out.println(buildIn);
             if(buildIn)
             {
                 for (int i = 0; i < nl.getLength(); i++) {

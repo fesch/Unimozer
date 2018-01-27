@@ -47,7 +47,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
-import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -4401,6 +4400,25 @@ Logger.getInstance().log("Diagram repainted ...");
 
        return content;
     }
+    
+    // test if a class is a build-in class
+    public boolean isBuildIn(MyClass myClass)
+    {
+        return isBuildIn(myClass.getFullName());
+    }
+
+    public boolean isBuildIn(String myClassFullname)
+    {
+        if(interactiveProject==null 
+            || interactiveProject.getStudentClass().getFullName().equals(myClassFullname)
+            || !interactiveProject.getClasses().contains(myClassFullname)
+            || !interactiveProject.isBuildIn()
+            )
+        {
+            return false;
+        }
+        return true;
+    }
 
     private void saveFiles()
     {
@@ -4448,11 +4466,13 @@ Logger.getInstance().log("Diagram repainted ...");
                 String str = entry.getKey();
                 
                 //when saving an interactive project, don't save the given files
+                if(!isBuildIn(str))
+                    /*
                 if(interactiveProject==null 
                         || interactiveProject.getStudentClass().getFullName().equals(entry.getKey())
                         || !interactiveProject.getClasses().contains(entry.getKey())
                         || !interactiveProject.isBuildIn()
-                        )
+                        )*/
                 {
                     try
                     {
@@ -4733,7 +4753,7 @@ Logger.getInstance().log("Diagram repainted ...");
             // save the java files
             saveFiles();
             // save BlueJ Package
-            saveBlueJPackages();
+            // saveBlueJPackages(); // dropped in 0.27-52
             if(interactiveProject!=null)
                 interactiveProject.save(directoryName);
             markClassesAsNotChanged();
@@ -4788,7 +4808,11 @@ Logger.getInstance().log("Diagram repainted ...");
                                Unimozer.B_PACKAGENAME;
                 }
                 StringList content = getBlueJSaveContent(pack);
-                content.saveToFile(filename);
+                
+                // #PackBo
+                if((new File(base+System.getProperty("file.separator")+
+                             pack.getName().replace('.', System.getProperty("file.separator").charAt(0)))).exists())
+                    content.saveToFile(filename);
             }
         }
     }
@@ -6217,7 +6241,7 @@ Logger.getInstance().log("Diagram repainted ...");
         } 
         catch (Exception ex)
         {
-            JOptionPane.showMessageDialog(frame, "A terrible error occured!\n"+
+            JOptionPane.showMessageDialog(frame, "A terrible error occured while creating the JavaDoc!\n"+
                         ex.getMessage()+"\n","Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
             setChanged(true);
         }
@@ -7095,7 +7119,7 @@ Logger.getInstance().log("Diagram repainted ...");
         } 
         catch (Exception ex)
         {
-            JOptionPane.showMessageDialog(frame, "A terrible error occured!\n"+
+            JOptionPane.showMessageDialog(frame, "A terrible error occured while saving the project!\n"+
                         ex.getMessage()+"\n","Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
             setChanged(true);
         }

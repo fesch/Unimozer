@@ -65,6 +65,7 @@ Current version: 0.27-52 (2018.01.24)
 - 51: fixed a bug when a new class is being added with the same name than
       a previously deleted file [Ronny OSWEILER]
 - 52: fixed a bug when changing the package name in a file [Robert FISCH]
+- 52: dropped writing of BlueJ save files [Robert FISCH]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]
