@@ -65,7 +65,7 @@ public class RealPlayer implements Player {
         this.y = y;
     }
 
-    public void move() {
+    public void moveForward() {
         if (x + dX < board.getCols()
                 && x + dX > 0
                 && y + dY < board.getRows()
@@ -102,6 +102,9 @@ public class RealPlayer implements Player {
 
     public boolean hasEnemyInFront() {
         return board.getMap()[y][x].equals("E");
+    }
+    public boolean hasAsteroidInFront() {
+        return board.getMap()[y][x].equals("#");
     }
 
     public void turnClockwise() {

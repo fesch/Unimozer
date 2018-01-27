@@ -9,12 +9,13 @@ package interactiveproject.spacesimulator;
  * @author Ronny
  */
 public interface Player {
-    public void move();
+    public void moveForward();
     public void turnClockwise();
     public void turnCounterClockwise();
     public void attack();
     public boolean isAtGem();
     public void collect();
     public boolean hasEnemyInFront();
+    public boolean hasAsteroidInFront();
 }
 
