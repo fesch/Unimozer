@@ -53,7 +53,16 @@ public class CodeReader implements Runnable
         {
             try
             {
+                String oldPName = mc.getPackagename();
                 diagram.loadClassFromString(mc, code.getCode());
+                String newPName = mc.getPackagename();
+                
+                if(!oldPName.equals(newPName))
+                {
+                    // we need to check if the stored file has to be moved
+                    diagram.moveFile(mc,oldPName);
+                }
+                
                 diagram.cleanAll();
                 // compile on the fly
                 if(Unimozer.javaCompileOnTheFly)

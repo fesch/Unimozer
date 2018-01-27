@@ -38,6 +38,8 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -266,6 +268,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
             {
                 if (files[f].getAbsolutePath().toLowerCase().endsWith(".java"))
                 {
+                    //System.out.println("ADD: "+files[f].getAbsolutePath());
                     try
                     {
                         //MyClass mc = new MyClass(new FileInputStream(filename));
@@ -4462,7 +4465,6 @@ Logger.getInstance().log("Diagram repainted ...");
                         String filename;
                         FileOutputStream fos;
                         Writer out;
-
                         // write standard file
                         /*
                         if(!classes.get(str).getPackagename().equals(Package.DEFAULT))
@@ -4594,6 +4596,44 @@ Logger.getInstance().log("Diagram repainted ...");
             MyClass mc = classes.get(str);
             File f = new File(getFullPathSrc(mc));
             mc.setLastModified(f.lastModified());
+        }
+    }
+    
+    public void moveFile(MyClass mc, String oldPName) {
+        //System.out.println(oldPName+" "+mc.getPackagename());
+        // <default>
+        String dir = directoryName+System.getProperty("file.separator")+"src"+System.getProperty("file.separator");
+        String p = mc.getPackagename().replaceAll("\\.", "\\"+System.getProperty("file.separator"));
+        String to = dir+p+System.getProperty("file.separator")+mc.getShortName()+".java";
+        if(mc.getPackagename().equals("<default>"))
+            to = dir+mc.getShortName()+".java";
+        
+        p = oldPName.replaceAll("\\.", "\\"+System.getProperty("file.separator"));
+        String from = dir+p+System.getProperty("file.separator")+mc.getShortName()+".java";
+        if(oldPName.equals("<default>"))
+            from = dir+mc.getShortName()+".java";
+        
+        File fromF = new File(from);
+        File toF = new File(to);
+        if(fromF.exists())
+           try {
+                String filePath = to.substring(0,to.lastIndexOf(System.getProperty("file.separator")));
+                //System.out.println(filePath);
+                Files.createDirectories((new File(filePath)).toPath());
+                Files.move(fromF.toPath(), toF.toPath(), REPLACE_EXISTING);
+                // we need to save the file as well, because it must contain the right package information!
+                FileOutputStream fos;
+                Writer out;
+                fos = new FileOutputStream(to);
+                out = new OutputStreamWriter(fos, Unimozer.FILE_ENCODING);
+                String code;
+                if(allowEdit==true) code = mc.getJavaCode();
+                else code = mc.getContent().getText();
+                out.write(code);
+                out.close();
+        } catch (IOException ex) {
+               System.err.println("Ups, you modified the package information of a class, but Unimozer didn't manage to move the corresponding file to theright place!");
+               ex.printStackTrace();
         }
     }
     

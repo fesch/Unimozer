@@ -2197,6 +2197,7 @@ public class MyClass implements Space
     public void setChanged(boolean changed)
     {
         this.changed = changed;
+        setLastModified();
     }
 
     public long getLastModified()
@@ -2207,6 +2208,11 @@ public class MyClass implements Space
     public void setLastModified(long lastModified)
     {
         this.lastModified = lastModified;
+    }
+    
+    public void setLastModified()
+    {
+        lastModified = Calendar.getInstance().getTimeInMillis();
     }
     
     public Point getCenter()
