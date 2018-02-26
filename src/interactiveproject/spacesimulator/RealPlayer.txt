@@ -168,7 +168,20 @@ public class RealPlayer implements Player {
     public int getGems() {
         return gems;
     }
-
+    
+    public void reset()
+    {   
+        this.gems = 0;
+        this.isAlive = true;
+        try {
+                img = ImageIO.read(getClass().getResourceAsStream("/interactiveproject/spacesimulator/images/ship.png"));
+        } catch (IOException ex) {
+                Logger.getLogger(RealPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        direction = 1;
+        dX = 1;
+        dY = 0;
+    }
     public void draw(Graphics g, int offsetLeft, int offsetTop, int cellSize) {
         //translation for the image
 
