@@ -233,7 +233,18 @@ public class MyObject
                         {
                             Object o = field.get(getObject());
                             if(o!=null)
-                                display = field.getName() + " = " + o.toString();
+                                if (field.getType().isArray())
+                                {
+                                    /*
+                                    Encapsulate our Object in an Object[] array and use java.util.Arrays.deepToString() to
+                                    create a string representation. Manually remove the leading [ and trailing ].
+                                    */
+                                    Object[] tmp = {o};
+                                    String s = java.util.Arrays.deepToString(tmp);
+                                    display = field.getName() + " = " + s.substring(1, s.length()-1);
+                                }
+                                else    
+                                    display = field.getName() + " = " + o.toString();
                             else
                                 display = field.getName() + " = <NULL>";
                         }
@@ -311,7 +322,18 @@ public class MyObject
                     {
                         Object o = field.get(getObject());
                         if(o!=null)
-                            display = field.getName() + " = " + o.toString();
+                            if (field.getType().isArray())
+                            {
+                                /*
+                                Encapsulate our Object in an Object[] array and use java.util.Arrays.deepToString() to
+                                create a string representation. Manually remove the leading [ and trailing ].
+                                */
+                                Object[] tmp = {o};
+                                String s = java.util.Arrays.deepToString(tmp);
+                                display = field.getName() + " = " + s.substring(1, s.length()-1);
+                            }
+                            else    
+                                display = field.getName() + " = " + o.toString();
                         else
                             display = field.getName() + " = <NULL>";
                     }
@@ -361,7 +383,18 @@ public class MyObject
                             {
                                 Object o = field.get(getObject());
                                 if(o!=null)
-                                    display = field.getName() + " = " + o.toString();
+                                    if (field.getType().isArray())
+                                    {
+                                        /*
+                                        Encapsulate our Object in an Object[] array and use java.util.Arrays.deepToString() to
+                                        create a string representation. Manually remove the leading [ and trailing ].
+                                        */
+                                        Object[] tmp = {o};
+                                        String s = java.util.Arrays.deepToString(tmp);
+                                        display = field.getName() + " = " + s.substring(1, s.length()-1);
+                                    }
+                                    else    
+                                        display = field.getName() + " = " + o.toString();
                                 else
                                     display = field.getName() + " = <NULL>";
                             }
