@@ -2007,7 +2007,7 @@ public class Mainform extends JFrame
 
     private void speFontUpActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_speFontUpActionPerformed
     {//GEN-HEADEREND:event_speFontUpActionPerformed
-       if(Unimozer.DRAW_FONT_SIZE<20) Unimozer.DRAW_FONT_SIZE++;
+       if(Unimozer.DRAW_FONT_SIZE<30) Unimozer.DRAW_FONT_SIZE++;
        codeEditor.setFontSize(Unimozer.DRAW_FONT_SIZE);
        diagram.repaint();
 }//GEN-LAST:event_speFontUpActionPerformed

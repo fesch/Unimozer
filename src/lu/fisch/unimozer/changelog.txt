@@ -5,7 +5,7 @@ Todo:
 - find/replace in selection
 
 
-Current version: 0.27-52 (2018.01.24)
+Current version: 0.27-54 (2018.04.19)
 - 01: printing was broken due to editor update [Lux BREDIMUS]
 - 02: copy diagrams cut outer lines for compiled projects [Fred FABER]
 - 03: added error message if save operations fails [Fred FABER]
@@ -66,6 +66,8 @@ Current version: 0.27-52 (2018.01.24)
       a previously deleted file [Ronny OSWEILER]
 - 52: fixed a bug when changing the package name in a file [Robert FISCH]
 - 52: dropped writing of BlueJ save files [Robert FISCH]
+- 53: increased max font size from 20 to 30 [Robert FEIEREISEN]
+- 54: display content of array in Objectizer [Laurent HAAN]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]
