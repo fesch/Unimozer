@@ -616,6 +616,7 @@ public class Mainform extends JFrame
         shVeryStrong = new javax.swing.JRadioButtonMenuItem();
         shCostum = new javax.swing.JRadioButtonMenuItem();
         chkRealtime = new javax.swing.JCheckBoxMenuItem();
+        chkHidePrivateFields = new javax.swing.JCheckBoxMenuItem();
         mHelp = new javax.swing.JMenu();
         miAbout = new javax.swing.JMenuItem();
         miBootLogReport = new javax.swing.JMenuItem();
@@ -1647,6 +1648,14 @@ public class Mainform extends JFrame
         });
         mOptions.add(chkRealtime);
 
+        chkHidePrivateFields.setText("Hide private fields in object monitor");
+        chkHidePrivateFields.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkHidePrivateFieldsActionPerformed(evt);
+            }
+        });
+        mOptions.add(chkHidePrivateFields);
+
         jMenuBar.add(mOptions);
 
         mHelp.setText("Help");
@@ -2356,12 +2365,25 @@ public class Mainform extends JFrame
         dg.setVisible(true);
     }//GEN-LAST:event_miCreateInteractiveActionPerformed
 
+    private void chkHidePrivateFieldsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkHidePrivateFieldsActionPerformed
+        if(chkHidePrivateFields.isSelected())
+        {
+            objectizer.setHidePrivateFields(true);
+        }
+        else
+        {
+            objectizer.setHidePrivateFields(false);
+        }
+        objectizer.repaint();
+    }//GEN-LAST:event_chkHidePrivateFieldsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup actionGroup;
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JSplitPane bottomSplitter;
     private javax.swing.JLabel callingLabel;
+    private javax.swing.JCheckBoxMenuItem chkHidePrivateFields;
     private javax.swing.JCheckBoxMenuItem chkRealtime;
     private lu.fisch.unimozer.CodeEditor codeEditor;
     lu.fisch.unimozer.console.Console console;
@@ -2371,7 +2393,7 @@ public class Mainform extends JFrame
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
-    private javax.swing.JSeparator jSeparator11;
+    private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
