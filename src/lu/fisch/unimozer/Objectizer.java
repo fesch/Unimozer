@@ -2013,6 +2013,10 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
     public void setHidePrivateFields(boolean hidePrivateFields) {
         this.hidePrivateFields = hidePrivateFields;
     }
+    
+    public boolean hasHidePrivateFields() {
+        return hidePrivateFields;
+    }
 
     /**
      * @return the calling

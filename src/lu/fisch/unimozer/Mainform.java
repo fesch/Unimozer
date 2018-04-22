@@ -257,6 +257,10 @@ public class Mainform extends JFrame
             miDiagramStandardJava.setSelected(true);
             miDiagramStandardUML.setSelected(false);
         }
+        
+        // hide private fields
+        objectizer.setHidePrivateFields(ini.getProperty("hidePrivateFields","false").equals("true"));
+        chkHidePrivateFields.setSelected(objectizer.hasHidePrivateFields());
 
         // toolbars
         miToolbarFile.setSelected(ini.getProperty("toolbarFile","true").equals("true"));
@@ -264,6 +268,7 @@ public class Mainform extends JFrame
         miToolbarRun.setSelected(ini.getProperty("toolbarRun","false").equals("true"));
         miToolbarUML.setSelected(ini.getProperty("toolbarUML","true").equals("true"));
         miToolbarShow.setSelected(ini.getProperty("toolbarShow","true").equals("true"));
+        
         //miShowJavadoc.setSelected(ini.getProperty("showComments","true").equals("true"));
         // initial directory name
 
@@ -2375,6 +2380,7 @@ public class Mainform extends JFrame
             objectizer.setHidePrivateFields(false);
         }
         objectizer.repaint();
+        Ini.set("hidePrivateFields",Boolean.toString(chkHidePrivateFields.isSelected()));
     }//GEN-LAST:event_chkHidePrivateFieldsActionPerformed
 
 
