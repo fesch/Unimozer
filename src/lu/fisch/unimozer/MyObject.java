@@ -28,6 +28,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Window;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -190,7 +191,11 @@ public class MyObject
         }
     }
 
-    public int paint(Graphics2D g, int x, int y, boolean isUML)
+    public int paint(Graphics2D g, int x, int y, boolean isUML) {
+        return paint(g, x, y, isUML, false);
+    }
+    
+    public int paint(Graphics2D g, int x, int y, boolean isUML, boolean hidePrivateFields)
     {
           String className = "<?>";
           if (this.getMyClass()!=null) className=this.getMyClass().getShortName();
@@ -226,6 +231,8 @@ public class MyObject
                     Field field = c.getDeclaredFields()[f];
                     //System.out.println("Found field: "+field.getName());
                     field.setAccessible(true);
+                    if (hidePrivateFields && Modifier.isPrivate(field.getModifiers()))
+                        continue;
                     String display = field.getName() + " = ?";
                     try
                     {
@@ -251,14 +258,11 @@ public class MyObject
                         else
                             display = field.getName() + " = <NULL>";
                     }
-                    catch (IllegalArgumentException ex)
+                    catch (IllegalArgumentException | IllegalAccessException ex)
                     {
                         //ex.printStackTrace();
                     }
-                    catch (IllegalAccessException ex)
-                    {
-                        //ex.printStackTrace();
-                    }
+                      //ex.printStackTrace();
                     g.setFont(new Font(g.getFont().getName(),Font.PLAIN,g.getFont().getSize()));
 
                     if(display.length()>50) display=display.substring(0,47)+"...";
@@ -315,6 +319,8 @@ public class MyObject
               {
                 Field field = c.getDeclaredFields()[f];  
                 field.setAccessible(true);
+                if (hidePrivateFields && Modifier.isPrivate(field.getModifiers()))
+                    continue;
                 String display = field.getName() + " = ?";
                 try
                 {
@@ -341,14 +347,11 @@ public class MyObject
                         display = field.getName() + " = <NULL>";
                     //display = field.getName() + " = " + field.get(getObject()).toString();
                 }
-                catch (IllegalArgumentException ex)
+                catch (IllegalArgumentException | IllegalAccessException ex)
                 {
                     //ex.printStackTrace();
                 }
-                catch (IllegalAccessException ex)
-                {
-                    //ex.printStackTrace();
-                }
+                  //ex.printStackTrace();
 
                 if(display.length()>50) display=display.substring(0,47)+"...";
 
@@ -376,6 +379,8 @@ public class MyObject
                       {
                         Field field = c.getDeclaredFields()[f];  
                         field.setAccessible(true);
+                        if (hidePrivateFields && Modifier.isPrivate(field.getModifiers()))
+                            continue;
                         String display = field.getName() + " = ?";
                         try
                         {
@@ -402,14 +407,11 @@ public class MyObject
                                 display = field.getName() + " = <NULL>";
                             //display = field.getName() + " = " + field.get(getObject()).toString();
                         }
-                        catch (IllegalArgumentException exi)
+                        catch (IllegalArgumentException | IllegalAccessException exi)
                         {
                             //exi.printStackTrace();
                         }
-                        catch (IllegalAccessException exi)
-                        {
-                            //exi.printStackTrace();
-                        }
+                          //exi.printStackTrace();
 
                         if(display.length()>50) display=display.substring(0,47)+"...";
 

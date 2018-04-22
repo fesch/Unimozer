@@ -83,6 +83,8 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
     private JLabel calling = null;
     /** holds the references to the different thread created */
     private Vector<Thread> threads = new Vector<Thread>();
+    /** whether to hide private fields */
+    private boolean hidePrivateFields = false;
     
     private static Objectizer self = null;
 
@@ -389,7 +391,7 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
             {
                 String objectName = (String) objects.keySet().toArray()[o];
                 MyObject myObj = objects.get(objectName);
-                left+=myObj.paint(g, left, 8, diagram.isUML())+8;
+                left+=myObj.paint(g, left, 8, diagram.isUML(), hidePrivateFields)+8;
             }
         }
         catch (Error e)
@@ -2006,6 +2008,10 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
     @Override
     public void windowDeactivated(WindowEvent e)
     {
+    }
+    
+    public void setHidePrivateFields(boolean hidePrivateFields) {
+        this.hidePrivateFields = hidePrivateFields;
     }
 
     /**
