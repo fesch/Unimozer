@@ -3759,318 +3759,322 @@ Logger.getInstance().log("Diagram repainted ...");
 			showPopup(e);
 		}
 
-    private void fillPopup(JComponent popup, Class c)
-    {
-        Method m[] = c.getDeclaredMethods();
-        boolean found = false;
-        for (int i = 0; i < m.length; i++)
+        private void fillPopup(JComponent popup, Class c)
         {
-            String full = "";
-            full+= m[i].getReturnType().getSimpleName();
-            Type type = m[i].getGenericReturnType();
-            if(type instanceof ParameterizedType)
+            Method m[] = c.getDeclaredMethods();
+            boolean found = false;
+            for (int i = 0; i < m.length; i++)
             {
-                full+="<";
-                ParameterizedType pt = (ParameterizedType) type;  
-                for(int t=0;t<pt.getActualTypeArguments().length;t++)
+                String full = "";
+                full+= m[i].getReturnType().getSimpleName();
+                Type type = m[i].getGenericReturnType();
+                if(type instanceof ParameterizedType)
                 {
-                    if(t!=0) full+=",";
-                    full+=pt.getActualTypeArguments()[t].toString()
-                            .replace("class java.lang.","")
-                            .replace("class ","");
-                }  
-                full+=">";
-                
-            }
-            full+=" ";
-            full+= m[i].getName();
-            full+= "(";
-            Type[] tvm = m[i].getParameterTypes();
-            for(int t=0;t<tvm.length;t++)
-            {
-                String sn = tvm[t].toString();
-                sn=sn.substring(sn.lastIndexOf('.')+1,sn.length());
-                if(sn.startsWith("class")) sn=sn.substring(5).trim();
-                // array is shown as ";"  ???
-                if(sn.endsWith(";"))
-                {
-                    sn=sn.substring(0,sn.length()-1)+"[]";
-                }
-                full+= sn+", ";
-            }
-            if(tvm.length>0) full=full.substring(0,full.length()-2);
-            full+= ")";
-            String backup = new String(full);
-            //System.out.println("Mod: "+m[i].getModifiers()+" << "+full);
-            String complete = new String(Modifier.toString(m[i].getModifiers())+" "+full);
-            //System.out.println("Comp: "+complete+" << "+full);
-
-            //if (base==true) System.err.println("Complete: "+complete);
-
-            // get the real full name from the "MyObject" representation
-            MyClass mc = diagram.getClass(c.getName());
-            if(mc!=null)
-            {
-                String comp = mc.getCompleteSignatureBySignature(full);
-                if(!comp.equals("")) complete = comp;
-                full = mc.getFullSignatureBySignature(full);
-            }
-            if(full.trim().equals("")) full=backup;
-
-            //System.err.println(c.getSimpleName()+" >> "+complete);
-            //System.out.println("Comp: "+complete+" << "+full);
-            //if((!complete.startsWith("private") || base==true)) // && (!complete.contains("static")))
-            if(complete.startsWith("public")==true && complete.contains("static"))
-            {
-                //System.err.println("Adding: "+complete);
-                found=true;
-                JMenuItem item = new JMenuItem(full);
-                item.addActionListener(diagram);
-                item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_method_static.png")));
-                popup.add(item);
-            }
-        }
-
-        // add separator if there is at leat one static method
-        if (found==true)
-        {
-            JSeparator sep = new JSeparator();
-            popup.add(sep);
-        }
-    }
-
-    private void showPopup(MouseEvent e)
-    {
-        //System.out.println("showPopup");
-        if(diagram.isEnabled())
-        {
-            //System.out.println("showPopup - en");
-	    if (e.isPopupTrigger())
-	    {
-                //System.out.println("showPopup - trigger");
-                mousePoint = e.getPoint();
-                MyClass clickClass = getMouseClassNoSelect(mousePoint);
-                mouseClass=clickClass;
-
-                // load the clicked class
-                loadClickedClass(e);
-
-                /*if(clickClass!=mouseClass)
-                {
-                    mouseClass=clickClass;
-                }*/
-
-                // clear the popup menu
-                popup.removeAll();
-                // fill with what is needed
-                if(clickClass!=null)
-                {
-                    if(clickClass.isCompiled())
+                    full+="<";
+                    ParameterizedType pt = (ParameterizedType) type;  
+                    for(int t=0;t<pt.getActualTypeArguments().length;t++)
                     {
-                        try
+                        if(t!=0) full+=",";
+                        full+=pt.getActualTypeArguments()[t].toString()
+                                .replace("class java.lang.","")
+                                .replace("class ","");
+                    }  
+                    full+=">";
+
+                }
+                full+=" ";
+                full+= m[i].getName();
+                full+= "(";
+                Type[] tvm = m[i].getParameterTypes();
+                for(int t=0;t<tvm.length;t++)
+                {
+                    String sn = tvm[t].toString();
+                    sn=sn.substring(sn.lastIndexOf('.')+1,sn.length());
+                    if(sn.startsWith("class")) sn=sn.substring(5).trim();
+                    // array is shown as ";"  ???
+                    if(sn.endsWith(";"))
+                    {
+                        sn=sn.substring(0,sn.length()-1)+"[]";
+                    }
+                    full+= sn+", ";
+                }
+                if(tvm.length>0) full=full.substring(0,full.length()-2);
+                full+= ")";
+                String backup = new String(full);
+                //System.out.println("Mod: "+m[i].getModifiers()+" << "+full);
+                String complete = new String(Modifier.toString(m[i].getModifiers())+" "+full);
+                //System.out.println("Comp: "+complete+" << "+full);
+
+                //if (base==true) System.err.println("Complete: "+complete);
+
+                // get the real full name from the "MyObject" representation
+                MyClass mc = diagram.getClass(c.getName());
+                if(mc!=null)
+                {
+                    String comp = mc.getCompleteSignatureBySignature(full);
+                    if(!comp.equals("")) complete = comp;
+                    full = mc.getFullSignatureBySignature(full);
+                }
+                if(full.trim().equals("")) full=backup;
+
+                //System.err.println(c.getSimpleName()+" >> "+complete);
+                //System.out.println("Comp: "+complete+" << "+full);
+                //if((!complete.startsWith("private") || base==true)) // && (!complete.contains("static")))
+                if(complete.startsWith("public")==true && complete.contains("static"))
+                {
+                    //System.err.println("Adding: "+complete);
+                    found=true;
+                    JMenuItem item = new JMenuItem(full);
+                    item.addActionListener(diagram);
+                    item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_method_static.png")));
+                    popup.add(item);
+                }
+            }
+
+            // add separator if there is at leat one static method
+            if (found==true)
+            {
+                JSeparator sep = new JSeparator();
+                popup.add(sep);
+            }
+        }
+
+        private void showPopup(MouseEvent e)
+        {
+            //System.out.println("showPopup");
+            if(diagram.isEnabled())
+            {
+                //System.out.println("showPopup - en");
+                if (e.isPopupTrigger())
+                {
+                    //System.out.println("showPopup - trigger");
+                    mousePoint = e.getPoint();
+                    MyClass clickClass = getMouseClassNoSelect(mousePoint);
+                    mouseClass=clickClass;
+
+                    // load the clicked class
+                    //System.out.println("showPopup - loadClickedClass");
+                    loadClickedClass(e);
+
+                    /*if(clickClass!=mouseClass)
+                    {
+                        mouseClass=clickClass;
+                    }*/
+
+                    // clear the popup menu
+                    //System.out.println("showPopup - remove all");
+                    popup.removeAll();
+                    // fill with what is needed
+                    if(clickClass!=null)
+                    {
+                        if(clickClass.isCompiled())
                         {
-                            // just make sure everthing _is_ right,
-                            // so we compile the class (and all subclasses)
-                            //mouseClass.compile();
-                            // now load the class (and all subclasses)
-                            //Class<?> cla = mouseClass.load();
-                            Class<?> cla = Runtime5.getInstance().load(clickClass.getFullName());
-                            Constructor[] constr = cla.getConstructors();
-                            for(int c = 0;c<constr.length;c++)
+                            try
                             {
-                                // get signature
-                                /*String full = constr[c].getName();
-                                full+="(";
-                                Class<?>[] tvm = constr[c].getParameterTypes();
-                                for(int t=0;t<tvm.length;t++)
+                                // just make sure everthing _is_ right,
+                                // so we compile the class (and all subclasses)
+                                //mouseClass.compile();
+                                // now load the class (and all subclasses)
+                                //Class<?> cla = mouseClass.load();
+                                Class<?> cla = Runtime5.getInstance().load(clickClass.getFullName());
+                                Constructor[] constr = cla.getConstructors();
+                                for(int c = 0;c<constr.length;c++)
                                 {
-                                    String sn = tvm[t].toString();
-                                    sn=sn.substring(sn.lastIndexOf('.')+1,sn.length());
-                                    if(sn.startsWith("class")) sn=sn.substring(5).trim();
-                                    // array is shown as ";"  ???
-                                    if(sn.endsWith(";"))
+                                    // get signature
+                                    /*String full = constr[c].getName();
+                                    full+="(";
+                                    Class<?>[] tvm = constr[c].getParameterTypes();
+                                    for(int t=0;t<tvm.length;t++)
                                     {
-                                        sn=sn.substring(0,sn.length()-1)+"[]";
+                                        String sn = tvm[t].toString();
+                                        sn=sn.substring(sn.lastIndexOf('.')+1,sn.length());
+                                        if(sn.startsWith("class")) sn=sn.substring(5).trim();
+                                        // array is shown as ";"  ???
+                                        if(sn.endsWith(";"))
+                                        {
+                                            sn=sn.substring(0,sn.length()-1)+"[]";
+                                        }
+                                        full+= sn+", ";
                                     }
-                                    full+= sn+", ";
+                                    if(tvm.length>0) full=full.substring(0,full.length()-2);
+                                    full+= ")";
+                                    String backup = new String(full);
+                                    String complete = new String(full);
+                                    */
+                                    String full = objectizer.constToFullString(constr[c]);
+                                    String backup = objectizer.constToFullString(constr[c]);
+                                    String complete = objectizer.constToCompleteString(constr[c]);
+
+                                    // get full signature
+                                    full = clickClass.getFullSignatureBySignature(full);
+                                    complete = clickClass.getCompleteSignatureBySignature(full);
+                                    if(full.trim().equals("")) full=backup;
+
+                                    if(!complete.startsWith("private") && !clickClass.getName().contains("abstract"))
+                                    {
+                                        JMenuItem item = new JMenuItem("new "+full);
+                                        item.addActionListener(diagram);
+                                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_constructor.png")));
+                                        popup.add(item);
+                                    }
                                 }
-                                if(tvm.length>0) full=full.substring(0,full.length()-2);
-                                full+= ")";
-                                String backup = new String(full);
-                                String complete = new String(full);
-                                */
-                                String full = objectizer.constToFullString(constr[c]);
-                                String backup = objectizer.constToFullString(constr[c]);
-                                String complete = objectizer.constToCompleteString(constr[c]);
 
-                                // get full signature
-                                full = clickClass.getFullSignatureBySignature(full);
-                                complete = clickClass.getCompleteSignatureBySignature(full);
-                                if(full.trim().equals("")) full=backup;
-
-                                if(!complete.startsWith("private") && !clickClass.getName().contains("abstract"))
+                                // add separator if there is at least one constructor
+                                if(constr.length>0)
                                 {
-                                    JMenuItem item = new JMenuItem("new "+full);
-                                    item.addActionListener(diagram);
-                                    item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_constructor.png")));
-                                    popup.add(item);
+                                    JSeparator sep = new JSeparator();
+                                    popup.add(sep);
                                 }
-                            }
 
-                            // add separator if there is at least one constructor
-                            if(constr.length>0)
+                                // add static methods
+                                fillPopup(popup,(Class) cla);
+
+                                JMenuItem item = new JMenuItem("Remove class");
+                                item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/gen_del.png")));
+                                item.addActionListener(diagram);
+                                popup.add(item);
+
+
+                            }
+                            catch (Exception ex)
                             {
-                                JSeparator sep = new JSeparator();
-                                popup.add(sep);
+                                MyError.display(ex);
+                                repaint();
+                                JOptionPane.showMessageDialog(frame, ex.toString(), "Class load error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
                             }
+                        }
+                        else
+                        {
+                            JMenuItem item = new JMenuItem("Compile");
+                            item.addActionListener(diagram);
+                            item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/gen_proc.png")));
+                            popup.add(item);
 
-                            // add static methods
-                            fillPopup(popup,(Class) cla);
-                            
-                            JMenuItem item = new JMenuItem("Remove class");
+                            JSeparator sep = new JSeparator();
+                            popup.add(sep);
+
+                            item = new JMenuItem("Remove class");
                             item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/gen_del.png")));
                             item.addActionListener(diagram);
                             popup.add(item);
-
-
                         }
-                        catch (Exception ex)
+
+                        // allowEdit &&
+                        if(clickClass.isValidCode())
                         {
-                            MyError.display(ex);
-                            repaint();
-                            JOptionPane.showMessageDialog(frame, ex.toString(), "Class load error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
+                            JSeparator sep = new JSeparator();
+                            popup.add(sep);
+
+                            JMenuItem item = new JMenuItem("Add constructor ...");
+                            item.addActionListener(
+                                       new java.awt.event.ActionListener()
+                                       {
+                                            @Override
+                                            public void actionPerformed(java.awt.event.ActionEvent evt)
+                                            {
+                                                diagram.addConstructor();
+                                            }
+                                       }
+                            );
+                            item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_constructor.png")));
+                            popup.add(item);
+
+                            item = new JMenuItem("Add method ...");
+                            item.addActionListener(
+                                       new java.awt.event.ActionListener()
+                                       {
+                                            @Override
+                                            public void actionPerformed(java.awt.event.ActionEvent evt)
+                                            {
+                                                diagram.addMethod();
+                                            }
+                                       }
+                            );
+                            item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_method.png")));
+                            popup.add(item);
+
+                            item = new JMenuItem("Add field ...");
+                            item.addActionListener(
+                                       new java.awt.event.ActionListener()
+                                       {
+                                            @Override
+                                            public void actionPerformed(java.awt.event.ActionEvent evt)
+                                            {
+                                                diagram.addField();
+                                            }
+                                       }
+                            );
+                            item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_field.png")));
+                            popup.add(item);
                         }
-                    }
-                    else
-                    {
-                        JMenuItem item = new JMenuItem("Compile");
-                        item.addActionListener(diagram);
-                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/gen_proc.png")));
-                        popup.add(item);
 
+                        // in either case
                         JSeparator sep = new JSeparator();
                         popup.add(sep);
 
-                        item = new JMenuItem("Remove class");
-                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/gen_del.png")));
-                        item.addActionListener(diagram);
-                        popup.add(item);
-                    }
+                        JMenu menu = new JMenu("Copy diagram as PNG");
+                        popup.add(menu);
 
-                    // allowEdit &&
-                    if(clickClass.isValidCode())
+                        JMenuItem item = new JMenuItem("Uncompiled, nothing selected");
+                        item.addActionListener(
+                                   new java.awt.event.ActionListener()
+                                   {
+                                        public void actionPerformed(java.awt.event.ActionEvent evt)
+                                        {
+                                            diagram.copyToClipboardPNG(mouseClass,0);
+                                        }
+                                   }
+                        );
+                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/export_image.png")));
+                        menu.add(item);
+
+                        item = new JMenuItem("Uncompiled, selected");
+                        item.addActionListener(
+                                   new java.awt.event.ActionListener()
+                                   {
+                                        public void actionPerformed(java.awt.event.ActionEvent evt)
+                                        {
+                                            diagram.copyToClipboardPNG(mouseClass,1);
+                                        }
+                                   }
+                        );
+                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/export_image.png")));
+                        menu.add(item);
+
+                        item = new JMenuItem("Compiled");
+                        item.addActionListener(
+                                   new java.awt.event.ActionListener()
+                                   {
+                                        public void actionPerformed(java.awt.event.ActionEvent evt)
+                                        {
+                                            diagram.copyToClipboardPNG(mouseClass,2);
+                                        }
+                                   }
+                        );
+                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/export_image.png")));
+                        menu.add(item);
+
+                    }
+                    else // click on the empty space
                     {
-                        JSeparator sep = new JSeparator();
-                        popup.add(sep);
-
-                        JMenuItem item = new JMenuItem("Add constructor ...");
+                        //System.out.println("showPopup - no class clicked ...");
+                        JMenuItem item = new JMenuItem("Add class ...");
                         item.addActionListener(
                                    new java.awt.event.ActionListener()
                                    {
-                                        @Override
                                         public void actionPerformed(java.awt.event.ActionEvent evt)
                                         {
-                                            diagram.addConstructor();
-                                        }
+                                            diagram.addClass();
+                                        } 
                                    }
                         );
-                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_constructor.png")));
-                        popup.add(item);
-
-                        item = new JMenuItem("Add method ...");
-                        item.addActionListener(
-                                   new java.awt.event.ActionListener()
-                                   {
-                                        @Override
-                                        public void actionPerformed(java.awt.event.ActionEvent evt)
-                                        {
-                                            diagram.addMethod();
-                                        }
-                                   }
-                        );
-                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_method.png")));
-                        popup.add(item);
-
-                        item = new JMenuItem("Add field ...");
-                        item.addActionListener(
-                                   new java.awt.event.ActionListener()
-                                   {
-                                        @Override
-                                        public void actionPerformed(java.awt.event.ActionEvent evt)
-                                        {
-                                            diagram.addField();
-                                        }
-                                   }
-                        );
-                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_field.png")));
+                        item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_class.png")));
                         popup.add(item);
                     }
-                    
-                    // in either case
-                    JSeparator sep = new JSeparator();
-                    popup.add(sep);
-
-                    JMenu menu = new JMenu("Copy diagram as PNG");
-                    popup.add(menu);
-
-                    JMenuItem item = new JMenuItem("Uncompiled, nothing selected");
-                    item.addActionListener(
-                               new java.awt.event.ActionListener()
-                               {
-                                    public void actionPerformed(java.awt.event.ActionEvent evt)
-                                    {
-                                        diagram.copyToClipboardPNG(mouseClass,0);
-                                    }
-                               }
-                    );
-                    item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/export_image.png")));
-                    menu.add(item);
-                    
-                    item = new JMenuItem("Uncompiled, selected");
-                    item.addActionListener(
-                               new java.awt.event.ActionListener()
-                               {
-                                    public void actionPerformed(java.awt.event.ActionEvent evt)
-                                    {
-                                        diagram.copyToClipboardPNG(mouseClass,1);
-                                    }
-                               }
-                    );
-                    item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/export_image.png")));
-                    menu.add(item);
-                    
-                    item = new JMenuItem("Compiled");
-                    item.addActionListener(
-                               new java.awt.event.ActionListener()
-                               {
-                                    public void actionPerformed(java.awt.event.ActionEvent evt)
-                                    {
-                                        diagram.copyToClipboardPNG(mouseClass,2);
-                                    }
-                               }
-                    );
-                    item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/export_image.png")));
-                    menu.add(item);
-                    
+                    //System.out.println("showPopup - show it ...");
+                    popup.show(e.getComponent(), e.getX(), e.getY());
                 }
-                else // click on the empty space
-                {
-                    JMenuItem item = new JMenuItem("Add class ...");
-                    item.addActionListener(
-                               new java.awt.event.ActionListener()
-                               {
-                                    public void actionPerformed(java.awt.event.ActionEvent evt)
-                                    {
-                                        diagram.addClass();
-                                    } 
-                               }
-                    );
-                    item.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_class.png")));
-                    popup.add(item);
-                }
-                popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-		}
+            }
 	}
     }
 

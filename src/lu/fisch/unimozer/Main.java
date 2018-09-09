@@ -27,6 +27,7 @@ import com.apple.eawt.ApplicationEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
@@ -35,7 +36,9 @@ import java.net.URLClassLoader;
 import java.nio.channels.FileChannel;
 import java.util.Enumeration;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import javax.swing.JOptionPane;
 
 /**
@@ -70,6 +73,11 @@ public class Main
 
     public static void main(String[] args)
     {
+        Launcher launcher = new Launcher();
+        launcher.setVisible(true);
+        launcher.setLocationRelativeTo(null);
+        launcher.setStatus("Loading ...");
+        
         // start Unimozer
         Unimozer.messages.add("Starting Unimozer ...");
         
@@ -84,22 +92,172 @@ public class Main
         }
         
         Unimozer.messages.add("--- OS");
-        Unimozer.messages.add("Name  = "+System.getProperty("os.name"));
-        Unimozer.messages.add("Version  = "+System.getProperty("os.version"));
+        Unimozer.messages.add("Name = "+System.getProperty("os.name"));
+        Unimozer.messages.add("Version = "+System.getProperty("os.version"));
         Unimozer.messages.add("--- Java");
-        Unimozer.messages.add("Version  = "+System.getProperty("java.version"));
+        Unimozer.messages.add("Version = "+System.getProperty("java.version"));
         Unimozer.messages.add("Vendor = "+System.getProperty("java.vendor"));
         Unimozer.messages.add("Home = "+System.getProperty("java.home"));
         Unimozer.messages.add("User = "+System.getProperty("user.name"));
         
-        if(System.getProperty("java.version").trim().startsWith("9"))
-            JOptionPane.showMessageDialog(null, "Unimozer is not yet comptiable with Java 9.\nPlease uninstall Java 9 and use Java 8 instead.", "Error", JOptionPane.ERROR_MESSAGE);
+        /*if(System.getProperty("java.version").trim().startsWith("9") ||
+           System.getProperty("java.version").trim().startsWith("10"))
+            JOptionPane.showMessageDialog(null, "Unimozer is not yet comptiable with Java 9 or Java 10.\nPlease uninstall Java 9 and use Java 8 instead.", "Error", JOptionPane.ERROR_MESSAGE);
+        */
+        
+        if(System.getProperty("java.version").trim().startsWith("9") ||
+           System.getProperty("java.version").trim().startsWith("10"))
+        {
+            launcher.setStatus("Java version > 8 detected, analysing ...");
+            Unimozer.messages.add("---");
+                                        
+            // first of all, let's check if we got launched by a JDK
+            String jmods = System.getProperty("file.separator")+"jmods";
+            String bin = System.getProperty("file.separator")+"bin";
+            
+            File compiler = new File(System.getProperty("java.home")+jmods+System.getProperty("file.separator")+"java.compiler.jmod");
+            
+            // only continue if we have not been launched by a JDK
+            if(!compiler.exists())
+            {
+                // get boot folder
+                String bootFolder = System.getProperty("sun.boot.library.path");
+                // go back two directories
+                bootFolder=bootFolder.substring(0,bootFolder.lastIndexOf(System.getProperty("file.separator")));
+                bootFolder=bootFolder.substring(0,bootFolder.lastIndexOf(System.getProperty("file.separator")));
 
+                Unimozer.messages.add("Searching in the bootfolder: "+bootFolder);
+
+                // get all files from the boot folder
+                File bootFolderfile = new File(bootFolder);
+                File[] files = bootFolderfile.listFiles();
+                TreeSet<String> directories = new TreeSet<String>();
+                for(int i=0;i<files.length;i++)
+                {
+                    if(files[i].isDirectory()) directories.add(files[i].getAbsolutePath());
+                }
+                boolean found=false;
+                String JDK_directory = "";
+
+                while(directories.size()>0 && found==false)
+                {
+                    JDK_directory = directories.last();
+                    directories.remove(JDK_directory);    
+
+                    // for Java >9
+                    File compi = new File(JDK_directory+jmods+System.getProperty("file.separator")+"java.compiler.jmod");
+                    //Unibloxs.messages.add(tools.getAbsolutePath());
+                    if(compi.exists())
+                    {
+                        // we got it!
+                        found=true;
+                        Unimozer.messages.add("<java.compiler.jmod> found here: "+compi.getAbsolutePath());
+                        // let's make shure the executable is there too
+                        File javaw = new File(JDK_directory+bin+System.getProperty("file.separator")+"javaw");
+                        if(!javaw.exists())
+                            javaw = new File(JDK_directory+bin+System.getProperty("file.separator")+"javaw.exe");
+                        if(!javaw.exists())
+                            Unimozer.messages.add("Sorry, but <javaw> cannot be found ... aborting here!");
+                        else
+                        {
+                            try 
+                            {
+                                Unimozer.messages.add("Relaunching now with JDK ...");
+                             
+                                if(isRunningJavaWebStart())
+                                {
+                                    Unimozer.messages.add("We are running JWS ...");
+                                    //Moenagade.messages.add(System.getProperty("jnlpx.origFilenameArg"));
+                                    try 
+                                    {
+                                        /*
+                                         * Task #0 >> Find <tools.jar>
+                                         */
+                                        Unimozer.messages.add("Searching <Unimozer.jar> ...");
+                                        // All jars have an manifest
+                                        Enumeration<URL> e2 = Thread.currentThread().getContextClassLoader().getResources("META-INF/MANIFEST.MF");
+                                        while(e2.hasMoreElements()) 
+                                        {
+                                            URL u = e2.nextElement();
+                                            String urlString = u.toExternalForm(); 
+                                            
+                                            Unimozer.messages.add("Found: "+urlString);
+
+                                            // skip unused libs
+                                            if (!(urlString.indexOf("Unimozer")>0)) 
+                                            {
+                                                continue;
+                                            }  
+                                            // index of .jar because the resource is behind it; “foo.jar!META-INF/MANIFEST.MF”
+                                            int jarIndex = urlString.lastIndexOf(".jar");
+                                            // skip non jar code
+                                            if (jarIndex<1) 
+                                            {
+                                                continue;
+                                            }                     
+                                            
+                                            JarFile cachedFile = ((JarURLConnection)u.openConnection()).getJarFile();
+                                            final File tempFile = File.createTempFile("cached-",".jar");
+                                            tempFile.deleteOnExit();
+                                            copyFile(new File(cachedFile.getName()),tempFile);
+                                            
+                                            Unimozer.messages.add("Downloaded: "+tempFile.getAbsolutePath());
+                                            Unimozer.messages.add("Trying to start ...");
+                                            
+                                            final File javawFile = javaw;
+                                            (new Thread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    try {
+                                                        Process process = new ProcessBuilder(javawFile.getAbsolutePath(),"-jar",tempFile.getAbsolutePath()).start();
+                                                    } catch (IOException ex) {
+                                                        ex.printStackTrace();
+                                                    }
+                                                }
+                                            })).start();
+                                            // terminated this process but wait a bit
+                                            Thread.sleep(10*1000);
+                                            System.exit(0);
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                else    // we can use the local file
+                                {
+                                    launcher.setStatus("Restarting using local JDK ...");
+                                    Process process = new ProcessBuilder(javaw.getAbsolutePath(),"-jar","Unimozer.jar").start();
+                                    try {
+                                        // terminated this process
+                                        TimeUnit.SECONDS.sleep(2);
+                                    } catch (InterruptedException ex) {
+                                        //java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    System.exit(0);
+                                }
+                            } 
+                            catch (IOException ex) 
+                            {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }
+                }
+                
+                if(found==false)
+                {
+                    JOptionPane.showMessageDialog(null, "Unimozer is not yet comptiable with JRE 9/10.\nPlease install JDK 9/10 or use Java 8 instead.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
 
         Unimozer.messages.add("--- JWS");
         // we need to find the file "swing-layout...jar"
         if(isRunningJavaWebStart())
         {
+            launcher.setStatus("JWS detected, analysing ...");
             Unimozer.messages.add("We are running JWS ...");
             try 
             {
@@ -211,6 +369,7 @@ public class Main
         /*
          * Task #1 >> Find <tools.jar>
          */
+        launcher.setStatus("Searching for tools.jar ...");
         Unimozer.messages.add("---");
         Unimozer.messages.add("Searching <tools.jar> ...");
 
@@ -473,7 +632,7 @@ public class Main
                     {
                         JDK_directory = directories.last();
                         directories.remove(JDK_directory);
-                        // JAR file
+                        // JAVA <= 8
                         File tools = new File(JDK_directory+System.getProperty("file.separator")+"lib"+System.getProperty("file.separator")+"tools.jar");
                         if(tools.exists())
                         {
@@ -487,7 +646,20 @@ public class Main
                                 addJarFile(tools);
                             } catch (Exception ex) { ex.printStackTrace(); }
                         }
-                        // ZIP file
+                        // JAVA >= 9
+                        if(System.getProperty("java.version").trim().startsWith("9") ||
+                           System.getProperty("java.version").trim().startsWith("10"))
+                        {
+                            File compiler = new File(JDK_directory+System.getProperty("file.separator")+"jmods"+System.getProperty("file.separator")+"java.compiler.jmod");
+                            if(compiler.exists())
+                            {
+                                // we got it!
+                                found=true;
+                                Unimozer.messages.add("JDK found here: "+compiler.getAbsolutePath());
+                                // now fix the JDK_home
+                                Unimozer.JDK_home=JDK_directory;
+                            }
+                        }
                     }
                 } else Unimozer.messages.add("Bootfolder file list is empty ...");
                 
@@ -538,6 +710,7 @@ public class Main
         /*
          * Task #2 >> find <src.zip>
          */
+        launcher.setStatus("Searching Java sources ...");
         Unimozer.messages.add("---");
         Unimozer.messages.add("Search for <src.zip> / <src.jar> ...");
         boolean foundSrc = false;
@@ -894,6 +1067,8 @@ public class Main
             // ignore
         }
         
+        launcher.setVisible(false);
+
         Unimozer.messages.add("---");
         
         Logger.getInstance().log("---------------%<------------------------------");
