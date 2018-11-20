@@ -2427,6 +2427,7 @@ public class Mainform extends JFrame
     private javax.swing.JMenuItem miClean;
     private javax.swing.JMenuItem miClipboardColoredCode;
     private javax.swing.JMenuItem miClipboardPNG;
+    private javax.swing.JMenuItem miCodePNG;
     private javax.swing.JMenuItem miCommand;
     private javax.swing.JMenuItem miCompile;
     private javax.swing.JCheckBoxMenuItem miCompileOnTheFly;
