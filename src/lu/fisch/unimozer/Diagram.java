@@ -1,7 +1,7 @@
 /*
     Unimozer
-    Unimozer intends to be a universal modelizer for Java™. It allows the user
-    to draw UML diagrams and generates the relative Java™ code automatically
+    Unimozer intends to be a universal modelizer for Javaâ„¢. It allows the user
+    to draw UML diagrams and generates the relative Javaâ„¢ code automatically
     and vice-versa.
 
     Copyright (C) 2009  Bob Fisch
@@ -55,6 +55,8 @@ import javax.jnlp.ClipboardService;
 import javax.jnlp.ServiceManager;
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.filechooser.FileSystemView;
+
 import lu.fisch.filefilter.PNGFilter;
 import lu.fisch.structorizer.gui.PrintPreview;
 import lu.fisch.unimozer.aligner.Area;
@@ -2019,7 +2021,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 String today = dateFormat.format(date);
                 JavadocComment jdc = new JavadocComment(
                      "\n"+
-                     " * Write a description of class “"+ce.getClassName()+"“ here."+"\n"+
+                     " * Write a description of class â€œ"+ce.getClassName()+"â€œ here."+"\n"+
                      " * "+"\n"+
                      " * @author     "+System.getProperty("user.name")+"\n"+
                      " * @version    "+today+"\n"+
@@ -2133,7 +2135,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
         }
         else if(showError)
         {
-            JOptionPane.showMessageDialog(frame, "Sorry, but you already have a class named “"+myClass.getShortName()+"“." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
+            JOptionPane.showMessageDialog(frame, "Sorry, but you already have a class named â€œ"+myClass.getShortName()+"â€œ." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
         }
     }
 
@@ -2435,7 +2437,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 }
                 else if(item.getText().equals("Remove class") && mouseClass!=null)
                 {
-                    int answ = JOptionPane.showConfirmDialog(frame, "Are you sure to remove the class “"+mouseClass.getFullName()+"“", "Remove a class", JOptionPane.YES_NO_OPTION);
+                    int answ = JOptionPane.showConfirmDialog(frame, "Are you sure to remove the class â€œ"+mouseClass.getFullName()+"â€œ", "Remove a class", JOptionPane.YES_NO_OPTION);
                     if (answ == JOptionPane.YES_OPTION)
                     {
                         cleanAll();// clean(mouseClass);
@@ -2449,7 +2451,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 }
                 else if(mouseClass.getName().contains("abstract"))
                 {
-                    JOptionPane.showMessageDialog(frame, "Can't create an object of an “abstract“ class ...", "Instatiation error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
+                    JOptionPane.showMessageDialog(frame, "Can't create an object of an â€œabstractâ€œ class ...", "Instatiation error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
                 }
                 else if (item.getText().startsWith("new")) // we have constructor
                 {
@@ -2558,14 +2560,14 @@ Logger.getInstance().log("Ask user for a name.");
                                                         prop = propose+count;
                                                     }
 
-                                                    name = (String) JOptionPane.showInputDialog(frame, "Please enter the name for you new instance of “"+mouseClass.getShortName()+"“", "Create object", JOptionPane.QUESTION_MESSAGE,null,null,prop);
+                                                    name = (String) JOptionPane.showInputDialog(frame, "Please enter the name for you new instance of â€œ"+mouseClass.getShortName()+"â€œ", "Create object", JOptionPane.QUESTION_MESSAGE,null,null,prop);
                                                     if (Java.isIdentifierOrNull(name)==false)
                                                     {
-                                                        JOptionPane.showMessageDialog(frame, "“"+name+"“ is not a correct identifier." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
+                                                        JOptionPane.showMessageDialog(frame, "â€œ"+name+"â€œ is not a correct identifier." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
                                                     }
                                                     else if (objectizer.hasObject(name)==true)
                                                     {
-                                                        JOptionPane.showMessageDialog(frame, "An object with the name “"+name+"“ already exists.\nPlease choose another name ..." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
+                                                        JOptionPane.showMessageDialog(frame, "An object with the name â€œ"+name+"â€œ already exists.\nPlease choose another name ..." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
                                                     }
                                                 } while (Java.isIdentifierOrNull(name)==false || objectizer.hasObject(name)==true);
 Logger.getInstance().log("name = "+name);
@@ -4011,6 +4013,43 @@ Logger.getInstance().log("Diagram repainted ...");
                         // in either case
                         JSeparator sep = new JSeparator();
                         popup.add(sep);
+                        
+                        JMenuItem codePNG = new JMenuItem("Export Source Code as PNG");
+                        codePNG.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/export_image.png")));
+                        codePNG.addActionListener(
+                        		new java.awt.event.ActionListener()
+                                {
+                                     @Override
+                                     public void actionPerformed(java.awt.event.ActionEvent evt)
+                                     {
+                                    	 
+                                    	 /*JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                                    	 jfc.setDialogTitle("Choose a directory to save your file: ");
+                                    	 jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+                                    	 int returnValue = jfc.showSaveDialog(null);
+                                    	 if (returnValue == JFileChooser.APPROVE_OPTION) {
+                                    		 if (jfc.getSelectedFile().isDirectory()) {
+                                    			 System.out.println("You selected the directory: " + jfc.getSelectedFile());
+                                    			 
+                                    		 }
+                                    	 }*/
+                                    	 
+                                    	 BufferedImage bi = new BufferedImage(editor.getWidth(), editor.getHeight(), BufferedImage.TYPE_INT_RGB);
+                                    	 Graphics2D g = bi.createGraphics();
+                                    	 editor.paint(g);
+                                    	 //g.dispose();
+                                    	 try {
+											ImageIO.write(bi, "png", new File("./output_image.png"));
+										} catch (IOException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+                                     }
+                                }
+                        );
+                        popup.add(codePNG);
+                        
 
                         JMenu menu = new JMenu("Copy diagram as PNG");
                         popup.add(menu);
@@ -5800,7 +5839,7 @@ Logger.getInstance().log("Diagram repainted ...");
                         String subdir = (String) JOptionPane.showInputDialog(
                                        frame,
                                        "Do you want to include any other resources directory?\n"+
-                                       "Click ”Cancel” to not include any resources directory!",
+                                       "Click â€�Cancelâ€� to not include any resources directory!",
                                        "JAR Packager",
                                        JOptionPane.QUESTION_MESSAGE,
                                        Unimozer.IMG_QUESTION,
@@ -7396,10 +7435,10 @@ Logger.getInstance().log("Diagram repainted ...");
 
 
     /**
-     * méthode qui recherche le plus grand nombre dans une liste
-     * 1) supposer que le premier élément est le plus grand
-     * 2) parcourir la liste et tester les éléments restants s'il
-     *    n'y a pas un autre élément plus grand et mémoriser alors
+     * mÃ©thode qui recherche le plus grand nombre dans une liste
+     * 1) supposer que le premier Ã©lÃ©ment est le plus grand
+     * 2) parcourir la liste et tester les Ã©lÃ©ments restants s'il
+     *    n'y a pas un autre Ã©lÃ©ment plus grand et mÃ©moriser alors
      *    celui-ci
      */
     public int findMax(int[] liste)
@@ -7463,7 +7502,7 @@ Logger.getInstance().log("Diagram repainted ...");
                     {
                         String thisName=params.get(i).get(1);
                         while (thisName.length()<maxLength) thisName+=" ";
-                        jd+="     * @param "+thisName+"    a description of the parameter “"+thisName+"“\n";
+                        jd+="     * @param "+thisName+"    a description of the parameter â€œ"+thisName+"â€œ\n";
                     }
                     jd+= "     ";
                     JavadocComment jdc = new JavadocComment(jd);
@@ -7495,7 +7534,7 @@ Logger.getInstance().log("Diagram repainted ...");
             {
                 /*if (mc.hasMethod(me.getMethodName()))
                 {
-                    JOptionPane.showMessageDialog(frame, "Sorry, but this class has already have a method named “"+me.getMethodName()+"“." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
+                    JOptionPane.showMessageDialog(frame, "Sorry, but this class has already have a method named â€œ"+me.getMethodName()+"â€œ." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
                 }
                 else
                 {*/
@@ -7524,7 +7563,7 @@ Logger.getInstance().log("Diagram repainted ...");
                     {
                         String jd=
                              "\n"+
-                             "     * Write a description of method “"+me.getMethodName()+"“ here."+"\n"+
+                             "     * Write a description of method â€œ"+me.getMethodName()+"â€œ here."+"\n"+
                              "     * "+"\n";
                         Vector<Vector<String>> params = me.getParams();
                         int maxLength = 0;
@@ -7537,7 +7576,7 @@ Logger.getInstance().log("Diagram repainted ...");
                         {
                             String thisName=params.get(i).get(1);
                             while (thisName.length()<maxLength) thisName+=" ";
-                            jd+="     * @param "+thisName+"    a description of the parameter “"+thisName+"“\n";
+                            jd+="     * @param "+thisName+"    a description of the parameter â€œ"+thisName+"â€œ\n";
                         }
                         if(!me.getMethodType().equals("void"))
                         {
@@ -7572,7 +7611,7 @@ Logger.getInstance().log("Diagram repainted ...");
             {
                 if (mc.hasField(fe.getFieldName()))
                 {
-                    JOptionPane.showMessageDialog(frame, "Sorry, but this class has already have a field named “"+fe.getFieldName()+"“." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
+                    JOptionPane.showMessageDialog(frame, "Sorry, but this class has already have a field named â€œ"+fe.getFieldName()+"â€œ." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
                 }
                 else
                 {
@@ -7600,7 +7639,7 @@ Logger.getInstance().log("Diagram repainted ...");
                     {
                         String jd=
                              "\n"+
-                             "     * Write a description of field “"+fe.getFieldName()+"“ here."+"\n";
+                             "     * Write a description of field â€œ"+fe.getFieldName()+"â€œ here."+"\n";
                         jd+= "     ";
                         JavadocComment jdc = new JavadocComment(jd);
                         fd.setJavaDoc(jdc);
