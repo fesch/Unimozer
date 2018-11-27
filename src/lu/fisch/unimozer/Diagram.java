@@ -55,6 +55,7 @@ import javax.jnlp.ClipboardService;
 import javax.jnlp.ServiceManager;
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import lu.fisch.filefilter.PNGFilter;
@@ -72,6 +73,8 @@ import org.apache.commons.io.FileUtils;
 import org.codehaus.janino.CompileException;
 import org.codehaus.janino.Parser.ParseException;
 import org.codehaus.janino.Scanner.ScanException;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.templates.StaticCodeTemplate;
 
 /**
  *
@@ -4014,7 +4017,7 @@ Logger.getInstance().log("Diagram repainted ...");
                         JSeparator sep = new JSeparator();
                         popup.add(sep);
                         
-                        JMenuItem codePNG = new JMenuItem("Export Source Code as PNG");
+                        JMenuItem codePNG = new JMenuItem("Screenshot the code");
                         codePNG.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/export_image.png")));
                         codePNG.addActionListener(
                         		new java.awt.event.ActionListener()
@@ -4023,28 +4026,31 @@ Logger.getInstance().log("Diagram repainted ...");
                                      public void actionPerformed(java.awt.event.ActionEvent evt)
                                      {
                                     	 
-                                    	 /*JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-                                    	 jfc.setDialogTitle("Choose a directory to save your file: ");
-                                    	 jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                                    	 JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                                    	 jfc.setDialogTitle("Choose a directory to save your screenshot: ");
+                                    	 jfc.setCurrentDirectory(new File(getContainingDirectoryName()));
 
-                                    	 int returnValue = jfc.showSaveDialog(null);
-                                    	 if (returnValue == JFileChooser.APPROVE_OPTION) {
-                                    		 if (jfc.getSelectedFile().isDirectory()) {
-                                    			 System.out.println("You selected the directory: " + jfc.getSelectedFile());
-                                    			 
-                                    		 }
-                                    	 }*/
+                                    	 FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG Image", "png");
+                                 		 jfc.addChoosableFileFilter(filter);
+                                    	 jfc.setFileFilter(filter);
                                     	 
-                                    	 BufferedImage bi = new BufferedImage(editor.getWidth(), editor.getHeight(), BufferedImage.TYPE_INT_RGB);
-                                    	 Graphics2D g = bi.createGraphics();
-                                    	 editor.paint(g);
-                                    	 //g.dispose();
-                                    	 try {
-											ImageIO.write(bi, "png", new File("./output_image.png"));
-										} catch (IOException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
+                                    	 int returnValue = jfc.showSaveDialog(null);
+                                    	 if (returnValue == JFileChooser.APPROVE_OPTION) 
+                                    	 {
+                                    		 BufferedImage bi = new BufferedImage(editor.getWidth(), editor.getHeight(), BufferedImage.TYPE_INT_RGB);
+                                    		 Graphics2D g = bi.createGraphics();
+                                    		 editor.getComponent(0).paint(g);
+
+                                    		 try 
+                                    		 {
+                                    			 ImageIO.write(bi, "png", new File(jfc.getSelectedFile().getAbsolutePath() + ".png"));
+                                    		 }
+                                    		 catch (IOException e) 
+                                    		 {
+                                    			 e.printStackTrace();
+                                    		 }
+                                    	 }
+     
                                      }
                                 }
                         );
