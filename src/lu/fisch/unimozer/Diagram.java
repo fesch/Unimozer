@@ -2138,7 +2138,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
         }
         else if(showError)
         {
-        	JOptionPane.showMessageDialog(frame, "Sorry, but you already have a class named “"+myClass.getShortName()+"“." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
+            JOptionPane.showMessageDialog(frame, "Sorry, but you already have a class named “"+myClass.getShortName()+"“." , "Error", JOptionPane.ERROR_MESSAGE,Unimozer.IMG_ERROR);
         }
     }
 
@@ -5845,7 +5845,7 @@ Logger.getInstance().log("Diagram repainted ...");
                         String subdir = (String) JOptionPane.showInputDialog(
                                        frame,
                                        "Do you want to include any other resources directory?\n"+
-                                       "Click â€�Cancelâ€� to not include any resources directory!",
+                                       "Click ”Cancel” to not include any resources directory!",
                                        "JAR Packager",
                                        JOptionPane.QUESTION_MESSAGE,
                                        Unimozer.IMG_QUESTION,
