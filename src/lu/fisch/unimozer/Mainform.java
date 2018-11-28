@@ -106,7 +106,7 @@ public class Mainform extends JFrame
         miReplace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
 
-        this.setLayout(new AKDockLayout());
+        getContentPane().setLayout(new AKDockLayout());
         
         this.getContentPane().removeAll();
 
@@ -2598,7 +2598,7 @@ public class Mainform extends JFrame
             console.setVisible(true);
             if(errorList!=null) errorList.setVisible(false);
             consoleScroller.add(console);
-            consoleScroller.getViewport().add(console);
+            consoleScroller.setViewportView(console);
             consoleScroller.validate();
             consoleScroller.repaint();
         }
@@ -2648,7 +2648,7 @@ public class Mainform extends JFrame
             });
 
             consoleScroller.add(errorList);
-            consoleScroller.getViewport().add(errorList);
+            consoleScroller.setViewportView(errorList);
             consoleScroller.validate();
             consoleScroller.repaint();
         }
