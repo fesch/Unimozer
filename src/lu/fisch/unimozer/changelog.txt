@@ -70,6 +70,7 @@ Current version: 0.27-56 (2018.09.09)
 - 54: display content of array in Objectizer [Laurent HAAN]
 - 55: hide private fields in object monitor [Laurent HAAN]
 - 56: bootstrap revision for Java 10 [Robret FISCH]
+- 57: added Screenshot Code Function [Louis Ewen (LAM - 3GIG2)]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]

@@ -4037,9 +4037,9 @@ Logger.getInstance().log("Diagram repainted ...");
                                     	 int returnValue = jfc.showSaveDialog(null);
                                     	 if (returnValue == JFileChooser.APPROVE_OPTION) 
                                     	 {
-                                    		 BufferedImage bi = new BufferedImage(editor.getWidth(), editor.getHeight(), BufferedImage.TYPE_INT_RGB);
+                                    		 BufferedImage bi = new BufferedImage(editor.getCodeArea().getWidth(), editor.getCodeArea().getHeight(), BufferedImage.TYPE_INT_RGB);
                                     		 Graphics2D g = bi.createGraphics();
-                                    		 editor.getComponent(0).paint(g);
+                                    		 editor.getCodeArea().paint(g);
 
                                     		 try 
                                     		 {
