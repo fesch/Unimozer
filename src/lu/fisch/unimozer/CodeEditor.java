@@ -147,12 +147,17 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
     
     private boolean badIdea = false;
 
+    public RSyntaxTextArea getCodeArea() {
+        return codeArea;
+    }
+
     public void setProjectPath()
     {
         // get LanguageSupport
         LanguageSupport ls = LanguageSupportFactory.get().getSupportFor("text/java");
         // clear jars
         JavaLanguageSupport jls = (JavaLanguageSupport) ls;
+/* does this make Unimozer crash --> new Java version??        
         //jls.getJarManager().clearClassFileSources();
         //jls.getJarManager().clearJars();
         try
@@ -164,9 +169,9 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
             // did we find the src.zip file?
             if(Unimozer.JDK_source!=null)
             {
-                /*JarInfo ji = JarInfo.getMainJREJarInfo();
-                ji.setSourceLocation(new File(Unimozer.JDK_source));
-                jls.getJarManager().addJar(ji);*/
+                //JarInfo ji = JarInfo.getMainJREJarInfo();
+                //ji.setSourceLocation(new File(Unimozer.JDK_source));
+                //jls.getJarManager().addJar(ji);
                 if((new File(Unimozer.JDK_source)).exists())
                     jls.getJarManager().addClassFileSource(new JarLibraryInfo(Unimozer.JDK_source));
                 if((new File(Unimozer.JDK_source)).exists())
@@ -176,21 +181,21 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
         catch (IOException ex)
         {
             ex.printStackTrace();
-        }/**/
-
+        }
+/**/
         if(diagram!=null)
         if (diagram.getDirectoryName()!=null)
         {
 
             String path=diagram.getDirectoryName();
             
+/* does this make Unimozer crash --> new Java version??                      
             try
             {
                 // add current project path
                 if(path.lastIndexOf(System.getProperty("file.separator"))!=path.length()-1) path+=System.getProperty("file.separator");
 
                 //System.out.println("Adding path "+path);
-                
                 File myPath;
                 myPath = new File(path+"bin");
                 // first let's try to add the "bin" folder
@@ -212,12 +217,12 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
                     else 
                         jls.getJarManager().addClassFileSource(myPath); 
                 }
-
             }
             catch (IOException ex)
             {
                 ex.printStackTrace();
             }
+/**/
         }
 /*
         try
