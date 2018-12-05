@@ -4026,7 +4026,7 @@ Logger.getInstance().log("Diagram repainted ...");
                                      public void actionPerformed(java.awt.event.ActionEvent evt)
                                      {
                                     	 
-                                    	 JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                                    	 /*JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
                                     	 jfc.setDialogTitle("Choose a directory to save your screenshot: ");
                                     	 jfc.setCurrentDirectory(new File(getContainingDirectoryName()));
 
@@ -4049,7 +4049,10 @@ Logger.getInstance().log("Diagram repainted ...");
                                     		 {
                                     			 e.printStackTrace();
                                     		 }
-                                    	 }
+                                    	 }*/
+                                    	 
+                                    	 ScreenshotDialog screenshotDialog = new ScreenshotDialog(diagram, editor);
+                                    	 screenshotDialog.setVisible(true);
      
                                      }
                                 }
