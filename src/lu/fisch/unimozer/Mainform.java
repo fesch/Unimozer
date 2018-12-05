@@ -27,8 +27,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -45,13 +43,9 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import lu.fisch.structorizer.gui.Editor;
 import lu.fisch.unimozer.compilation.CompilationError;
 import lu.fisch.unimozer.console.Console;
 import lu.fisch.unimozer.dialogs.BootLogReport;
@@ -59,11 +53,6 @@ import lu.fisch.unimozer.dialogs.CreateInteractiveProjectDialog;
 import lu.fisch.unimozer.dialogs.JSliderOnJOptionPane;
 import lu.fisch.unimozer.dialogs.NewInteractiveProjectDialog;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaUIBackgroundDrawer;
-import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
-import org.fife.ui.rsyntaxtextarea.Theme;
-import org.fife.ui.rsyntaxtextarea.Token;
-
-import com.bulenkov.darcula.DarculaLaf;
 
 /**
  *
@@ -625,7 +614,6 @@ public class Mainform extends JFrame
         miEncodingWindows1252 = new javax.swing.JRadioButtonMenuItem();
         miCompileOnTheFly = new javax.swing.JCheckBoxMenuItem();
         miStructureHighlithningLEvel = new javax.swing.JMenu();
-        miDarkTheme = new javax.swing.JCheckBoxMenuItem();
         shOff = new javax.swing.JRadioButtonMenuItem();
         shLight = new javax.swing.JRadioButtonMenuItem();
         shMedium = new javax.swing.JRadioButtonMenuItem();
@@ -845,7 +833,7 @@ public class Mainform extends JFrame
         tbFile.add(speOpen);
 
         speSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/gen_save.png"))); // NOI18N
-        speSave.setToolTipText("Save the project");
+        speSave.setToolTipText("Save the current project");
         speSave.setEnabled(false);
         speSave.setFocusable(false);
         speSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1673,34 +1661,6 @@ public class Mainform extends JFrame
         });
         mOptions.add(chkHidePrivateFields);
 
-        miDarkTheme.setText("Use dark theme");
-        miDarkTheme.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	Theme theme;
-				try {
-					theme = Theme.load(getClass().getResourceAsStream("dark-theme.xml"));
-					theme.apply(codeEditor.getCodeArea());
-					codeEditor.getCodeArea().setHighlightCurrentLine(false);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				try {
-					UIManager.setLookAndFeel(new DarculaLaf());
-				} catch (UnsupportedLookAndFeelException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-				
-				updateFrame();
-				
-            }
-        });
-        
-        
-        
-        mOptions.add(miDarkTheme);
-        
         jMenuBar.add(mOptions);
 
         mHelp.setText("Help");
@@ -2479,7 +2439,6 @@ public class Mainform extends JFrame
     private javax.swing.JMenu miEncoding;
     private javax.swing.JRadioButtonMenuItem miEncodingUTF8;
     private javax.swing.JRadioButtonMenuItem miEncodingWindows1252;
-    private javax.swing.JCheckBoxMenuItem miDarkTheme;
     private javax.swing.JMenuItem miExportPNG;
     private javax.swing.JMenuItem miFind;
     private javax.swing.JMenuItem miFindAgain;
@@ -2725,10 +2684,6 @@ public class Mainform extends JFrame
             return home;
         }
         else return Ini.get("lastDirename",System.getProperty("user.home"));
-    }
-    
-    public void updateFrame () {
-    	SwingUtilities.updateComponentTreeUI(this);
     }
 
     
