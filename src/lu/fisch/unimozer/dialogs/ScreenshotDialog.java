@@ -2,6 +2,7 @@ package lu.fisch.unimozer.dialogs;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 
 import javax.swing.JButton;
@@ -29,18 +30,22 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.JFrame;
 
 public class ScreenshotDialog extends JDialog {
 
     /**
      * Create the dialog.
      */
-    public ScreenshotDialog(Diagram diagram, CodeEditor editor) {
-
+    public ScreenshotDialog(Frame parent, Diagram diagram, CodeEditor editor) {
+        super(parent);
         setIconImage(Toolkit.getDefaultToolkit().getImage(ScreenshotDialog.class.getResource("/lu/fisch/icons/export_image.png")));
         setTitle("Screenshot Code");
+        setModal(true);
         setResizable(false);
-        setBounds(100, 100, 226, 155);
+        setBounds(0, 0, 226, 155);
+        setLocationRelativeTo(parent);
+
         JPanel contentPanel = new JPanel();
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         JLabel lblShowLineNumbers = new JLabel("Show line numbers:");
@@ -155,5 +160,7 @@ public class ScreenshotDialog extends JDialog {
                                 .addComponent(btnSave))
         );
         getContentPane().setLayout(groupLayout);
+
+        setVisible(true);
     }
 }
