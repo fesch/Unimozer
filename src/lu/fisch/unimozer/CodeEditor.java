@@ -25,6 +25,7 @@ package lu.fisch.unimozer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -1307,7 +1308,7 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
     }
 
 
- public void copyAdRtf()
+    public void copyAdRtf()
     {
         int start = codeArea.getSelectionStart();
         int stop = codeArea.getSelectionEnd();
@@ -1350,5 +1351,8 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
     }
 
 
+ 	public Gutter getGutter() {
+ 		return codeAreaScroll.getGutter();
+ 	}
 
  }
