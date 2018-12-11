@@ -96,7 +96,7 @@ public class ScreenshotDialog extends JDialog {
                         gScreenshot.drawImage(biGutter, null, 0, 0);
                     }
 
-                    if (chckbxAddFooter.isSelected()) {
+                    if (chckbxAddFooter.isSelected() && copyDiagram.getDirectoryName()!=null) {
                         gScreenshot.setFont(new Font(copyEditor.getCodeArea().getFont().getFontName(), Font.PLAIN, 16));
                         gScreenshot.setColor(Color.BLACK);
                         gScreenshot.drawLine(5, biCode.getHeight() + 2, biScreenShot.getWidth() - 5, biCode.getHeight() + 2);
