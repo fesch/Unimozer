@@ -5,7 +5,7 @@ Todo:
 - find/replace in selection
 
 
-Current version: 0.27-58 (2018.12.06)
+Current version: 0.27-59 (2018.12.11)
 - 01: printing was broken due to editor update [Lux BREDIMUS]
 - 02: copy diagrams cut outer lines for compiled projects [Fred FABER]
 - 03: added error message if save operations fails [Fred FABER]
@@ -70,8 +70,9 @@ Current version: 0.27-58 (2018.12.06)
 - 54: display content of array in Objectizer [Laurent HAAN]
 - 55: hide private fields in object monitor [Laurent HAAN]
 - 56: bootstrap revision for Java 10 [Robret FISCH]
-- 57: added Screenshot Code Function [Louis Ewen (LAM - 3GIG2)]
-- 58: refined Screenshot Code Function [Louis Ewen (LAM - 3GIG2)]
+- 57: added Screenshot Code Function (SCF) [Louis Ewen (LAM - 3GIG2)]
+- 58: refined SCF [Louis Ewen (LAM - 3GIG2)]
+- 59: fixed footer error in SCF #8 [Louis Ewen (LAM - 3GIG2)]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]

@@ -42,6 +42,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -108,7 +109,7 @@ import org.fife.ui.rtextarea.SearchEngine;
  *
  * @author robertfisch
  */
-public class CodeEditor extends JPanel implements KeyListener, MouseMotionListener, DocumentListener, Printable, ActionListener, HyperlinkListener, FocusListener
+public class CodeEditor extends JPanel implements KeyListener, MouseMotionListener, DocumentListener, Printable, ActionListener, HyperlinkListener, FocusListener, MouseListener
 {
     private RSyntaxTextArea codeArea = null;
     private RTextScrollPane codeAreaScroll = null;
@@ -147,6 +148,8 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
     private Icon[] icons;
     
     private boolean badIdea = false;
+    
+    private String selection = "";
 
     public RSyntaxTextArea getCodeArea() {
         return codeArea;
@@ -340,6 +343,7 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
         }*/
 
         codeArea.addCaretListener(listener);
+        codeArea.addMouseListener(this);
         codeAreaScroll.setIconRowHeaderEnabled(true);
         codeAreaScroll.getGutter().setBookmarkingEnabled(true);
         /* --- this does the "... class blah blah" output
@@ -371,6 +375,7 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
         topPanel.setBackground(Color.decode("#ffffaa"));
 
         myClassname = new JLabel();
+        
         myClassname.setFont(new Font(myClassname.getFont().getFontName(),Font.BOLD,myClassname.getFont().getSize()));
         topPanel.add(myClassname,BorderLayout.WEST);
 
@@ -1191,6 +1196,31 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
         codeArea.redoLastAction();
     }
 
+    @Override
+    public void mouseClicked(MouseEvent me) {
+        
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) {
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent me) {
+        
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent me) {
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent me) {
+        
+    }
+
 
 
 	/**
@@ -1242,7 +1272,14 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
         @Override
         public void caretUpdate(CaretEvent e)
         {
-                t.restart();
+            if(e.getDot()!=-1 && e.getMark()!=-1)
+            {
+                selection=codeArea.getText().substring(Math.min(e.getDot(), e.getMark()), Math.max(e.getDot(), e.getMark()));
+                //System.out.println(selection+" : "+Math.min(e.getDot(), e.getMark()));
+            }
+            else
+                selection="";
+            t.restart();
         }
 
         @Override
@@ -1351,8 +1388,12 @@ public class CodeEditor extends JPanel implements KeyListener, MouseMotionListen
     }
 
 
- 	public Gutter getGutter() {
- 		return codeAreaScroll.getGutter();
- 	}
+    public Gutter getGutter() {
+            return codeAreaScroll.getGutter();
+    }
+
+    public String getSelection() {
+        return selection;
+    }
 
  }

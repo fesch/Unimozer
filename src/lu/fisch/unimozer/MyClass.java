@@ -1210,7 +1210,7 @@ public class MyClass implements Space
 
         if(isValidCode())
         {
-            // get the old selected element
+           // get the old selected element
             String selectedSignature = null;
             if(getSelected()!=null) selectedSignature=getSelected().getName();
 

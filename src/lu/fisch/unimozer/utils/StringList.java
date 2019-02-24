@@ -570,6 +570,23 @@ public class StringList
             System.out.println(ex.getMessage());
         }*/
     }
+    
+    public int toLinearPos(int line, int index)
+    {
+        int ret = 0;
+        for(int i=0;i<count(); i++)
+        {
+            if(i==line)
+            {
+                ret+=index;
+            }
+            else if(i<line)
+            {
+                ret+=get(i).length()+1;
+            }
+        }
+        return ret;
+    }
 
     public String copyFrom(int beginLine, int beginIndex, int endLine, int endIndex)
     {

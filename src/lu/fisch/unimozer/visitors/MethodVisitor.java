@@ -127,10 +127,6 @@ public class MethodVisitor extends VoidVisitorAdapter
     @Override
     public void visit(MethodDeclaration n, Object arg)
     {
-        /*System.err.println((n.getBody().getBeginLine()-1)+","+
-                           (n.getBody().getBeginColumn()-1)+","+
-                           (n.getBody().getEndLine()-1)+","+
-                           (n.getBody().getEndColumn()-1));/**/
         try
         {
            if(n.getBody()!=null)
@@ -139,6 +135,12 @@ public class MethodVisitor extends VoidVisitorAdapter
                                                            n.getBody().getBeginColumn()-1,
                                                            n.getBody().getEndLine()-1,
                                                            n.getBody().getEndColumn()-1);
+            /*String content2 = ((StringList) arg).copyFrom(n.getBeginLine()-1,
+                                                           n.getBeginColumn()-1,
+                                                           n.getEndLine()-1,
+                                                           n.getEndColumn()-1);
+            System.out.println(n.getName()+" : "+n.getBeginLine()+" - "+n.getBeginColumn()+" >> "+((StringList) arg).toLinearPos(n.getBeginLine()-1,n.getBeginColumn()-1)+" - "+content2);
+           */
             //content=content.trim();
             if(content.startsWith("{")) content=content.substring(1);
             if(content.endsWith("}")) content=content.substring(0,content.length()-1);
