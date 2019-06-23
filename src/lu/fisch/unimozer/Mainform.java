@@ -25,6 +25,7 @@ package lu.fisch.unimozer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -2691,5 +2692,49 @@ public class Mainform extends JFrame
     {
         final Mainform mainform = new Mainform();
         mainform.setVisible(true);
+    }
+
+    void doOSX() {
+        try {
+            // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
+            // use as delegates for various com.apple.eawt.ApplicationListener methods
+            OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("quit", (Class[]) null));
+            OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("about", (Class[]) null));
+            OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("preferences", (Class[]) null));
+            OSXAdapter.setDockIconImage(getIconImage());
+            //OSXAdapter.setFileHandler(this, getClass().getDeclaredMethod("loadImageFile", new Class[]{String.class}));
+
+        } catch (Exception e) {
+            //System.err.println("Error while loading the OSXAdapter:");
+            e.printStackTrace();
+        }
+    }
+    
+    
+    // General info dialog; fed to the OSXAdapter as the method to call when 
+    // "About OSXAdapter" is selected from the application menu
+    public void about() {
+        getDiagram().about();
+    }
+
+    // General preferences dialog; fed to the OSXAdapter as the method to call when
+    // "Preferences..." is selected from the application menu
+    public void preferences() {
+        //
+    }
+
+    // General quit handler; fed to the OSXAdapter as the method to call when a system quit event occurs
+    // A quit event is triggered by Cmd-Q, selecting Quit from the application or Dock menu, or logging out
+    public boolean quit() { 
+        int option = JOptionPane.showConfirmDialog(this, "Are you sure you want to quit?", "Quit?", JOptionPane.YES_NO_OPTION);
+        if (option == JOptionPane.YES_OPTION)
+        {
+            closeWindow();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

@@ -22,12 +22,15 @@
 
 package lu.fisch.unimozer;
 
+//import com.apple.eawt.Application;
+//import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.Application;
 import com.apple.eawt.ApplicationEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
@@ -1115,12 +1118,17 @@ public class Main
             System.setProperty("apple.awt.graphics.UseQuartz", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Unimozer");
 
-            Application application = Application.getApplication();
-            //application.setDockIconImage(mainform.getIconImage());
-
+            mainform.doOSX();
+            
+            
+            /*
             try
             {
+                Application application = Application.getApplication();
+                application.setDockIconImage(mainform.getIconImage());
+
                 application.setEnabledPreferencesMenu(true);
+                //application.setDockIconImage(new javax.swing.ImageIcon(launcher.getClass().getResource("/lu/fisch/unimozer/icons/unimozer.png")));
                 application.addApplicationListener(new com.apple.eawt.ApplicationAdapter()
                 {
                     @Override
@@ -1171,8 +1179,9 @@ public class Main
             {
                 //e.printStackTrace();
             }
-        }
         /**/
+        }
+
         
 
     }
