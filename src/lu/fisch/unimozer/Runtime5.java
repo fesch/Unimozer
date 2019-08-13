@@ -415,6 +415,11 @@ public class Runtime5
     {
         interpreter.set(name, object);
     }
+    
+    public Object getObject(String name) throws EvalError
+    {
+        return interpreter.get(name);
+    }
 
     public Object executeCommand(String cmd) throws EvalError
     {

@@ -5,7 +5,7 @@ Todo:
 - find/replace in selection
 
 
-Current version: 0.27-59 (2019.06.22)
+Current version: 0.27-61 (2019.08.12)
 - 01: printing was broken due to editor update [Lux BREDIMUS]
 - 02: copy diagrams cut outer lines for compiled projects [Fred FABER]
 - 03: added error message if save operations fails [Fred FABER]
@@ -75,6 +75,7 @@ Current version: 0.27-59 (2019.06.22)
 - 59: fixed footer error in SCF #8 [Louis Ewen (LAM - 3GIG2)]
 - 60: OSX support is now loaded via relextion so the app works with Java 9+
 - 60: Implemented dynamic downloader as JWS replacement (separate app)
+- 61: Added methods to monitor an object via code [Georges KUGENER]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]

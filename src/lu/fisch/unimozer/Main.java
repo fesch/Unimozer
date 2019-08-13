@@ -41,7 +41,6 @@ import java.util.Enumeration;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 import javax.swing.JOptionPane;
 
 /**

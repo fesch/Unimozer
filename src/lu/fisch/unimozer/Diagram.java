@@ -36,6 +36,7 @@ import java.awt.image.BufferedImage;
 import java.awt.print.*;
 import java.io.*;
 import java.lang.reflect.*;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -47,6 +48,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -3740,6 +3742,10 @@ Logger.getInstance().log("Diagram repainted ...");
         }
     }
 
+    private void File(URI toURI) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
 
 
@@ -6608,6 +6614,16 @@ Logger.getInstance().log("Diagram repainted ...");
                 }
             }
         }
+        
+        try {
+            File f = new File(Diagram.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            sl.add(f.getAbsolutePath());
+            Unimozer.messages.add(f.getAbsolutePath());
+        } 
+        catch (URISyntaxException ex) {
+            Unimozer.messages.add(ex.getMessage());
+        }
+        
         return sl;
     }
     
