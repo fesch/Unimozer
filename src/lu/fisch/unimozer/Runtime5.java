@@ -70,7 +70,9 @@ public class Runtime5
 
     protected Runtime5()
     {
+        Unimozer.messages.add("Pre: new Interpreter");
         interpreter = new Interpreter();
+        Unimozer.messages.add("Post: new Interpreter");
         //interpreter.DEBUG=true;
         
         //interpreter.setErr(Console.getErr());
@@ -80,6 +82,7 @@ public class Runtime5
         //interpreter.getNameSpace().
         //new Thread(interpreter).start();
 
+        Unimozer.messages.add("Pre: try to create compiler");
         try
         {
             // try to get the system compiler
@@ -98,8 +101,10 @@ public class Runtime5
         }
         
         Console.disconnectAll();
-        System.out.println("Using compile: "+compilerUsed);
+        System.out.println("Using compiler: "+compilerUsed);
+        Unimozer.messages.add("Using compiler: "+compilerUsed);
         Console.connectAll();
+        Unimozer.messages.add("Done: protected Runtime5");
     }
 
     public static Runtime5 getInstance()
@@ -170,11 +175,16 @@ public class Runtime5
     // the input always contains <Classname, Javacode>
     private void compile(Hashtable<String, String> codes, String classpath) throws ClassNotFoundException
     {
-        
+        //System.out.println("Pre try");
+        Unimozer.messages.add("Pre: try in compile");
         try
         {
+            //System.out.println("Main.classpath!=null ?");
+            Unimozer.messages.add("Main.classpath!=null ?");
             if(Main.classpath!=null)
             {
+                 Unimozer.messages.add("Main.classpath!=null !");
+                //System.out.println("Main.classpath!=null !");
                 if(classpath.length()>0)
                     if(System.getProperty("os.name").toLowerCase().contains("windows"))
                         classpath+=";";
@@ -183,19 +193,21 @@ public class Runtime5
                 classpath+=Main.classpath;
             }
             Unimozer.messages.add("Compile using CP = "+classpath);
-            /*Console.disconnectAll();
-            System.out.println("CP: "+classpath);
-            Console.connectAll();*/
+            //Console.disconnectAll();
+            //System.out.println("CP: "+classpath);
+            //Console.connectAll();*/
             //System.out.println("CP: "+classpath);
         }
         catch (Error e) 
         {
             e.printStackTrace();
         }
+        //System.out.println("Post try");
         
                 
         if (compilerUsed == COMPILER_JANINO)
         {
+            Unimozer.messages.add("Compile using COMPILER_JANINO");
             // we need to convert the content
             Hashtable input = new Hashtable();
             Set<String> set = codes.keySet();
@@ -220,6 +232,7 @@ public class Runtime5
         }
         else if (compilerUsed == COMPILER_SUN)
         {
+            Unimozer.messages.add("Compile using COMPILER_SUN");
             //System.out.println("TZ: compile");
             // forward calls to the RunTime6
             Runtime6.getInstance(interpreter,rootDirectory).compile(codes,classpath);
@@ -323,6 +336,7 @@ public class Runtime5
     public void compileAndLoad(Hashtable<String, String> codes, String classpath) throws ClassNotFoundException
     {
         //System.out.println("TZ: comileAndLoad");
+        Unimozer.messages.add("forward call to compile");
         compile(codes,classpath);
         //if(classname==null) return null;
         //else return load(classname);

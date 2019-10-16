@@ -4993,7 +4993,11 @@ Logger.getInstance().log("Diagram repainted ...");
                 }
             }
             
+            Unimozer.messages.add("Pre: Runtime5.getInstance()");
+            Runtime5.getInstance();
+            Unimozer.messages.add("Pre: Runtime5.getInstance().compileAndLoad");
             Runtime5.getInstance().compileAndLoad(codes,getLibPath());
+            Unimozer.messages.add("Post: Runtime5.getInstance().compileAndLoad");
 
             // set compiled flag
             if(mark)
@@ -5004,12 +5008,12 @@ Logger.getInstance().log("Diagram repainted ...");
                 {
                   String str = itr.next();*/
 
-        /* let's try this one ... */
-        for(Entry<String,MyClass> entry : classes.entrySet()) 
-        {
-            // get the actual class ...
-            String str = entry.getKey();
-                  
+                 /* let's try this one ... */
+                for(Entry<String,MyClass> entry : classes.entrySet()) 
+                {
+                    // get the actual class ...
+                    String str = entry.getKey();
+
                   MyClass mc = classes.get(str);
                   mc.setCompiled(true);
                 }
@@ -5620,8 +5624,8 @@ Logger.getInstance().log("Diagram repainted ...");
         content.add("excludes=bin");
         content.add("includes=**");
         content.add("jar.compress=true");
-        content.add("javac.classpath=\\");
-        content.add("   ${libs.swing-layout.classpath}");
+        //content.add("javac.classpath=\\");
+        //content.add("   ${libs.swing-layout.classpath}");
         content.add("javac.compilerargs=");
         content.add("javac.deprecation=false");
         content.add("javac.source=1.7");
@@ -6601,8 +6605,14 @@ Logger.getInstance().log("Diagram repainted ...");
     public StringList getLibs()
     {
         StringList sl = new StringList();
+        
+        if(directoryName==null)
+            return sl;
+        
         String libName = directoryName+System.getProperty("file.separator")+"lib";
+        Unimozer.messages.add("libName = "+directoryName+System.getProperty("file.separator")+"lib");
         File libs = new File(libName);
+        Unimozer.messages.add("created File with libname");
         if(libs.exists())
         {
             File[] files = libs.listFiles();
@@ -6620,7 +6630,7 @@ Logger.getInstance().log("Diagram repainted ...");
             sl.add(f.getAbsolutePath());
             Unimozer.messages.add(f.getAbsolutePath());
         } 
-        catch (URISyntaxException ex) {
+        catch (Exception ex) {
             Unimozer.messages.add(ex.getMessage());
         }
         
