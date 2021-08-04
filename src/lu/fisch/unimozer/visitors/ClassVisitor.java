@@ -53,7 +53,7 @@ public class ClassVisitor extends VoidVisitorAdapter
 
         classLine=n.getBeginLine();
 
-        ele = new Element(n, n.getParentNode());
+        ele = new Element(n);
         ele.setName(name);
         ele.setUmlName(name);
         /*if (n.getExtends()!=null)

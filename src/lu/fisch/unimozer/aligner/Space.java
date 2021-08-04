@@ -9,9 +9,9 @@ package lu.fisch.unimozer.aligner;
 
 public interface Space
 {
-	int getX();
-	int getY();
+	public int getX();
+	public int getY();
 
-	int getWidth();
-	int getHeight();
+	public int getWidth();
+	public int getHeight();
 }

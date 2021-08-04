@@ -22,11 +22,10 @@
 
 package lu.fisch.unimozer;
 
-import japa.parser.ast.Node;
-import japa.parser.ast.body.*;
-import org.codehaus.janino.Java;
-
-import javax.swing.*;
+import japa.parser.ast.body.BodyDeclaration;
+import japa.parser.ast.body.ConstructorDeclaration;
+import japa.parser.ast.body.FieldDeclaration;
+import japa.parser.ast.body.MethodDeclaration;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -50,13 +49,7 @@ public class Element
     public static final int INTERFACE = 4;
     public static final int ICONSIZE = 24;
 
-    public static final Image PLUS = new javax.swing.ImageIcon(Element.class.getResource("/lu/fisch/icons/uml_plus.png")).getImage();
-    public static final Image MINUS = new javax.swing.ImageIcon(Element.class.getResource("/lu/fisch/icons/uml_minus.png")).getImage();
-    public static final Image DIEZE = new javax.swing.ImageIcon(Element.class.getResource("/lu/fisch/icons/uml_dieze.png")).getImage();
-    public static final Image TILDE = new javax.swing.ImageIcon(Element.class.getResource("/lu/fisch/icons/uml_tilde.png")).getImage();
-
     private String name;
-    private Node parent;
     private String umlName = new String();
     private Point position = new Point();
     private int width = 0;
@@ -69,19 +62,17 @@ public class Element
 
     private boolean isUML = true;
 
-    public Element(int type, Node parent)
+    public Element(int type)
     {
         this.type=type;
-        this.parent = parent;
     }
 
-    public Element(BodyDeclaration node, Node parent)
+    public Element(BodyDeclaration node)
     {
         if(node instanceof FieldDeclaration) type=FIELD;
         else if(node instanceof MethodDeclaration) type=METHOD;
         else if(node instanceof ConstructorDeclaration) type=CONSTRUCTOR;
         this.node=node;
-        this.parent = parent;
     }
 
     public boolean isInside(Point pt)
@@ -123,15 +114,10 @@ public class Element
                     adjx=2;
                     adjy=Unimozer.DRAW_FONT_SIZE-12;
                 }
-
-                ClassOrInterfaceDeclaration castedParent = null;
-                if(parent instanceof ClassOrInterfaceDeclaration){
-                    castedParent = (ClassOrInterfaceDeclaration) parent;
-                }
-                if(getFullName().contains("private")) img = MINUS;
-                else if(getFullName().contains("protected")) img = DIEZE;
-                else if(getFullName().contains("public") || (castedParent!=null && castedParent.isInterface())) img = PLUS;
-                else img = TILDE;
+                if(getFullName().contains("private")) img = new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_minus.png")).getImage();
+                else if(getFullName().contains("protected")) img = new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_dieze.png")).getImage();
+                else if(getFullName().contains("public")) img = new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_plus.png")).getImage();
+                else img = new javax.swing.ImageIcon(getClass().getResource("/lu/fisch/icons/uml_tilde.png")).getImage();
                 if (img!=null && getType()!=INTERFACE) g.drawImage(img, position.x+MyClass.PAD/4+adjx, position.y+MyClass.PAD/2+adjy, null);
             }
         }

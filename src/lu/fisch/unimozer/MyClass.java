@@ -1343,7 +1343,7 @@ public class MyClass implements Space
             if(!isValidCode() && classes.isEmpty())
             {
                 cleanIt=true;
-                Element ele = new Element(Element.CLASS, null);
+                Element ele = new Element(Element.CLASS);
                 ele.setName("public class "+internalName);
                 ele.setUmlName(internalName);
                 ele.setUML(isUML);
@@ -1361,7 +1361,7 @@ public class MyClass implements Space
 
             if(isInterface())
             {
-                Element ele = new Element(Element.INTERFACE, null);
+                Element ele = new Element(Element.INTERFACE);
                 ele.setUmlName("<interface>");
                 ele.setName("<interface>");
                 classes.add(0, ele);

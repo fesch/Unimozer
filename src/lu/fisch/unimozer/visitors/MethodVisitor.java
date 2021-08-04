@@ -91,7 +91,7 @@ public class MethodVisitor extends VoidVisitorAdapter
         }
 
  
-        Element ele = new Element(n, n.getParentNode());
+        Element ele = new Element(n);
 
         String uml = Modifier.toString(n.getModifiers())+n.getName()+"(";
         String full = Modifier.toString(n.getModifiers())+n.getName()+"(";
@@ -158,7 +158,7 @@ public class MethodVisitor extends VoidVisitorAdapter
            er.printStackTrace();
         }
 
-        Element ele = new Element(n, n.getParentNode());
+        Element ele = new Element(n);
 
         String uml = Modifier.toString(n.getModifiers())+n.getName()+"(";
         String full = Modifier.toString(n.getModifiers())+n.getType().toString()+" "+n.getName()+"(";
