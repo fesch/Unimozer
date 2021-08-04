@@ -4,7 +4,7 @@
 
 	<target name="Unimozer">
 	  <taskdef name="bundleapp" 
-	    classpath="lib/appbundler-1.0ea.jar"
+	    classpath="lib/appbundler-1.0ea-new.jar"
 	    classname="com.oracle.appbundler.AppBundlerTask"/>
 	
 	    <!-- Note the usage of classpathref to avoid copy-pasting all 
@@ -25,6 +25,7 @@
           <classpath file="dist/lib/*" />
 	
 	      <!--<runtime dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_15.jdk/Contents/Home"/>-->
+		  <!--<runtime dir="${env.JAVA_HOME}" />-->
 	
 	      <!-- Specify which architectures you want to support -->
 	      <arch name="x86_64"/>
