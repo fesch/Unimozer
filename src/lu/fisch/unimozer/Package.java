@@ -19,7 +19,7 @@ import java.awt.image.BufferedImage;
  */
 public class Package
 {
-    public static final int PADDING = 30;
+    public static final int PADDING = 60;
     public static final int PAD = 4;
 
     public static final String DEFAULT = "<default>";

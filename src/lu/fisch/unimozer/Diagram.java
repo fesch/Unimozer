@@ -714,693 +714,470 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
     // new code
     private void drawCompoAggregation2(Graphics2D g, MyClass thisClass, MyClass otherClass, Hashtable<MyClass,Vector<MyClass>> classUsings,boolean isComposition)
     {
-        if(thisClass!=otherClass)
-        {
-            Point thisTop       = new Point(thisClass.getX()+thisClass.getWidth()/2,thisClass.getY());
-            Point thisBottom    = new Point(thisClass.getX()+thisClass.getWidth()/2,thisClass.getY()+thisClass.getHeight());
-            Point thisLeft      = new Point(thisClass.getX(),thisClass.getY()+thisClass.getHeight()/2);
-            Point thisRight     = new Point(thisClass.getX()+thisClass.getWidth(),thisClass.getY()+thisClass.getHeight()/2);
-            Point[] thisPoints = {thisTop,thisBottom,thisLeft,thisRight};
-            
-            Point otherTop      = new Point(otherClass.getX()+otherClass.getWidth()/2,otherClass.getY());
-            Point otherBottom   = new Point(otherClass.getX()+otherClass.getWidth()/2,otherClass.getY()+otherClass.getHeight());
-            Point otherLeft     = new Point(otherClass.getX(),otherClass.getY()+otherClass.getHeight()/2);
-            Point otherRight    = new Point(otherClass.getX()+otherClass.getWidth(),otherClass.getY()+otherClass.getHeight()/2);
-            Point[] otherPoints = {otherTop,otherBottom,otherLeft,otherRight};
-            
-            double min = Double.MAX_VALUE;
-            Point thisPoint  = null;
-            Point otherPoint = null;
-            double thisMin;
-            
-            // determine closest middelst
-            for(int i=0;i<thisPoints.length;i++)
-                for(int j=0;j<otherPoints.length;j++)
-                {
-                    thisMin = thisPoints[i].distance(otherPoints[j]);
-                    if(thisMin<min)
-                    {
-                        min=thisMin;
-                        thisPoint  = thisPoints[i];
-                        otherPoint = otherPoints[j];
-                    }
-                }
-            
-            //Vector<MyClass> others = classUsings.get(thisClass);
-            Vector<MyClass> usingsThisClass = classUsings.get(thisClass);
-            // iterate through all usages
-            /*Set<MyClass> set = classUsings.keySet();
-            Iterator<MyClass> itr = set.iterator();
-            while (itr.hasNext())
-            {
-                // get the actual class ...
-                MyClass actual = itr.next();
-                // ... and the list of classes it uses
-                Vector<MyClass> actualUses = classUsings.get(actual);
-                // iterate through that list
-                for(MyClass used : actualUses)
-                {
-                    // add the actual class if
-                    // - it usesd the "otherClass"
-                    // - and the actual class has not yet been captured
-                    if(used==thisClass && !usingsThisClass.contains(actual)) usingsThisClass.add(actual);
-                }
-            }*/
-            
-            /* let's try this one ... */
-            for(Entry<MyClass,Vector<MyClass>> entry : classUsings.entrySet()) 
-            {
-                // get the actual class ...
-                MyClass actual = entry.getKey();
-                // ... and the list of classes it uses
-                Vector<MyClass> actualUses = classUsings.get(actual);
-                // iterate through that list
-                for(MyClass used : actualUses)
-                {
-                    // add the actual class if
-                    // - it usesd the "otherClass"
-                    // - and the actual class has not yet been captured
-                    if(used==thisClass && !usingsThisClass.contains(actual)) usingsThisClass.add(actual);
-                }
-            }
-            
 
-            Stroke oldStroke = g.getStroke();
+        Point thisTop       = new Point(thisClass.getX()+thisClass.getWidth()/2,thisClass.getY());
+        Point thisBottom    = new Point(thisClass.getX()+thisClass.getWidth()/2,thisClass.getY()+thisClass.getHeight());
+        Point thisLeft      = new Point(thisClass.getX(),thisClass.getY()+thisClass.getHeight()/2);
+        Point thisRight     = new Point(thisClass.getX()+thisClass.getWidth(),thisClass.getY()+thisClass.getHeight()/2);
+        Point[] thisPoints = {thisTop,thisBottom,thisLeft,thisRight};
+        if (thisClass == otherClass) {
 
-            if(thisPoint==thisTop)
-            {
-                // init number of connectionx
-                int thisCon = 1;
-                // init the direction into which to move
-                int thisDir = 1;
-                if(thisPoint.x>otherPoint.x) thisDir=-1;
-                // loop through others to determine position
-                for(MyClass other : usingsThisClass)
-                {
-                    // check goto right
-                     if (
-                         (other.getCenter().y < thisClass.getCenter().y)
-                         &&
-                         (other.getCenter().x >= thisClass.getCenter().x)
-                         &&
-                         (other.getCenter().y > otherClass.getCenter().y)
-                         && (thisDir==1)) thisCon++;
-                    // check goto left
-                    if (
-                         (other.getCenter().y < thisClass.getCenter().y)
-                         &&
-                         (other.getCenter().x < thisClass.getCenter().x)
-                         &&
-                         (other.getCenter().y > otherClass.getCenter().y)
-                        && (thisDir==-1)) thisCon++;
-                }
-                int con = thisCon;
-                thisCon=(int)((thisCon-0.5)*(12*thisDir));
-                
-                Polygon p = new Polygon();
-                p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y);
-                p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2-4, thisClass.getPosition().y-8);
-                p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y-16);
-                p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2+4, thisClass.getPosition().y-8);
-                if(isComposition) g.fillPolygon(p);
-                else g.drawPolygon(p);
-                
-                thisPoint.y-=15;
-                thisPoint.x+=thisCon;
-                
-                Point movePoint = new Point(thisPoint);
-                movePoint.y-=(usingsThisClass.size()-con)*8;
-                g.setStroke(dashed);
-                drawLine(g, thisPoint, movePoint);
-                thisPoint=movePoint;
-            }
-            else if(thisPoint==thisBottom)
-            {
-               // init number of connectionx
-                int thisCon = 1;
-                // init the direction into which to move
-                int thisDir = 1;
-                if(thisPoint.x>otherPoint.x) thisDir=-1;
-                // loop through others to determine position
-                for(MyClass other : usingsThisClass)
-                {
-                    // check goto right
-                     if (
-                         (other.getCenter().y >= thisClass.getCenter().y)
-                         &&
-                         (other.getCenter().x >= thisClass.getCenter().x)
-                         &&
-                         (other.getCenter().y > otherClass.getCenter().y)
-                         && (thisDir==1)) thisCon++;
-                    // check goto left
-                    if (
-                         (other.getCenter().y >= thisClass.getCenter().y)
-                         &&
-                         (other.getCenter().x < thisClass.getCenter().x)
-                         &&
-                         (other.getCenter().y > otherClass.getCenter().y)
-                         && (thisDir==-1)) thisCon++;
-                }
-                int con = thisCon;
-                thisCon=(int)((thisCon-0.5)*(12*thisDir));
+            int thisCon = 6;
 
-                // bottom
-                Polygon p = new Polygon();
-                p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y+thisClass.getHeight());
-                p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2-4, thisClass.getPosition().y+thisClass.getHeight()+8);
-                p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y+thisClass.getHeight()+16);
-                p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2+4, thisClass.getPosition().y+thisClass.getHeight()+8);
-                if(isComposition) g.fillPolygon(p);
-                else g.drawPolygon(p);
-                
-                thisPoint.y+=15;
-                thisPoint.x+=thisCon;
-                
-                Point movePoint = new Point(thisPoint);
-                movePoint.y+=(usingsThisClass.size()-con)*8;
-                g.setStroke(dashed);
-                drawLine(g, thisPoint, movePoint);
-                thisPoint=movePoint;
-            }
-            else if(thisPoint==thisRight)
-            {
-               // init number of connectionx
-                int thisCon = 1;
-                // init the direction into which to move
-                int thisDir = 1;
-                if(thisPoint.y>otherPoint.y) thisDir=-1;
-                // loop through others to determine position
-                for(MyClass other : usingsThisClass)
-                {
-                    // check goto up
-                    if (
-                         (other.getCenter().x >= thisClass.getCenter().x)
-                         &&
-                         (other.getCenter().y >= thisClass.getCenter().y)
-                         &&
-                         (other.getCenter().x > otherClass.getCenter().x)
-                         && (thisDir==1)) thisCon++;
-                    // check goto down
-                    if (
-                         (other.getCenter().x >= thisClass.getCenter().x)
-                         &&
-                         (other.getCenter().y < thisClass.getCenter().y)
-                         &&
-                         (other.getCenter().x > otherClass.getCenter().x)
-                         && (thisDir==-1)) thisCon++;
-                }
-                int con = thisCon;
-                thisCon=(int)((thisCon-0.5)*(12*thisDir));
+            Polygon p = new Polygon();
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y);
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2-4, thisClass.getPosition().y-8);
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y-16);
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2+4, thisClass.getPosition().y-8);
+            if(isComposition) g.fillPolygon(p);
+            else g.drawPolygon(p);
 
-                // right
-                Polygon p = new Polygon();
-                //thisCON = thisClass.getConnector().getNewBottom(otherDIR);
-                p.addPoint(thisClass.getPosition().x+thisClass.getWidth(),   thisCon+thisClass.getPosition().y+thisClass.getHeight()/2);
-                p.addPoint(thisClass.getPosition().x+thisClass.getWidth()+8, thisCon+thisClass.getPosition().y+thisClass.getHeight()/2-4);
-                p.addPoint(thisClass.getPosition().x+thisClass.getWidth()+16,thisCon+thisClass.getPosition().y+thisClass.getHeight()/2);
-                p.addPoint(thisClass.getPosition().x+thisClass.getWidth()+8, thisCon+thisClass.getPosition().y+thisClass.getHeight()/2+4);
-                if(isComposition) g.fillPolygon(p);
-                else g.drawPolygon(p);
-                
-                thisPoint.x+=15;
-                thisPoint.y+=thisCon;
-                
-                Point movePoint = new Point(thisPoint);
-                movePoint.x+=(usingsThisClass.size()-con)*8;
-                g.setStroke(dashed);
-                drawLine(g, thisPoint, movePoint);
-                thisPoint=movePoint;
-            }
-            else // left
-            {
-                // init number of connectionx
-                int thisCon = 1;
-                // init the direction into which to move
-                int thisDir = 1;
-                if(thisPoint.y>otherPoint.y) thisDir=-1;
-                // loop through others to determine position
-                for(MyClass other : usingsThisClass)
-                {
-                    // check goto up
-                     if (
-                         (other.getCenter().x < thisClass.getCenter().x)
-                         &&
-                         (other.getCenter().y >= thisClass.getCenter().y)
-                         &&
-                         (other.getCenter().x > otherClass.getCenter().x)
-                         && (thisDir==1)) thisCon++;
-                    // check goto down
-                    if (
-                         (other.getCenter().x < thisClass.getCenter().x)
-                         &&
-                         (other.getCenter().y < thisClass.getCenter().y)
-                         &&
-                         (other.getCenter().x > otherClass.getCenter().x)
-                        && (thisDir==-1)) thisCon++;
-                }
-                int con = thisCon;
-                thisCon=(int)((thisCon-0.5)*(12*thisDir));
-                
-                Polygon p = new Polygon();
-                p.addPoint(thisClass.getPosition().x,   thisCon+thisClass.getPosition().y+thisClass.getHeight()/2);
-                p.addPoint(thisClass.getPosition().x-8, thisCon+thisClass.getPosition().y+thisClass.getHeight()/2-4);
-                p.addPoint(thisClass.getPosition().x-16,thisCon+thisClass.getPosition().y+thisClass.getHeight()/2);
-                p.addPoint(thisClass.getPosition().x-8, thisCon+thisClass.getPosition().y+thisClass.getHeight()/2+4);
-                if(isComposition) g.fillPolygon(p);
-                else g.drawPolygon(p);
-                
-                thisPoint.y+=thisCon;
-                thisPoint.x-=15;
-                
-                Point movePoint = new Point(thisPoint);
-                movePoint.x-=(usingsThisClass.size()-con)*8;
-                g.setStroke(dashed);
-                drawLine(g, thisPoint, movePoint);
-                thisPoint=movePoint;
-            }
+            Point stopUp   = new Point(thisRight.x+8,thisRight.y-4);
+            Point stopDown = new Point(thisRight.x+8,thisRight.y+4);
+            Point lineBoxPoint = new Point(thisTop.x+5, thisTop.y-8);
+            Point lineTopLeft = new Point(lineBoxPoint.x, lineBoxPoint.y-50);
+            Point lineTopRight = new Point(lineTopLeft.x+50 + thisClass.getWidth()/2, lineTopLeft.y);
+            Point lineBottomRight = new Point(lineTopRight.x, thisClass.getPosition().y + thisClass.getHeight()/2);
 
-            //Vector<MyClass> others = classUsings.get(otherClass);
-            Vector<MyClass> usingsOtherClass = classUsings.get(otherClass);
-            /*
-            // iterate through all usages
-            set = classUsings.keySet();
-            itr = set.iterator();
-            while (itr.hasNext())
-            {
-                // get the actual class ...
-                MyClass actual = itr.next();
-                // ... and the list of classes it uses
-                Vector<MyClass> actualUses = classUsings.get(actual);
-                // iterate through that list
-                for(MyClass used : actualUses)
-                {
-                    // add the actual class if
-                    // - it usesd the "otherClass"
-                    // - and the actual class has not yet been captured
-                    if(used==otherClass && !usingsOtherClass.contains(actual)) usingsOtherClass.add(actual);
-                }
-            }
-            */
-            
-            /* let's try this one ... */
-            for(Entry<MyClass,Vector<MyClass>> entry : classUsings.entrySet()) 
-            {
-                // get the actual class ...
-                MyClass actual = entry.getKey();
-                // ... and the list of classes it uses
-                Vector<MyClass> actualUses = classUsings.get(actual);
-                // iterate through that list
-                for(MyClass used : actualUses)
-                {
-                    // add the actual class if
-                    // - it usesd the "otherClass"
-                    // - and the actual class has not yet been captured
-                    if(used==otherClass && !usingsOtherClass.contains(actual)) usingsOtherClass.add(actual);
-                }
-            }
+            drawLine(g, lineBoxPoint, lineTopLeft);
+            drawLine(g, lineTopLeft, lineTopRight);
+            drawLine(g, lineTopRight, lineBottomRight);
+            drawLine(g, lineBottomRight, thisRight);
+            drawLine(g,stopUp,thisRight);
+            drawLine(g,stopDown,thisRight);
 
-
-            Point stopUp;
-            Point stopDown;
-            Point stopOut;
-            Point step;
-            Point start = thisPoint;
-            Point stop;
-            
-            if(otherPoint==otherTop)
-            {
-                // init number of connectionx
-                int otherCon = 1;
-                // init the direction into which to move
-                int otherDir = 1;
-                if(otherPoint.x>thisPoint.x) otherDir=-1;
-                // loop through others to determine position
-                for(MyClass other : usingsOtherClass)
-                {
-                    // check goto right
-                    if (
-                         (other.getCenter().y < otherClass.getCenter().y)
-                         &&
-                         (other.getCenter().x >= otherClass.getCenter().x)
-                         &&
-                         (other.getCenter().y < thisClass.getCenter().y)
-                         && (otherDir==1)) otherCon++;
-                    // check goto left
-                    if (
-                         (other.getCenter().y < otherClass.getCenter().y)
-                         &&
-                         (other.getCenter().x < otherClass.getCenter().x)
-                         &&
-                         (other.getCenter().y < thisClass.getCenter().y)
-                        && (otherDir==-1)) otherCon++;
-                }
-                otherCon=(int)((otherCon-0.5)*(12*otherDir));
-                
-                otherPoint.x+=otherCon;
-
-                stopUp   = new Point(otherPoint.x-4,otherPoint.y-8);
-                stopDown = new Point(otherPoint.x+4,otherPoint.y-8);
-                stopOut  = new Point(otherPoint.x,otherPoint.y-8);
-                stop = stopOut;
-                step = new Point(stop.x,start.y);
-            }
-            else if(otherPoint==otherBottom)
-            {
-               // init number of connectionx
-                int otherCon = 1;
-                // init the direction into which to move
-                int otherDir = 1;
-                if(otherPoint.x>thisPoint.x) otherDir=-1;
-                // loop through others to determine position
-                for(MyClass other : usingsOtherClass)
-                {
-                    // check goto right
-                     if (
-                         (other.getCenter().y >= otherClass.getCenter().y)
-                         &&
-                         (other.getCenter().x >= otherClass.getCenter().x)
-                         &&
-                         (other.getCenter().y > thisClass.getCenter().y)
-                         && (otherDir==1)) otherCon++;
-                    // check goto left
-                    if (
-                         (other.getCenter().y >= otherClass.getCenter().y)
-                         &&
-                         (other.getCenter().x < otherClass.getCenter().x)
-                         &&
-                         (other.getCenter().y > thisClass.getCenter().y)
-                         && (otherDir==-1)) otherCon++;
-                }
-                otherCon=(int)((otherCon-0.5)*(12*otherDir));
-
-                otherPoint.x+=otherCon;
-                
-                stopUp   = new Point(otherPoint.x-4,otherPoint.y+8);
-                stopDown = new Point(otherPoint.x+4,otherPoint.y+8);
-                stopOut  = new Point(otherPoint.x,otherPoint.y+8);
-                stop = stopOut;
-                step = new Point(stop.x,start.y);
-            }
-            else if(otherPoint==otherRight)
-            {
-               // init number of connectionx
-                int otherCon = 1;
-                // init the direction into which to move
-                int otherDir = 1;
-                if(otherPoint.y>thisPoint.y) otherDir=-1;
-                // loop through others to determine position
-                for(MyClass other : usingsOtherClass)
-                {
-                    // check goto up
-                    if (
-                         (other.getCenter().x >= otherClass.getCenter().x)
-                         &&
-                         (other.getCenter().y >= otherClass.getCenter().y)
-                         &&
-                         (other.getCenter().x > thisClass.getCenter().x)
-                         && (otherDir==1)) otherCon++;
-                    // check goto down
-                    if (
-                         (other.getCenter().x >= otherClass.getCenter().x)
-                         &&
-                         (other.getCenter().y < otherClass.getCenter().y)
-                         &&
-                         (other.getCenter().x > thisClass.getCenter().x)
-                         && (otherDir==-1)) otherCon++;
-                }
-                otherCon=(int)((otherCon-0.5)*(12*otherDir));
-
-                otherPoint.y+=otherCon;
-                
-                stopUp   = new Point(otherPoint.x+8,otherPoint.y-4);
-                stopDown = new Point(otherPoint.x+8,otherPoint.y+4);
-                stopOut  = new Point(otherPoint.x+8,otherPoint.y);
-                stop = stopOut;
-                step = new Point(start.x,stop.y);
-            }
-            else // left
-            {
-                // init number of connectionx
-                int otherCon = 1;
-                // init the direction into which to move
-                int otherDir = 1;
-                if(otherPoint.y>thisPoint.y) otherDir=-1;
-                // loop through others to determine position
-                for(MyClass other : usingsOtherClass)
-                {
-                    // check goto up
-                     if (
-                         (other.getCenter().x < otherClass.getCenter().x)
-                         &&
-                         (other.getCenter().y >= otherClass.getCenter().y)
-                         &&
-                         (other.getCenter().x < thisClass.getCenter().x)
-                         && (otherDir==1)) otherCon++;
-                    // check goto down
-                    if (
-                         (other.getCenter().x < otherClass.getCenter().x)
-                         &&
-                         (other.getCenter().y < otherClass.getCenter().y)
-                         &&
-                         (other.getCenter().x < thisClass.getCenter().x)
-                        && (otherDir==-1)) otherCon++;
-                }
-                otherCon=(int)((otherCon-0.5)*(12*otherDir));
-                
-                otherPoint.y+=otherCon;
-                
-                stopUp   = new Point(otherPoint.x-8,otherPoint.y-4);
-                stopDown = new Point(otherPoint.x-8,otherPoint.y+4);
-                stopOut  = new Point(otherPoint.x+8,otherPoint.y);
-                stop = stopOut;
-                step = new Point(start.x,stop.y);
-            }            
-            
-//            drawLine(g,thisPoint,otherPoint);
-
-            boolean inter =false;
-
-            /*
-
-            if(otherClass.getPosition().y+otherClass.getHeight()/2 < thisClass.getPosition().y+thisClass.getHeight()/2)
-            { // top
-                if(stop.y>start.y)
-                {
-                    step = new Point(start.x,thisClass.getPosition().y);
-                    inter = true;
-                }
-                else
-                {
-                    step = new Point(start.x,stop.y);
-                }
-            }
-            else
-            { // bottom
-                if(stop.y<thisClass.getPosition().y+thisClass.getHeight() || thisClass==otherClass)
-                {
-                    step = new Point(start.x,
-                                     thisClass.getPosition().y+thisClass.getHeight());
-                    inter = true;
-                }
-                else
-                {
-                    step = new Point(start.x,stop.y);
-                }
-
-            }
-
-
-            drawLine(g,start,step);
-
-            if(inter==true)
-            {
-                int middle;
-                if(thisClass==otherClass)
-                {
-                    middle = otherClass.getPosition().x+otherClass.getWidth()+16;//-otherCON;
-                }
-                else if(otherClass.getPosition().x+otherClass.getWidth()/2 > thisClass.getPosition().x+thisClass.getWidth()/2)
-                { // left
-                    middle = (-(thisClass.getPosition().x+thisClass.getWidth())+(otherClass.getPosition().x))/2+thisClass.getPosition().x+thisClass.getWidth();
-                }
-                else
-                { // right
-                    middle = (-(otherClass.getPosition().x+otherClass.getWidth())+(thisClass.getPosition().x))/2+otherClass.getPosition().x+otherClass.getWidth();
-                }
-                Point next = new Point(middle,step.y);
-                drawLine(g,step,next);
-                step = new Point(middle,stop.y);
-                drawLine(g,step,next);
-            }
-            */
-            /*
-            g.setColor(Color.red);
-            drawLine(g,start,step);
-            drawLine(g,step,stop);
-            
-            g.setColor(Color.blue);
-            step = new Point(stop.x,start.y);
-            drawLine(g,start,step);
-            drawLine(g,step,stop);
-            
-            g.setColor(Color.orange);
-            drawLine(g,start,
-                       new Point(start.x,(start.y+stop.y)/2));
-            drawLine(g,new Point(start.x,(start.y+stop.y)/2),
-                       new Point((start.x+stop.y)/2,(start.y+stop.y)/2));
-            drawLine(g,new Point((start.x+stop.y)/2,(start.y+stop.y)/2),
-                       new Point((start.x+stop.y)/2,stop.y));
-            drawLine(g,new Point((start.x+stop.y)/2,stop.y),
-                       stop);
-
-            g.setColor(Color.black);/**/
-            
-            drawLine(g,start,step);
-            drawLine(g,step,stop);
-            
-            drawLine(g,otherPoint,stop);
-            g.setStroke(oldStroke);
-            drawLine(g,stopUp,otherPoint);
-            drawLine(g,stopDown,otherPoint);            
+            return;
         }
+
+        Point otherTop      = new Point(otherClass.getX()+otherClass.getWidth()/2,otherClass.getY());
+        Point otherBottom   = new Point(otherClass.getX()+otherClass.getWidth()/2,otherClass.getY()+otherClass.getHeight());
+        Point otherLeft     = new Point(otherClass.getX(),otherClass.getY()+otherClass.getHeight()/2);
+        Point otherRight    = new Point(otherClass.getX()+otherClass.getWidth(),otherClass.getY()+otherClass.getHeight()/2);
+        Point[] otherPoints = {otherTop,otherBottom,otherLeft,otherRight};
+
+        double min = Double.MAX_VALUE;
+        Point thisPoint  = null;
+        Point otherPoint = null;
+        double thisMin;
+
+        // determine closest middelst
+        for(int i=0;i<thisPoints.length;i++)
+            for(int j=0;j<otherPoints.length;j++)
+            {
+                thisMin = thisPoints[i].distance(otherPoints[j]);
+                if(thisMin<min)
+                {
+                    min=thisMin;
+                    thisPoint  = thisPoints[i];
+                    otherPoint = otherPoints[j];
+                }
+            }
+
+        //Vector<MyClass> others = classUsings.get(thisClass);
+        Vector<MyClass> usingsThisClass = classUsings.get(thisClass);
+
+        /* let's try this one ... */
+        for(Entry<MyClass,Vector<MyClass>> entry : classUsings.entrySet())
+        {
+            // get the actual class ...
+            MyClass actual = entry.getKey();
+            // ... and the list of classes it uses
+            Vector<MyClass> actualUses = classUsings.get(actual);
+            // iterate through that list
+            for(MyClass used : actualUses)
+            {
+                // add the actual class if
+                // - it usesd the "otherClass"
+                // - and the actual class has not yet been captured
+                if(used==thisClass && !usingsThisClass.contains(actual)) usingsThisClass.add(actual);
+            }
+        }
+
+
+        Stroke oldStroke = g.getStroke();
+
+        if(thisPoint==thisTop)
+        {
+            // init number of connectionx
+            int thisCon = 1;
+            // init the direction into which to move
+            int thisDir = 1;
+            if(thisPoint.x>otherPoint.x) thisDir=-1;
+            // loop through others to determine position
+            for(MyClass other : usingsThisClass)
+            {
+                // check goto right
+                 if (
+                     (other.getCenter().y < thisClass.getCenter().y)
+                     &&
+                     (other.getCenter().x >= thisClass.getCenter().x)
+                     &&
+                     (other.getCenter().y > otherClass.getCenter().y)
+                     && (thisDir==1)) thisCon++;
+                // check goto left
+                if (
+                     (other.getCenter().y < thisClass.getCenter().y)
+                     &&
+                     (other.getCenter().x < thisClass.getCenter().x)
+                     &&
+                     (other.getCenter().y > otherClass.getCenter().y)
+                    && (thisDir==-1)) thisCon++;
+            }
+            int con = thisCon;
+            thisCon=(int)((thisCon-0.5)*(12*thisDir));
+
+            Polygon p = new Polygon();
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y);
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2-4, thisClass.getPosition().y-8);
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y-16);
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2+4, thisClass.getPosition().y-8);
+            if(isComposition) g.fillPolygon(p);
+            else g.drawPolygon(p);
+
+            thisPoint.y-=15;
+            thisPoint.x+=thisCon;
+
+            Point movePoint = new Point(thisPoint);
+            movePoint.y-=(usingsThisClass.size()-con)*8;
+            g.setStroke(dashed);
+            drawLine(g, thisPoint, movePoint);
+            thisPoint=movePoint;
+        }
+        else if(thisPoint==thisBottom)
+        {
+           // init number of connectionx
+            int thisCon = 1;
+            // init the direction into which to move
+            int thisDir = 1;
+            if(thisPoint.x>otherPoint.x) thisDir=-1;
+            // loop through others to determine position
+            for(MyClass other : usingsThisClass)
+            {
+                // check goto right
+                 if (
+                     (other.getCenter().y >= thisClass.getCenter().y)
+                     &&
+                     (other.getCenter().x >= thisClass.getCenter().x)
+                     &&
+                     (other.getCenter().y > otherClass.getCenter().y)
+                     && (thisDir==1)) thisCon++;
+                // check goto left
+                if (
+                     (other.getCenter().y >= thisClass.getCenter().y)
+                     &&
+                     (other.getCenter().x < thisClass.getCenter().x)
+                     &&
+                     (other.getCenter().y > otherClass.getCenter().y)
+                     && (thisDir==-1)) thisCon++;
+            }
+            int con = thisCon;
+            thisCon=(int)((thisCon-0.5)*(12*thisDir));
+
+            // bottom
+            Polygon p = new Polygon();
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y+thisClass.getHeight());
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2-4, thisClass.getPosition().y+thisClass.getHeight()+8);
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y+thisClass.getHeight()+16);
+            p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2+4, thisClass.getPosition().y+thisClass.getHeight()+8);
+            if(isComposition) g.fillPolygon(p);
+            else g.drawPolygon(p);
+
+            thisPoint.y+=15;
+            thisPoint.x+=thisCon;
+
+            Point movePoint = new Point(thisPoint);
+            movePoint.y+=(usingsThisClass.size()-con)*8;
+            g.setStroke(dashed);
+            drawLine(g, thisPoint, movePoint);
+            thisPoint=movePoint;
+        }
+        else if(thisPoint==thisRight)
+        {
+           // init number of connectionx
+            int thisCon = 1;
+            // init the direction into which to move
+            int thisDir = 1;
+            if(thisPoint.y>otherPoint.y) thisDir=-1;
+            // loop through others to determine position
+            for(MyClass other : usingsThisClass)
+            {
+                // check goto up
+                if (
+                     (other.getCenter().x >= thisClass.getCenter().x)
+                     &&
+                     (other.getCenter().y >= thisClass.getCenter().y)
+                     &&
+                     (other.getCenter().x > otherClass.getCenter().x)
+                     && (thisDir==1)) thisCon++;
+                // check goto down
+                if (
+                     (other.getCenter().x >= thisClass.getCenter().x)
+                     &&
+                     (other.getCenter().y < thisClass.getCenter().y)
+                     &&
+                     (other.getCenter().x > otherClass.getCenter().x)
+                     && (thisDir==-1)) thisCon++;
+            }
+            int con = thisCon;
+            thisCon=(int)((thisCon-0.5)*(12*thisDir));
+
+            // right
+            Polygon p = new Polygon();
+            //thisCON = thisClass.getConnector().getNewBottom(otherDIR);
+            p.addPoint(thisClass.getPosition().x+thisClass.getWidth(),   thisCon+thisClass.getPosition().y+thisClass.getHeight()/2);
+            p.addPoint(thisClass.getPosition().x+thisClass.getWidth()+8, thisCon+thisClass.getPosition().y+thisClass.getHeight()/2-4);
+            p.addPoint(thisClass.getPosition().x+thisClass.getWidth()+16,thisCon+thisClass.getPosition().y+thisClass.getHeight()/2);
+            p.addPoint(thisClass.getPosition().x+thisClass.getWidth()+8, thisCon+thisClass.getPosition().y+thisClass.getHeight()/2+4);
+            if(isComposition) g.fillPolygon(p);
+            else g.drawPolygon(p);
+
+            thisPoint.x+=15;
+            thisPoint.y+=thisCon;
+
+            Point movePoint = new Point(thisPoint);
+            movePoint.x+=(usingsThisClass.size()-con)*8;
+            g.setStroke(dashed);
+            drawLine(g, thisPoint, movePoint);
+            thisPoint=movePoint;
+        }
+        else // left
+        {
+            // init number of connectionx
+            int thisCon = 1;
+            // init the direction into which to move
+            int thisDir = 1;
+            if(thisPoint.y>otherPoint.y) thisDir=-1;
+            // loop through others to determine position
+            for(MyClass other : usingsThisClass)
+            {
+                // check goto up
+                 if (
+                     (other.getCenter().x < thisClass.getCenter().x)
+                     &&
+                     (other.getCenter().y >= thisClass.getCenter().y)
+                     &&
+                     (other.getCenter().x > otherClass.getCenter().x)
+                     && (thisDir==1)) thisCon++;
+                // check goto down
+                if (
+                     (other.getCenter().x < thisClass.getCenter().x)
+                     &&
+                     (other.getCenter().y < thisClass.getCenter().y)
+                     &&
+                     (other.getCenter().x > otherClass.getCenter().x)
+                    && (thisDir==-1)) thisCon++;
+            }
+            int con = thisCon;
+            thisCon=(int)((thisCon-0.5)*(12*thisDir));
+
+            Polygon p = new Polygon();
+            p.addPoint(thisClass.getPosition().x,   thisCon+thisClass.getPosition().y+thisClass.getHeight()/2);
+            p.addPoint(thisClass.getPosition().x-8, thisCon+thisClass.getPosition().y+thisClass.getHeight()/2-4);
+            p.addPoint(thisClass.getPosition().x-16,thisCon+thisClass.getPosition().y+thisClass.getHeight()/2);
+            p.addPoint(thisClass.getPosition().x-8, thisCon+thisClass.getPosition().y+thisClass.getHeight()/2+4);
+            if(isComposition) g.fillPolygon(p);
+            else g.drawPolygon(p);
+
+            thisPoint.y+=thisCon;
+            thisPoint.x-=15;
+
+            Point movePoint = new Point(thisPoint);
+            movePoint.x-=(usingsThisClass.size()-con)*8;
+            g.setStroke(dashed);
+            drawLine(g, thisPoint, movePoint);
+            thisPoint=movePoint;
+        }
+
+        //Vector<MyClass> others = classUsings.get(otherClass);
+        Vector<MyClass> usingsOtherClass = classUsings.get(otherClass);
+
+        /* let's try this one ... */
+        for(Entry<MyClass,Vector<MyClass>> entry : classUsings.entrySet())
+        {
+            // get the actual class ...
+            MyClass actual = entry.getKey();
+            // ... and the list of classes it uses
+            Vector<MyClass> actualUses = classUsings.get(actual);
+            // iterate through that list
+            for(MyClass used : actualUses)
+            {
+                // add the actual class if
+                // - it usesd the "otherClass"
+                // - and the actual class has not yet been captured
+                if(used==otherClass && !usingsOtherClass.contains(actual)) usingsOtherClass.add(actual);
+            }
+        }
+
+
+        Point stopUp;
+        Point stopDown;
+        Point stopOut;
+        Point step;
+        Point start = thisPoint;
+        Point stop;
+
+        if(otherPoint==otherTop)
+        {
+            // init number of connectionx
+            int otherCon = 1;
+            // init the direction into which to move
+            int otherDir = 1;
+            if(otherPoint.x>thisPoint.x) otherDir=-1;
+            // loop through others to determine position
+            for(MyClass other : usingsOtherClass)
+            {
+                // check goto right
+                if (
+                     (other.getCenter().y < otherClass.getCenter().y)
+                     &&
+                     (other.getCenter().x >= otherClass.getCenter().x)
+                     &&
+                     (other.getCenter().y < thisClass.getCenter().y)
+                     && (otherDir==1)) otherCon++;
+                // check goto left
+                if (
+                     (other.getCenter().y < otherClass.getCenter().y)
+                     &&
+                     (other.getCenter().x < otherClass.getCenter().x)
+                     &&
+                     (other.getCenter().y < thisClass.getCenter().y)
+                    && (otherDir==-1)) otherCon++;
+            }
+            otherCon=(int)((otherCon-0.5)*(12*otherDir));
+
+            otherPoint.x+=otherCon;
+
+            stopUp   = new Point(otherPoint.x-4,otherPoint.y-8);
+            stopDown = new Point(otherPoint.x+4,otherPoint.y-8);
+            stopOut  = new Point(otherPoint.x,otherPoint.y-8);
+            stop = stopOut;
+            step = new Point(stop.x,start.y);
+        }
+        else if(otherPoint==otherBottom)
+        {
+           // init number of connectionx
+            int otherCon = 1;
+            // init the direction into which to move
+            int otherDir = 1;
+            if(otherPoint.x>thisPoint.x) otherDir=-1;
+            // loop through others to determine position
+            for(MyClass other : usingsOtherClass)
+            {
+                // check goto right
+                 if (
+                     (other.getCenter().y >= otherClass.getCenter().y)
+                     &&
+                     (other.getCenter().x >= otherClass.getCenter().x)
+                     &&
+                     (other.getCenter().y > thisClass.getCenter().y)
+                     && (otherDir==1)) otherCon++;
+                // check goto left
+                if (
+                     (other.getCenter().y >= otherClass.getCenter().y)
+                     &&
+                     (other.getCenter().x < otherClass.getCenter().x)
+                     &&
+                     (other.getCenter().y > thisClass.getCenter().y)
+                     && (otherDir==-1)) otherCon++;
+            }
+            otherCon=(int)((otherCon-0.5)*(12*otherDir));
+
+            otherPoint.x+=otherCon;
+
+            stopUp   = new Point(otherPoint.x-4,otherPoint.y+8);
+            stopDown = new Point(otherPoint.x+4,otherPoint.y+8);
+            stopOut  = new Point(otherPoint.x,otherPoint.y+8);
+            stop = stopOut;
+            step = new Point(stop.x,start.y);
+        }
+        else if(otherPoint==otherRight)
+        {
+           // init number of connectionx
+            int otherCon = 1;
+            // init the direction into which to move
+            int otherDir = 1;
+            if(otherPoint.y>thisPoint.y) otherDir=-1;
+            // loop through others to determine position
+            for(MyClass other : usingsOtherClass)
+            {
+                // check goto up
+                if (
+                     (other.getCenter().x >= otherClass.getCenter().x)
+                     &&
+                     (other.getCenter().y >= otherClass.getCenter().y)
+                     &&
+                     (other.getCenter().x > thisClass.getCenter().x)
+                     && (otherDir==1)) otherCon++;
+                // check goto down
+                if (
+                     (other.getCenter().x >= otherClass.getCenter().x)
+                     &&
+                     (other.getCenter().y < otherClass.getCenter().y)
+                     &&
+                     (other.getCenter().x > thisClass.getCenter().x)
+                     && (otherDir==-1)) otherCon++;
+            }
+            otherCon=(int)((otherCon-0.5)*(12*otherDir));
+
+            otherPoint.y+=otherCon;
+
+            stopUp   = new Point(otherPoint.x+8,otherPoint.y-4);
+            stopDown = new Point(otherPoint.x+8,otherPoint.y+4);
+            stopOut  = new Point(otherPoint.x+8,otherPoint.y);
+            stop = stopOut;
+            step = new Point(start.x,stop.y);
+        }
+        else // left
+        {
+            // init number of connectionx
+            int otherCon = 1;
+            // init the direction into which to move
+            int otherDir = 1;
+            if(otherPoint.y>thisPoint.y) otherDir=-1;
+            // loop through others to determine position
+            for(MyClass other : usingsOtherClass)
+            {
+                // check goto up
+                 if (
+                     (other.getCenter().x < otherClass.getCenter().x)
+                     &&
+                     (other.getCenter().y >= otherClass.getCenter().y)
+                     &&
+                     (other.getCenter().x < thisClass.getCenter().x)
+                     && (otherDir==1)) otherCon++;
+                // check goto down
+                if (
+                     (other.getCenter().x < otherClass.getCenter().x)
+                     &&
+                     (other.getCenter().y < otherClass.getCenter().y)
+                     &&
+                     (other.getCenter().x < thisClass.getCenter().x)
+                    && (otherDir==-1)) otherCon++;
+            }
+            otherCon=(int)((otherCon-0.5)*(12*otherDir));
+
+            otherPoint.y+=otherCon;
+
+            stopUp   = new Point(otherPoint.x-8,otherPoint.y-4);
+            stopDown = new Point(otherPoint.x-8,otherPoint.y+4);
+            stopOut  = new Point(otherPoint.x+8,otherPoint.y);
+            stop = stopOut;
+            step = new Point(start.x,stop.y);
+        }
+
+        boolean inter =false;
+        drawLine(g,start,step);
+        drawLine(g,step,stop);
+
+        drawLine(g,otherPoint,stop);
+        g.setStroke(oldStroke);
+        drawLine(g,stopUp,otherPoint);
+        drawLine(g,stopDown,otherPoint);
     }
             
     private void drawCompoAggregation(Graphics2D g, MyClass thisClass, MyClass otherClass, Hashtable<MyClass,Vector<MyClass>> classUsings,boolean isComposition)
     {
-        //g.setColor(Color.BLUE);
         drawCompoAggregation2(g, thisClass, otherClass, classUsings, isComposition);
-        /*g.setColor(Color.RED);
-        if(thisClass!=otherClass)
-        {
-            Point start;
-            Point stop;
-            Point stopUp;
-            Point stopDown;
-            boolean inter =false;
-
-            int destY;
-            Point step;
-
-            Point cons = getCons(thisClass, otherClass, classUsings);
-            int thisCON = cons.x;
-            int otherCON = cons.y;
-
-            if(otherClass.getPosition().y+otherClass.getHeight()/2 < thisClass.getPosition().y+thisClass.getHeight()/2)
-            {   
-                // top
-                Polygon p = new Polygon();
-                //thisCON = thisClass.getConnector().getNewTop(otherDIR);
-                p.addPoint(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y);
-                p.addPoint(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2-4, thisClass.getPosition().y-8);
-                p.addPoint(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y-16);
-                p.addPoint(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2+4, thisClass.getPosition().y-8);
-                if(isComposition) g.fillPolygon(p);
-                else g.drawPolygon(p);
-
-                start = new Point(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2,
-                                  thisClass.getPosition().y-16);
-            }
-            else
-            { 
-                // bottom
-                Polygon p = new Polygon();
-                //thisCON = thisClass.getConnector().getNewBottom(otherDIR);
-                p.addPoint(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y+thisClass.getHeight());
-                p.addPoint(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2-4, thisClass.getPosition().y+thisClass.getHeight()+8);
-                p.addPoint(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y+thisClass.getHeight()+16);
-                p.addPoint(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2+4, thisClass.getPosition().y+thisClass.getHeight()+8);
-                if(isComposition) g.fillPolygon(p);
-                else g.drawPolygon(p);
-
-                start = new Point(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2,
-                                  thisClass.getPosition().y+thisClass.getHeight()+16);
-            }
-
-            Stroke oldStroke = g.getStroke();
-            g.setStroke(dashed);
-
-            if(otherClass.getPosition().x+otherClass.getWidth()/2 > thisClass.getPosition().x+thisClass.getWidth()/2)
-            { // left
-                //otherCON = otherClass.getConnector().getNewLeft(thisDIR);
-                stop = new Point(otherClass.getPosition().x,
-                                  otherCON+otherClass.getPosition().y+otherClass.getHeight()/2);
-                stopUp = new Point(otherClass.getPosition().x-8,
-                                  otherCON+otherClass.getPosition().y+otherClass.getHeight()/2-4);
-                stopDown = new Point(otherClass.getPosition().x-8,
-                                  otherCON+otherClass.getPosition().y+otherClass.getHeight()/2+4);
-                destY = otherCON+otherClass.getPosition().y+otherClass.getHeight()/2;
-            }
-            else
-            { // right
-                //otherCON = otherClass.getConnector().getNewRight(thisDIR);
-                stop = new Point(otherClass.getPosition().x+otherClass.getWidth(),
-                                  otherCON+otherClass.getPosition().y+otherClass.getHeight()/2);
-                stopUp = new Point(otherClass.getPosition().x+otherClass.getWidth()+8,
-                                  otherCON+otherClass.getPosition().y+otherClass.getHeight()/2-4);
-                stopDown = new Point(otherClass.getPosition().x+otherClass.getWidth()+8,
-                                  otherCON+otherClass.getPosition().y+otherClass.getHeight()/2+4);
-                destY = otherCON+otherClass.getPosition().y+otherClass.getHeight()/2;
-            }
-
-            if(otherClass.getPosition().y+otherClass.getHeight()/2 < thisClass.getPosition().y+thisClass.getHeight()/2)
-            { // top
-                if(destY>thisClass.getPosition().y-24)
-                {
-                    step = new Point(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2,
-                                     thisClass.getPosition().y-24);
-                    inter = true;
-                }
-                else
-                {
-                    step = new Point(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2,destY);
-                }
-            }
-            else
-            { // bottom
-                if(destY<thisClass.getPosition().y+thisClass.getHeight()+24 || thisClass==otherClass)
-                {
-                    step = new Point(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2,
-                                     thisClass.getPosition().y+thisClass.getHeight()+24);
-                    inter = true;
-                }
-                else
-                {
-                    step = new Point(thisCON+thisClass.getPosition().x+thisClass.getWidth()/2,destY);
-                }
-
-            }
-
-
-            drawLine(g,start,step);
-
-            if(inter==true)
-            {
-                int middle;
-                if(thisClass==otherClass)
-                {
-                    middle = otherClass.getPosition().x+otherClass.getWidth()+16;//-otherCON;
-                }
-                else if(otherClass.getPosition().x+otherClass.getWidth()/2 > thisClass.getPosition().x+thisClass.getWidth()/2)
-                { // left
-                    middle = (-(thisClass.getPosition().x+thisClass.getWidth())+(otherClass.getPosition().x))/2+thisClass.getPosition().x+thisClass.getWidth();
-                }
-                else
-                { // right
-                    middle = (-(otherClass.getPosition().x+otherClass.getWidth())+(thisClass.getPosition().x))/2+otherClass.getPosition().x+otherClass.getWidth();
-                }
-                Point next = new Point(middle,step.y);
-                drawLine(g,step,next);
-                step = new Point(middle,stop.y);
-                drawLine(g,step,next);
-            }
-
-            drawLine(g,step,stop);
-
-            g.setStroke(oldStroke);
-            drawLine(g,stopUp,stop);
-            drawLine(g,stopDown,stop);
-        }
-        /**/
     }
 
     private void drawComposition(Graphics2D g, MyClass thisClass, MyClass otherClass, Hashtable<MyClass,Vector<MyClass>> classUsings)
@@ -1455,7 +1232,8 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 MyClass clas = entry.getValue();
                 clas.setEnabled(this.isEnabled());
                 clas.draw(graphics,showFields,showMethods);
-            }            
+            }
+
 
             // draw packages
             packages.clear();
@@ -1594,7 +1372,6 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
                 }
                 g.setStroke(oldStroke);
             }
-
 
             // draw inheritance
             if(isShowHeritage())
@@ -3360,7 +3137,7 @@ Logger.getInstance().log("Diagram repainted ...");
     public void printDiagram()
     {
         // print preview takes a lot of memory (don't know why)
-        // so it is a good idea to sugest to the JVM to clean up the heap
+        // so it is a good idea to suggest to the JVM to clean up the heap
         System.gc();
         printOptions = PrintOptions.showModal(frame, "Print options");
         if(printOptions.OK==true)
@@ -4435,7 +4212,7 @@ Logger.getInstance().log("Diagram repainted ...");
 
     public boolean isBuildIn(String myClassFullname)
     {
-        if(interactiveProject==null 
+        if(interactiveProject==null
             || interactiveProject.getStudentClass().getFullName().equals(myClassFullname)
             || !interactiveProject.getClasses().contains(myClassFullname)
             || !interactiveProject.isBuildIn()
@@ -4843,18 +4620,20 @@ Logger.getInstance().log("Diagram repainted ...");
         }
     }
 
+    //#######################################################################################
+    //renders the little box on the bottom left that normally says "no syntax errors"
+    //#######################################################################################
     public void showParseStatus(String ret)
     {
         if(ret.equals(MyClass.NO_SYNTAX_ERRORS))
         {
             status.setBackground(new Color(135,255,135));
-            this.setEnabled(true);
         }
         else
         {
             status.setBackground(new Color(255,135,135));
-            this.setEnabled(true);
         }
+        this.setEnabled(true);
         if(ret.length()>100) status.setText(ret.substring(0, 100).trim());
         else status.setText(ret);
         status.setToolTipText("<html><pre>"+ret+"</pre></html>");
@@ -6736,7 +6515,7 @@ Logger.getInstance().log("Diagram repainted ...");
                     {
                         case 0:
                                 //allowEdit=Boolean.parseBoolean(content.get(i))
-                                if(frame!=null);
+                                if(frame!=null)
                                     frame.setAllowEdit(allowEdit);
                                 break;
                         case 1:
@@ -6771,9 +6550,9 @@ Logger.getInstance().log("Diagram repainted ...");
                         // the source fioles can be located in two different places
                         File fileDefault = new File(directoryName + System.getProperty("file.separator") + line.get(0).replace(".", System.getProperty("file.separator")) + ".java");
                         File fileSrc     = new File(directoryName + System.getProperty("file.separator") + "src" + System.getProperty("file.separator") + line.get(0).replace(".", System.getProperty("file.separator")) + ".java");
-                        
+
                         MyClass mc = null;
-                        
+
                         // only a "default" file is present
                         if(fileDefault.exists() && !fileSrc.exists()) mc = new MyClass(fileDefault.getAbsolutePath(),Unimozer.FILE_ENCODING);
                         // only a "src" file is present
@@ -6784,7 +6563,7 @@ Logger.getInstance().log("Diagram repainted ...");
                             if(fileDefault.lastModified()>fileSrc.lastModified()) mc = new MyClass(fileDefault.getAbsolutePath(),Unimozer.FILE_ENCODING);
                             else mc = new MyClass(fileSrc.getAbsolutePath(),Unimozer.FILE_ENCODING);
                         }
-                        
+
                         if(mc!=null)
                         {
                             mc.setPosition(new Point(Integer.valueOf(line.get(1)), Integer.valueOf(line.get(2))));
