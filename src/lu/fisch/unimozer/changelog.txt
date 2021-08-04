@@ -5,7 +5,7 @@ Todo:
 - find/replace in selection
 
 
-Current version: 0.27-63 (2019.10.16)
+Current version: 0.27-69 (2021.03.02)
 - 01: printing was broken due to editor update [Lux BREDIMUS]
 - 02: copy diagrams cut outer lines for compiled projects [Fred FABER]
 - 03: added error message if save operations fails [Fred FABER]
@@ -78,7 +78,14 @@ Current version: 0.27-63 (2019.10.16)
 - 61: Added methods to monitor an object via code [Georges KUGENER]
 - 62: fixed a bug not findung the lib path during JWS [David MANCINI]
 - 63: remove Swing library [Fred FABER]
-- 63: fixed a NPE in Structorizer [Robert Fisch]
+- 63: fixed a NPE in Structorizer [Robert FISCH]
+- 64: Structorizer lost synch [Guy LOESH]
+- 65: Unimozer.monitor(...) only worked on saved projects [Jean-Paul TOUSCH]
+- 66: added Java 11 and 12 to bootstrap [Robert FISCH]
+- 67: do not display fields of type "javax.swing" [Laurent HAAN]
+- 68: ignore fields & methods from anonymous inner classes [Robert FISCH]
+- 69: bugfix: minus floating in top left (>67)
+- 69: added option to hide/show "javax.swing" attributes [Robert FISCH]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]

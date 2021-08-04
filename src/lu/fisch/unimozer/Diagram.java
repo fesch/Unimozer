@@ -3085,7 +3085,7 @@ Logger.getInstance().log("Diagram repainted ...");
         if(objectizer!=null) objectizer.removeAllObjects();
         if(nsd!=null)
         {
-            nsd.setRoot(MyClass.setErrorNSD(),false,true);
+            nsd.setRootForce(MyClass.setErrorNSD());
             nsd.getParent().getParent().repaint();
         }
         /*
@@ -4587,6 +4587,7 @@ Logger.getInstance().log("Diagram repainted ...");
             } catch (Exception ex)
             {
                 ex.printStackTrace();
+                System.out.println("ATTENTION: Backup failed. Please contact your teacher immediately!!!");
             }
         }
     }
@@ -6606,21 +6607,25 @@ Logger.getInstance().log("Diagram repainted ...");
     {
         StringList sl = new StringList();
         
-        if(directoryName==null)
-            return sl;
+        // stop if project not yet saved
+        //if(directoryName==null) return sl;
         
-        String libName = directoryName+System.getProperty("file.separator")+"lib";
-        Unimozer.messages.add("libName = "+directoryName+System.getProperty("file.separator")+"lib");
-        File libs = new File(libName);
-        Unimozer.messages.add("created File with libname");
-        if(libs.exists())
+        // only check if project saved
+        if(directoryName!=null)
         {
-            File[] files = libs.listFiles();
-            for (int f = 0; f < files.length; f++)
+            String libName = directoryName+System.getProperty("file.separator")+"lib";
+            Unimozer.messages.add("libName = "+directoryName+System.getProperty("file.separator")+"lib");
+            File libs = new File(libName);
+            Unimozer.messages.add("created File with libname");
+            if(libs.exists())
             {
-                if (files[f].getAbsolutePath().toLowerCase().endsWith(".jar"))
+                File[] files = libs.listFiles();
+                for (int f = 0; f < files.length; f++)
                 {
-                    sl.add(files[f].getAbsolutePath());
+                    if (files[f].getAbsolutePath().toLowerCase().endsWith(".jar"))
+                    {
+                        sl.add(files[f].getAbsolutePath());
+                    }
                 }
             }
         }
@@ -6628,10 +6633,10 @@ Logger.getInstance().log("Diagram repainted ...");
         try {
             File f = new File(Diagram.class.getProtectionDomain().getCodeSource().getLocation().toURI());
             sl.add(f.getAbsolutePath());
-            Unimozer.messages.add(f.getAbsolutePath());
+            Unimozer.messages.add("Adding LIB: "+f.getAbsolutePath());
         } 
         catch (Exception ex) {
-            Unimozer.messages.add(ex.getMessage());
+            Unimozer.messages.add("Error adding LIB: "+ex.getMessage());
         }
         
         return sl;

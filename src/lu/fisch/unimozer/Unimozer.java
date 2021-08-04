@@ -30,7 +30,7 @@ import lu.fisch.unimozer.utils.StringList;
 public class Unimozer
 {
     public final static String E_NAME = "Unimozer";
-    public final static String E_VERSION = "0.27-63" +
+    public final static String E_VERSION = "0.27-69" +
             "" +
             "";
 
@@ -70,6 +70,7 @@ public class Unimozer
 
     public static String JDK_home = null;
     public static String JDK_source = null;
+    public static boolean hideSwing;
 
     public static void switchButtons(JButton a, JButton b)
     {

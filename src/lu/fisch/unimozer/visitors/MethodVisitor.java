@@ -23,6 +23,7 @@
 package lu.fisch.unimozer.visitors;
 
 import japa.parser.ast.body.*;
+import japa.parser.ast.expr.ObjectCreationExpr;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
 import java.util.List;
 import java.util.Vector;
@@ -44,6 +45,11 @@ public class MethodVisitor extends VoidVisitorAdapter
     public MethodVisitor(String forClass)
     {
         this.forClass=forClass;
+    }
+    
+    @Override
+    public void visit(ObjectCreationExpr n, Object arg) {
+        // ignore anonymous stuff
     }
 
     @Override

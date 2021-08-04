@@ -199,7 +199,7 @@ public class Mainform extends JFrame
                     Console.disconnectAll();
                     lu.fisch.structorizer.gui.Mainform mainform = new lu.fisch.structorizer.gui.Mainform(false);
                     mainform.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    mainform.diagram.setRoot(mf.diagram.getNsd().getRoot(),false,true);
+                    mainform.diagram.setRootForce(mf.diagram.getNsd().getRoot());
                     mainform.diagram.redraw();
                     Console.connectAll();
                 }
@@ -317,6 +317,9 @@ public class Mainform extends JFrame
         Unimozer.javaCompileOnTheFly=Boolean.valueOf(ini.getProperty("compileOnTheFly","false"));
         miCompileOnTheFly.setSelected(Unimozer.javaCompileOnTheFly);
         
+        Unimozer.hideSwing=Boolean.valueOf(ini.getProperty("hideSwing","false"));
+        miHideSwing.setSelected(Unimozer.hideSwing);
+
         RSyntaxTextAreaUIBackgroundDrawer.setSaturation((int) Integer.valueOf(ini.getProperty("structureHighlithningSaturation","0")));
         RSyntaxTextAreaUIBackgroundDrawer.setActive(Boolean.valueOf(ini.getProperty("structureHighlithning","false")));
         
@@ -615,6 +618,7 @@ public class Mainform extends JFrame
         miEncodingWindows1252 = new javax.swing.JRadioButtonMenuItem();
         miCompileOnTheFly = new javax.swing.JCheckBoxMenuItem();
         miStructureHighlithningLEvel = new javax.swing.JMenu();
+        miHideSwing = new javax.swing.JCheckBoxMenuItem();
         shOff = new javax.swing.JRadioButtonMenuItem();
         shLight = new javax.swing.JRadioButtonMenuItem();
         shMedium = new javax.swing.JRadioButtonMenuItem();
@@ -1645,7 +1649,7 @@ public class Mainform extends JFrame
         miStructureHighlithningLEvel.add(shCostum);
 
         mOptions.add(miStructureHighlithningLEvel);
-
+		
         chkRealtime.setText("Real-time object monitoring");
         chkRealtime.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1661,6 +1665,14 @@ public class Mainform extends JFrame
             }
         });
         mOptions.add(chkHidePrivateFields);
+
+		miHideSwing.setText("Hide javax.swing attributes");
+		miHideSwing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miHideSwingActionPerformed(evt);
+            }
+        });
+		mOptions.add(miHideSwing);
 
         jMenuBar.add(mOptions);
 
@@ -2127,6 +2139,13 @@ public class Mainform extends JFrame
         Unimozer.FILE_ENCODING="UTF-8";
     }//GEN-LAST:event_miEncodingUTF8ActionPerformed
 
+    private void miHideSwingActionPerformed(java.awt.event.ActionEvent evt)                                               
+    {                                          
+        Unimozer.hideSwing=miHideSwing.isSelected();
+        Ini.set("hideSwing",Boolean.toString(miHideSwing.isSelected()));
+        diagram.repaint();
+    }                                     
+
     private void miEncodingWindows1252ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miEncodingWindows1252ActionPerformed
     {//GEN-HEADEREND:event_miEncodingWindows1252ActionPerformed
         miEncodingWindows1252.setSelected(true);
@@ -2467,6 +2486,7 @@ public class Mainform extends JFrame
     private javax.swing.JCheckBoxMenuItem miShowMethods;
     private javax.swing.JMenuItem miStop;
     private javax.swing.JMenu miStructureHighlithningLEvel;
+    private javax.swing.JCheckBoxMenuItem miHideSwing;
     private javax.swing.JCheckBoxMenuItem miToolbarFile;
     private javax.swing.JCheckBoxMenuItem miToolbarFont;
     private javax.swing.JCheckBoxMenuItem miToolbarRun;

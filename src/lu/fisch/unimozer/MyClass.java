@@ -1393,15 +1393,18 @@ public class MyClass implements Space
                 //for(Element ele : fields)
                 {
                     Element ele = fields.get(i);
-                    g.setFont(new Font(g.getFont().getFamily(),ele.getFontStyle(),Unimozer.DRAW_FONT_SIZE));
-                    int h = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getHeight()+PAD;
-                    int w = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getWidth()+Element.ICONSIZE;
-                    g.setFont(new Font(g.getFont().getFamily(),Font.PLAIN,Unimozer.DRAW_FONT_SIZE));
-                    ele.setHeight(h);
-                    ele.setPosition(new Point(position.x,position.y+totalHeight));
-                    if (w>maxWidth) maxWidth=w;
-                    fieldsHeight+=h;
-                    totalHeight+=h;
+                    if(!ele.getName().contains("javax.swing") || !Unimozer.hideSwing)
+                    {
+                        g.setFont(new Font(g.getFont().getFamily(),ele.getFontStyle(),Unimozer.DRAW_FONT_SIZE));
+                        int h = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getHeight()+PAD;
+                        int w = (int) g.getFont().getStringBounds(ele.getPrintName(), g.getFontRenderContext()).getWidth()+Element.ICONSIZE;
+                        g.setFont(new Font(g.getFont().getFamily(),Font.PLAIN,Unimozer.DRAW_FONT_SIZE));
+                        ele.setHeight(h);
+                        ele.setPosition(new Point(position.x,position.y+totalHeight));
+                        if (w>maxWidth) maxWidth=w;
+                        fieldsHeight+=h;
+                        totalHeight+=h;
+                    }
                 }
             }
             if(showMethods)
@@ -1433,7 +1436,10 @@ public class MyClass implements Space
             for(int i=0;i<classes.size();i++) //for(Element ele : classes) 
                 { classes.get(i).setWidth(this.getWidth()); }
             for(int i=0;i<fields.size();i++) //if(showFields) for(Element ele : fields) 
-                { fields.get(i).setWidth(this.getWidth()); }
+            { 
+                if(!fields.get(i).getName().contains("javax.swing") || !Unimozer.hideSwing)
+                    fields.get(i).setWidth(this.getWidth()); 
+            }
             for(int i=0;i<methods.size();i++) //if(showMethods)for(Element ele : methods) 
                 { methods.get(i).setWidth(this.getWidth()); }
 
@@ -1446,7 +1452,7 @@ public class MyClass implements Space
             for(int i=0;i<classes.size();i++) //for(Element ele : classes) 
                 { classes.get(i).draw(g); }
             if(showFields) for(int i=0;i<fields.size();i++) //for(Element ele : fields) 
-                { fields.get(i).draw(g); }
+                { if(!fields.get(i).getName().contains("javax.swing") || !Unimozer.hideSwing) fields.get(i).draw(g); }
             if(showMethods)for(int i=0;i<methods.size();i++) //for(Element ele : methods) 
                 { methods.get(i).draw(g); }
 
@@ -1733,14 +1739,15 @@ public class MyClass implements Space
             if(getSelected()!=null)
             {
                 getSelected().getName();
-
+                
                 if ((getSelected().getType()==Element.METHOD) || (getSelected().getType()==Element.CONSTRUCTOR))
                 {
                     StructorizerVisitor sv = new StructorizerVisitor(getSelected().getName());
                     sv.visit(cu,null);
-
+                    
                     // affect the new diagram to the editor
-                    nsd.setRoot(sv.root,false,true);
+                    boolean OK = nsd.setRootForce(sv.root);
+                    //System.out.println("OK: "+OK);
                     // redraw the diagram
                     //nsd.redraw();
                     // redraw the parent
@@ -1753,10 +1760,11 @@ public class MyClass implements Space
                 else ERROR=true;
             }
             else ERROR=true;
+            //System.out.println("Error: "+ERROR);
 
             if(ERROR)
             {
-                nsd.setRoot(setErrorNSD(),false,true);
+                nsd.setRootForce(setErrorNSD());
                 nsd.getParent().getParent().repaint();
             }
         }

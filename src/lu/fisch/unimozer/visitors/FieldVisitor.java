@@ -22,14 +22,12 @@
 
 package lu.fisch.unimozer.visitors;
 
-import japa.parser.ASTParserTokenManager;
 import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.ClassOrInterfaceDeclaration;
 import japa.parser.ast.body.FieldDeclaration;
 import japa.parser.ast.body.VariableDeclarator;
-import japa.parser.ast.type.ClassOrInterfaceType;
+import japa.parser.ast.expr.ObjectCreationExpr;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import lu.fisch.unimozer.Element;
@@ -52,8 +50,14 @@ public class FieldVisitor extends VoidVisitorAdapter
     }
 
     @Override
+    public void visit(ObjectCreationExpr n, Object arg) {
+        // ignore anonymous stuff
+    }
+    
+    @Override
     public void visit(ClassOrInterfaceDeclaration n, Object arg) 
     {
+        //System.out.println("CLASS: "+n.getName());
         if(n.getName().equals(forClass))
         {
             inClass=true;
@@ -70,28 +74,31 @@ public class FieldVisitor extends VoidVisitorAdapter
     @Override
     public void visit(FieldDeclaration n, Object arg)
     {
-        List<VariableDeclarator> pl = n.getVariables();
-        if(pl!=null)
-        for(VariableDeclarator p : pl)
+        if(inClass)
         {
-            String uml = Modifier.toString(n.getModifiers());
-            String full = Modifier.toString(n.getModifiers())+n.getType().toString();
-
-            full+=" "+p.getId().getName()+"";
-            uml+=" "+p.getId().getName()+"";
-            
-            if(full.charAt(full.length()-1)==',')
+            List<VariableDeclarator> pl = n.getVariables();
+            if(pl!=null)
+            for(VariableDeclarator p : pl)
             {
-                full=full.substring(0,full.length()-1);
-                uml=uml.substring(0,uml.length()-1);
-            }
-            uml += " : "+n.getType().toString();
-            fields.add(full);
+                String uml = Modifier.toString(n.getModifiers());
+                String full = Modifier.toString(n.getModifiers())+n.getType().toString();
 
-            Element ele = new Element(n);
-            ele.setName(full);
-            ele.setUmlName(uml);
-            vec.add(ele);
+                full+=" "+p.getId().getName()+"";
+                uml+=" "+p.getId().getName()+"";
+
+                if(full.charAt(full.length()-1)==',')
+                {
+                    full=full.substring(0,full.length()-1);
+                    uml=uml.substring(0,uml.length()-1);
+                }
+                uml += " : "+n.getType().toString();
+                fields.add(full);
+
+                Element ele = new Element(n);
+                ele.setName(full);
+                ele.setUmlName(uml);
+                vec.add(ele);
+            }
         }
     }
 

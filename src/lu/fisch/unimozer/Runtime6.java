@@ -158,7 +158,7 @@ public class Runtime6
 
 
             // set compileroptions for target JVM
-            //System.err.println(path+"bin/");
+            //System.err.println(classPath);
             String[] options = new String[]{"-classpath", classPath};
             Iterable<String> myOptions = null;
             myOptions = Arrays.asList(options);

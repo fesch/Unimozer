@@ -23,13 +23,11 @@
 
 package lu.fisch.unimozer.visitors;
 
-import japa.parser.ast.PackageDeclaration;
 import japa.parser.ast.body.ClassOrInterfaceDeclaration;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.expr.QualifiedNameExpr;
 import japa.parser.ast.type.ClassOrInterfaceType;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
-import lu.fisch.unimozer.Package;
 
 /**
  *

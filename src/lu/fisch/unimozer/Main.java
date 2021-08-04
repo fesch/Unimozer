@@ -108,7 +108,9 @@ public class Main
         */
         
         if(System.getProperty("java.version").trim().startsWith("9") ||
-           System.getProperty("java.version").trim().startsWith("10"))
+           System.getProperty("java.version").trim().startsWith("10")||
+           System.getProperty("java.version").trim().startsWith("11")||
+           System.getProperty("java.version").trim().startsWith("12"))
         {
             launcher.setStatus("Java version > 8 detected, analysing ...");
             Unimozer.messages.add("---");
