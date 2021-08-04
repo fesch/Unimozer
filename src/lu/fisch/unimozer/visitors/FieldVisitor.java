@@ -94,7 +94,7 @@ public class FieldVisitor extends VoidVisitorAdapter
                 uml += " : "+n.getType().toString();
                 fields.add(full);
 
-                Element ele = new Element(n);
+                Element ele = new Element(n, n.getParentNode());
                 ele.setName(full);
                 ele.setUmlName(uml);
                 vec.add(ele);
