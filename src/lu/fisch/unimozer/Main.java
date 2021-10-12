@@ -37,6 +37,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.channels.FileChannel;
+import java.nio.file.FileSystems;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -113,13 +115,16 @@ public class Main
            System.getProperty("java.version").trim().startsWith("12"))
         {
             launcher.setStatus("Java version > 8 detected, analysing ...");
-            Unimozer.messages.add("---");
+            Unimozer.messages.add("--- PATH");
+            Unimozer.messages.add("Java version > 8 detected!");
+            Unimozer.messages.add("Searching <java.compiler.jmod> ...");
                                         
             // first of all, let's check if we got launched by a JDK
             String jmods = System.getProperty("file.separator")+"jmods";
             String bin = System.getProperty("file.separator")+"bin";
             
             File compiler = new File(System.getProperty("java.home")+jmods+System.getProperty("file.separator")+"java.compiler.jmod");
+            Unimozer.messages.add("Seaching here: "+compiler.getAbsolutePath());
             
             // only continue if we have not been launched by a JDK
             if(!compiler.exists())
@@ -248,6 +253,149 @@ public class Main
                             }
                         }
                     }
+                }
+                
+                if((found==false) && (System.getProperty("os.name").toLowerCase().startsWith("mac os x")))
+                {
+                    Unimozer.messages.add("Searching in the Mac JDK folder: /Library/Java/JavaVirtualMachines");
+
+                    // get all files from it
+                    bootFolderfile = new File("/Library/Java/JavaVirtualMachines");
+                    files = bootFolderfile.listFiles();
+                    if(files!=null)
+                    {
+                        directories = new TreeSet<String>();
+                        for(int i=0;i<files.length;i++)
+                        {
+                            if(files[i].isDirectory())
+                                directories.add(files[i].getAbsolutePath());
+                        }
+
+                        while(directories.size()>0 && found==false)
+                        {
+                            JDK_directory = directories.last();
+                            directories.remove(JDK_directory);
+                            // JAR file
+                            File compi = new File(JDK_directory+System.getProperty("file.separator")+"Contents"+System.getProperty("file.separator")+"Home"+
+                                                  jmods+System.getProperty("file.separator")+"java.compiler.jmod");
+                            
+                            if(compi.exists())
+                            {
+                                // we got it!
+                                found=true;
+                                Unimozer.messages.add("<java.compiler.jmod> found here: "+compi.getAbsolutePath());
+                                // let's make shure the executable is there too
+                                File javaw = new File(JDK_directory+System.getProperty("file.separator")+"Contents"+System.getProperty("file.separator")+"Home"+
+                                                      System.getProperty("file.separator")+bin+System.getProperty("file.separator")+"java");
+                                if(!javaw.exists())
+                                    javaw = new File(JDK_directory+System.getProperty("file.separator")+"Contents"+System.getProperty("file.separator")+"Home"+
+                                                      System.getProperty("file.separator")+bin+System.getProperty("file.separator")+"java");
+                                if(!javaw.exists())
+                                    Unimozer.messages.add("Sorry, but <java> cannot be found ... aborting here!");
+                                else
+                                {
+                                    try 
+                                    {
+                                        Unimozer.messages.add("Relaunching now with JDK ...");
+
+                                        if(isRunningJavaWebStart())
+                                        {
+                                            Unimozer.messages.add("We are running JWS ...");
+                                            //Moenagade.messages.add(System.getProperty("jnlpx.origFilenameArg"));
+                                            try 
+                                            {
+                                                /*
+                                                 * Task #0 >> Find <tools.jar>
+                                                 */
+                                                Unimozer.messages.add("Searching <Unimozer.jar> ...");
+                                                // All jars have an manifest
+                                                Enumeration<URL> e2 = Thread.currentThread().getContextClassLoader().getResources("META-INF/MANIFEST.MF");
+                                                while(e2.hasMoreElements()) 
+                                                {
+                                                    URL u = e2.nextElement();
+                                                    String urlString = u.toExternalForm(); 
+
+                                                    Unimozer.messages.add("Found: "+urlString);
+
+                                                    // skip unused libs
+                                                    if (!(urlString.indexOf("Unimozer")>0)) 
+                                                    {
+                                                        continue;
+                                                    }  
+                                                    // index of .jar because the resource is behind it; “foo.jar!META-INF/MANIFEST.MF”
+                                                    int jarIndex = urlString.lastIndexOf(".jar");
+                                                    // skip non jar code
+                                                    if (jarIndex<1) 
+                                                    {
+                                                        continue;
+                                                    }                     
+
+                                                    JarFile cachedFile = ((JarURLConnection)u.openConnection()).getJarFile();
+                                                    final File tempFile = File.createTempFile("cached-",".jar");
+                                                    tempFile.deleteOnExit();
+                                                    copyFile(new File(cachedFile.getName()),tempFile);
+
+                                                    Unimozer.messages.add("Downloaded: "+tempFile.getAbsolutePath());
+                                                    Unimozer.messages.add("Trying to start ...");
+
+                                                    final File javawFile = javaw;
+                                                    (new Thread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            try {
+                                                                Process process = new ProcessBuilder(javawFile.getAbsolutePath(),"-jar",tempFile.getAbsolutePath()).start();
+                                                            } catch (IOException ex) {
+                                                                ex.printStackTrace();
+                                                            }
+                                                        }
+                                                    })).start();
+                                                    // terminated this process but wait a bit
+                                                    Thread.sleep(10*1000);
+                                                    System.exit(0);
+                                                }
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        else    // we can use the local file
+                                        {
+                                            launcher.setStatus("Restarting using local JDK ...");
+                                            
+                                            // Contents
+                                            String bf=bootFolder.substring(0,bootFolder.lastIndexOf(System.getProperty("file.separator")));
+                                            // packaged JRE folder
+                                            bf=bf.substring(0,bf.lastIndexOf(System.getProperty("file.separator")));
+                                            // PlugIns
+                                            bf=bf.substring(0,bf.lastIndexOf(System.getProperty("file.separator")));
+                                            // Contents
+                                            bf=bf.substring(0,bf.lastIndexOf(System.getProperty("file.separator")));
+                                            // Unimozer.app
+                                            bf=bf.substring(0,bf.lastIndexOf(System.getProperty("file.separator")));
+                                            
+                                            //JOptionPane.showMessageDialog(null, "Dir = "+bf+"/Contents/Java/Unimozer.jar");
+                                            
+                                            //Process process = new ProcessBuilder(javaw.getAbsolutePath(),"-jar -Xdock:icon=Contents/Resources/turtle.icns -Dapple.laf.useScreenMenuBar=true -Dcom.apple.macos.use-file-dialog-packages=true -Dcom.apple.macos.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=Unimozer -Dcom.apple.smallTabs=true -Xdock:name=Unimozer -Xmx1024M",bf+"/Contents/Java/Unimozer.jar").start();
+                                            Process process = new ProcessBuilder(javaw.getAbsolutePath(),"-jar",bf+"/Contents/Java/Unimozer.jar").start();
+                                            try {
+                                                // terminated this process
+                                                TimeUnit.SECONDS.sleep(2);
+                                            } catch (InterruptedException ex) {
+                                                //java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                            System.exit(0);
+                                        }
+                                    } 
+                                    catch (IOException ex) 
+                                    {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }
+                            
+                        }
+                    } else Unimozer.messages.add("Bootfolder file list is empty ...");
                 }
                 
                 if(found==false)
