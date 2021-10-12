@@ -1489,8 +1489,14 @@ public class StructorizerVisitor extends VoidVisitorAdapter
         }
         */
 
-
-        For ele = new For(code);
+        //code = "for "+counter+" <- "+startvalue+" to "+stopvalue+" by = "+increment;
+        //For ele = new For(code);
+        For ele = new For();
+        ele.setCounterVar(counter);
+        ele.setStartValue(startvalue);
+        ele.setEndValue(stopvalue);
+        ele.setStepConst(increment);
+        ele.setText(ele.composeForClause(true));
         ele.setColor(RSyntaxTextAreaUIBackgroundDrawer.COLOR_LOOP);
         lastElement = ele;
         queueList.get(queueList.size()-1).addElement(ele);
