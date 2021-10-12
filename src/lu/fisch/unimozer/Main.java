@@ -376,8 +376,21 @@ public class Main
                                             
                                             //JOptionPane.showMessageDialog(null, "Dir = "+bf+"/Contents/Java/Unimozer.jar");
                                             
-                                            //Process process = new ProcessBuilder(javaw.getAbsolutePath(),"-jar -Xdock:icon=Contents/Resources/turtle.icns -Dapple.laf.useScreenMenuBar=true -Dcom.apple.macos.use-file-dialog-packages=true -Dcom.apple.macos.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=Unimozer -Dcom.apple.smallTabs=true -Xdock:name=Unimozer -Xmx1024M",bf+"/Contents/Java/Unimozer.jar").start();
-                                            Process process = new ProcessBuilder(javaw.getAbsolutePath(),"-jar",bf+"/Contents/Java/Unimozer.jar").start();
+                                            // launch with OSX integration
+                                            Process process = new ProcessBuilder(
+                                                    javaw.getAbsolutePath(),
+                                                    "-jar","-Xdock:icon=Contents/Resources/turtle.icns",
+                                                    "-Dapple.laf.useScreenMenuBar=true",
+                                                    "-Dcom.apple.macos.use-file-dialog-packages=true",
+                                                    "-Dcom.apple.macos.useScreenMenuBar=true",
+                                                    "-Dcom.apple.mrj.application.apple.menu.about.name=Unimozer",
+                                                    "-Dcom.apple.smallTabs=true -Xdock:name=Unimozer",
+                                                    "-Xmx1024M",
+                                                    bf+"/Contents/Java/Unimozer.jar").start();
+                                            
+                                            // simple launch
+                                            //Process process = new ProcessBuilder(javaw.getAbsolutePath(),"-jar",bf+"/Contents/Java/Unimozer.jar").start();
+                                            
                                             try {
                                                 // terminated this process
                                                 TimeUnit.SECONDS.sleep(2);

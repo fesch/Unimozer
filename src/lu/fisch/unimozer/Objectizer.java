@@ -39,6 +39,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Hashtable;
@@ -47,6 +48,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+import javax.lang.model.type.DeclaredType;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -60,7 +62,7 @@ import javax.swing.Timer;
 import lu.fisch.unimozer.console.Console;
 import lu.fisch.unimozer.dialogs.MethodInputs;
 import lu.fisch.unimozer.interactiveproject.MyInteractiveObject;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+//import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 /**
  * Class responsible for displaying the objects in the bottom left panel.
@@ -71,7 +73,7 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
 {
     /** holds references to the generated objects */
     private LinkedHashMap<String,MyObject> objects = new LinkedHashMap<String,MyObject>();
-    /** popup which is diplayed on e right click */
+    /** popup which is displayed on e right click */
     private JPopupMenu popup = new JPopupMenu();
     /** a reference to the selected object (with the mouse) */
     private MyObject selected = null;
@@ -442,17 +444,17 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
 
     // Taken from OpenJDF7
     // ParameterizedTypeImpl.java
-    private String toString(ParameterizedTypeImpl t)
+    private String toString(ParameterizedType t)
     {
         StringBuilder sb = new StringBuilder();
 
         if (t.getOwnerType() != null)
         {
-            sb.append(t.getRawType().getSimpleName().replace(((ParameterizedTypeImpl) t.getOwnerType()).getRawType().getName() + "$",
-                        ""));
+            //sb.append(t.getRawType().getSimpleName().replace(((ParameterizedTypeImpl) t.getOwnerType()).getRawType().getName() + "$",""));
+            sb.append(t.getRawType().getClass().getSimpleName().replace(((ParameterizedType) t.getOwnerType()).getRawType().getClass().getName() + "$",""));
         } else
         {
-            sb.append(t.getRawType().getSimpleName());
+            sb.append(t.getRawType().getClass().getSimpleName());
         }
 
         if (t.getActualTypeArguments() != null
@@ -483,17 +485,17 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
 
     // Taken from OpenJDF7
     // ParameterizedTypeImpl.java
-    private String toStringReplaced(ParameterizedTypeImpl t, MyObject myObj)
+    private String toStringReplaced(ParameterizedType t, MyObject myObj)
     {
         StringBuilder sb = new StringBuilder();
 
         if (t.getOwnerType() != null)
         {
-            sb.append(t.getRawType().getSimpleName().replace(((ParameterizedTypeImpl) t.getOwnerType()).getRawType().getName() + "$",
+            sb.append(t.getRawType().getClass().getSimpleName().replace(((ParameterizedType) t.getOwnerType()).getRawType().getClass().getName() + "$",
                         ""));
         } else
         {
-            sb.append(t.getRawType().getSimpleName());
+            sb.append(t.getRawType().getClass().getSimpleName());
         }
 
         if (t.getActualTypeArguments() != null
@@ -691,8 +693,8 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
             Type genRetType = m.getGenericReturnType();
             sb.append(((genRetType instanceof Class<?>)
                     ? getTypeName((Class<?>) genRetType) : 
-                        genRetType instanceof ParameterizedTypeImpl ?
-                        toString((ParameterizedTypeImpl) genRetType) :
+                        genRetType instanceof ParameterizedType ?
+                        toString((ParameterizedType) genRetType) :
                         genRetType.toString())).append(' ');
 
             //sb.append(getTypeName(m.getDeclaringClass())).append('.');
@@ -704,9 +706,9 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                         ? getTypeName((Class) params[j]) :
                             (params[j].toString());
                 // override
-                if (params[j] instanceof ParameterizedTypeImpl)
+                if (params[j] instanceof ParameterizedType)
                 {
-                    param = toString((ParameterizedTypeImpl) params[j]);
+                    param = toString((ParameterizedType) params[j]);
                 }
                 
                 if (isVarArgs(m) && (j == params.length - 1)) // replace T[] with T...
@@ -790,9 +792,9 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                         ? getTypeName((Class) params[j]) :
                             (params[j].toString());
                 // override
-                if (params[j] instanceof ParameterizedTypeImpl)
+                if (params[j] instanceof ParameterizedType)
                 {
-                    param = toString((ParameterizedTypeImpl) params[j]);
+                    param = toString((ParameterizedType) params[j]);
                 }
                 
                 sb.append(param);
@@ -869,8 +871,8 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
             Type genRetType = m.getGenericReturnType();
             String retP = (((genRetType instanceof Class<?>)
                     ? getTypeName((Class<?>) genRetType) : 
-                        genRetType instanceof ParameterizedTypeImpl ?
-                        toStringReplaced((ParameterizedTypeImpl) genRetType,myObj) :
+                        genRetType instanceof ParameterizedType ?
+                        toStringReplaced((ParameterizedType) genRetType,myObj) :
                         genRetType.toString()));
             if(myObj!=null)
                 if(myObj.generics.containsKey(retP))
@@ -891,9 +893,9 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                         ? getTypeName((Class) params[j]) :
                             (params[j].toString());
                 // override
-                if (params[j] instanceof ParameterizedTypeImpl)
+                if (params[j] instanceof ParameterizedType)
                 {
-                    param = toStringReplaced((ParameterizedTypeImpl) params[j],myObj);
+                    param = toStringReplaced((ParameterizedType) params[j],myObj);
                 }
                 
                 if (isVarArgs(m) && (j == params.length - 1)) // replace T[] with T...
@@ -951,9 +953,9 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                         ? getTypeName((Class) params[j]) :
                             (params[j].toString());
                 // override
-                if (params[j] instanceof ParameterizedTypeImpl)
+                if (params[j] instanceof ParameterizedType)
                 {
-                    param = toStringReplaced((ParameterizedTypeImpl) params[j],myObj);
+                    param = toStringReplaced((ParameterizedType) params[j],myObj);
                 }
                 
                 if (isVarArgs(m) && (j == params.length - 1)) // replace T[] with T...
@@ -1024,9 +1026,9 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                         ? getTypeName((Class) params[j]) :
                             (params[j].toString());
                 // override
-                if (params[j] instanceof ParameterizedTypeImpl)
+                if (params[j] instanceof ParameterizedType)
                 {
-                    param = toStringReplaced((ParameterizedTypeImpl) params[j],myObj);
+                    param = toStringReplaced((ParameterizedType) params[j],myObj);
                 }
                 
                 if (isVarArgs(m) && (j == params.length - 1)) // replace T[] with T...
@@ -1109,8 +1111,8 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
             Type genRetType = m.getGenericReturnType();
             sb.append(((genRetType instanceof Class<?>)
                     ? getTypeName((Class<?>) genRetType) : 
-                        genRetType instanceof ParameterizedTypeImpl ?
-                        toString((ParameterizedTypeImpl) genRetType) :
+                        genRetType instanceof ParameterizedType ?
+                        toString((ParameterizedType) genRetType) :
                         genRetType.toString())).append(' ');
 
             //sb.append(getTypeName(m.getDeclaringClass())).append('.');
@@ -1122,9 +1124,9 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                         ? getTypeName((Class) params[j]) :
                             (params[j].toString());
                 // override
-                if (params[j] instanceof ParameterizedTypeImpl)
+                if (params[j] instanceof ParameterizedType)
                 {
-                    param = toString((ParameterizedTypeImpl) params[j]);
+                    param = toString((ParameterizedType) params[j]);
                 }
                 
                 if (isVarArgs(m) && (j == params.length - 1)) // replace T[] with T...
@@ -1209,9 +1211,9 @@ public class Objectizer extends JPanel implements MouseListener, ActionListener,
                         ? getTypeName((Class) params[j]) :
                             (params[j].toString());
                 // override
-                if (params[j] instanceof ParameterizedTypeImpl)
+                if (params[j] instanceof ParameterizedType)
                 {
-                    param = toString((ParameterizedTypeImpl) params[j]);
+                    param = toString((ParameterizedType) params[j]);
                 }
                 
                 sb.append(param);

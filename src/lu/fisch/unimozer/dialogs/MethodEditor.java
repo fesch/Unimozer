@@ -38,7 +38,7 @@ import lu.fisch.unimozer.Element;
 import lu.fisch.unimozer.Ini;
 import lu.fisch.unimozer.Java;
 import lu.fisch.unimozer.Unimozer;
-import sun.security.krb5.internal.crypto.Des;
+//import sun.security.krb5.internal.crypto.Des;
 
 /**
  *

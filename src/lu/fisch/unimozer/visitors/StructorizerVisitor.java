@@ -1286,6 +1286,8 @@ public class StructorizerVisitor extends VoidVisitorAdapter
 
         code = doReplacements(code);
 
+        //System.out.println("Code: "+code);
+        
         // Todo: interprete and set to correct form!
         //code = D7Parser.preFor+"("+code+")";
         // input : int i = 1 ; i <= number ; i++
@@ -1437,7 +1439,9 @@ public class StructorizerVisitor extends VoidVisitorAdapter
            }
         }
 
-        code = "pour "+counter+" <- "+startvalue+" à "+stopvalue+", pas = "+increment;
+        code = "for "+counter+" <- "+startvalue+" to "+stopvalue+" by = "+increment;
+        
+        //System.out.println("Code = "+code);
 
         /*
         if(sl.count()>=3 && (sl.get(sl.count()-1).contains("++") || sl.get(sl.count()-1).contains("--")))
