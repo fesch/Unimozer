@@ -77,16 +77,16 @@ public class Package
 
         // background
         g.setColor(background2);
-        g.fillRect(getLeft()-PADDING,getTop()-PADDING/2-h,w,h);
+        g.fillRect(getLeft()-PADDING,getTop()-PADDING,w,h);
         // line around
         g.setColor(border);
-        g.drawRect(getLeft()-PADDING,getTop()-PADDING/2-h,w,h);
+        g.drawRect(getLeft()-PADDING,getTop()-PADDING,w,h);
 
-        nameZoneTop = new Point(getLeft()-PADDING,getTop()-PADDING/2-h);
-        nameZoneBottom = new Point(getLeft()-PADDING+w,getTop()-PADDING/2-h+h);
+        nameZoneTop = new Point(getLeft()-PADDING,getTop()-PADDING);
+        nameZoneBottom = new Point(getLeft()-PADDING+w,getTop()-PADDING+h);
 
         // text
-        g.drawString(getName(), getLeft()-PADDING+PAD,getTop()-PADDING/2-PAD);
+        g.drawString(getName(), getLeft()-PADDING+PAD,getTop()-PADDING-2*PAD+h);
 
         g.setFont(new Font(oldFontName,Font.BOLD+Font.ITALIC,Unimozer.DRAW_FONT_SIZE));
     }

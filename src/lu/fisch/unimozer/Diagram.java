@@ -714,7 +714,8 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
     // new code
     private void drawCompoAggregation2(Graphics2D g, MyClass thisClass, MyClass otherClass, Hashtable<MyClass,Vector<MyClass>> classUsings,boolean isComposition)
     {
-
+        int dist = 30;
+        
         Point thisTop       = new Point(thisClass.getX()+thisClass.getWidth()/2,thisClass.getY());
         Point thisBottom    = new Point(thisClass.getX()+thisClass.getWidth()/2,thisClass.getY()+thisClass.getHeight());
         Point thisLeft      = new Point(thisClass.getX(),thisClass.getY()+thisClass.getHeight()/2);
@@ -735,8 +736,8 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
             Point stopUp   = new Point(thisRight.x+8,thisRight.y-4);
             Point stopDown = new Point(thisRight.x+8,thisRight.y+4);
             Point lineBoxPoint = new Point(thisTop.x+5, thisTop.y-8);
-            Point lineTopLeft = new Point(lineBoxPoint.x, lineBoxPoint.y-50);
-            Point lineTopRight = new Point(lineTopLeft.x+50 + thisClass.getWidth()/2, lineTopLeft.y);
+            Point lineTopLeft = new Point(lineBoxPoint.x, lineBoxPoint.y-dist);
+            Point lineTopRight = new Point(lineTopLeft.x+dist + thisClass.getWidth()/2, lineTopLeft.y);
             Point lineBottomRight = new Point(lineTopRight.x, thisClass.getPosition().y + thisClass.getHeight()/2);
 
             drawLine(g, lineBoxPoint, lineTopLeft);
