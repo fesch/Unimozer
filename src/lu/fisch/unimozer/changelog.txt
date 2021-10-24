@@ -5,7 +5,7 @@ Todo:
 - find/replace in selection
 
 
-Current version: 0.27-70 (2021.08.04)
+Current version: 0.27-71 (2021.10.24)
 - 01: printing was broken due to editor update [Lux BREDIMUS]
 - 02: copy diagrams cut outer lines for compiled projects [Fred FABER]
 - 03: added error message if save operations fails [Fred FABER]
@@ -88,6 +88,7 @@ Current version: 0.27-70 (2021.08.04)
 - 69: added option to hide/show "javax.swing" attributes [Robert FISCH]
 - 70: small changes, so that the methods in interfaces don't get market as … [Andy RONCK]
 - 70: added UML support for class with fields of the same type [Andy RONCK]
+- 71: fixed some drawing errors [Robert FISCH]
 
 Version 0.27 (06/12/2012)
 - 01: editor: update of RSyntaxTextArea (Revision 313) [Robert FUTRELL]
