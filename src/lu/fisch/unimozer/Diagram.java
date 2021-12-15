@@ -721,8 +721,10 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
         Point thisLeft      = new Point(thisClass.getX(),thisClass.getY()+thisClass.getHeight()/2);
         Point thisRight     = new Point(thisClass.getX()+thisClass.getWidth(),thisClass.getY()+thisClass.getHeight()/2);
         Point[] thisPoints = {thisTop,thisBottom,thisLeft,thisRight};
-        if (thisClass == otherClass) {
 
+        //recursive fields
+        if (thisClass == otherClass) {
+            if(!isComposition)return;
             int thisCon = 6;
 
             Polygon p = new Polygon();
@@ -730,8 +732,7 @@ public class Diagram extends JPanel implements MouseListener, MouseMotionListene
             p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2-4, thisClass.getPosition().y-8);
             p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2, thisClass.getPosition().y-16);
             p.addPoint(thisCon+thisClass.getPosition().x+thisClass.getWidth()/2+4, thisClass.getPosition().y-8);
-            if(isComposition) g.fillPolygon(p);
-            else g.drawPolygon(p);
+            g.fillPolygon(p);
 
             Point stopUp   = new Point(thisRight.x+8,thisRight.y-4);
             Point stopDown = new Point(thisRight.x+8,thisRight.y+4);
