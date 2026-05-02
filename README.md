@@ -1,6 +1,13 @@
 # Unimozer
 U N I M O Z E R - the universal modelizer for learning Java™ 
 
+# Modern continuation
+A modern continuation of Unimozer is available as Unimozer Next:
+
+https://github.com/haan/UnimozerNext
+
+Unimozer Next keeps the UML-first Java learning focus of the original project while using a current desktop stack and active maintenance.
+
 # What is Unimozer?
 Unimozer implements mostly the same functionalities as BlueJ does.
 
